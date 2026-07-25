@@ -1,0 +1,58 @@
+{
+  "video": [
+    {
+      "path": "public/video/hero-scroll.mp4",
+      "source": "client-supplied (repo upload, originally referenced via a Cloudinary URL blocked by network policy)",
+      "purpose": "scroll-scrubbed hero, desktop/tablet",
+      "resolution": "1920x1080",
+      "durationSeconds": 15.08,
+      "sizeBytes": 11790443,
+      "optimization": "re-encoded H.264 crf20, keyframe every 8 frames, no B-frames, faststart, audio removed"
+    },
+    {
+      "path": "public/video/hero-scroll-mobile.mp4",
+      "source": "derived from the same client-supplied video",
+      "purpose": "scroll-scrubbed hero, mobile (<768px)",
+      "resolution": "810px wide, aspect preserved",
+      "durationSeconds": 15.08,
+      "sizeBytes": 2817566,
+      "optimization": "re-encoded H.264 crf22, keyframe every 8 frames, no B-frames, faststart, audio removed"
+    }
+  ],
+  "images": [
+    {
+      "path": "public/images/logo.jpg",
+      "source": "client-attached repo asset (Logo.jpg)",
+      "purpose": "nav + footer logo",
+      "status": "final — used as-is per brief (do not redraw/distort)"
+    },
+    {
+      "path": "public/images/hero-poster.jpg",
+      "source": "extracted first frame of public/video/hero-scroll.mp4",
+      "purpose": "hero poster / reduced-motion background",
+      "status": "final"
+    },
+    {
+      "path": "public/images/hero-poster.webp",
+      "source": "converted from hero-poster.jpg",
+      "purpose": "lighter-weight poster variant",
+      "status": "final"
+    },
+    {
+      "path": "public/images/hero-poster-mobile.jpg",
+      "source": "scaled from hero-poster.jpg to 810px",
+      "purpose": "mobile poster",
+      "status": "final"
+    },
+    {
+      "path": "public/images/hero-poster-mobile.webp",
+      "source": "converted from hero-poster-mobile.jpg",
+      "purpose": "mobile poster, lighter-weight",
+      "status": "final"
+    }
+  ],
+  "pendingHiggsfieldAssets": {
+    "note": "See docs/higgsfield-image-prompts.md for the full prompt list and generation status. Layouts currently use MediaFrame placeholder panels (src/components/ui/MediaFrame.tsx) wherever a generated image is still needed, each labeled with its intended content so it's obvious in the UI what's outstanding.",
+    "placeholderComponent": "src/components/ui/MediaFrame.tsx"
+  }
+}

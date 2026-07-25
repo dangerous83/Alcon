@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Produces a minimal, self-contained server bundle (.next/standalone)
+  // with only the node_modules actually needed at runtime — keeps the
+  // Docker image small instead of copying the whole node_modules tree.
+  output: "standalone",
   images: {
     // Higgsfield-generated imagery is served from Higgsfield's CDN rather
     // than self-hosted — this sandbox's network policy blocks downloading

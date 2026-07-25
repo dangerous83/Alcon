@@ -139,13 +139,18 @@ statement sits, matching the client's reference composition.
 
 Two details are load-bearing:
 
-- **The video is scaled back during clip 3** (`lg:scale-[0.66]
-  lg:-translate-x-[22%]`). The `<video>` is `object-cover`, so on any
-  viewport narrower than 16:9 it crops the sides, which pushes the brain
-  across the middle and directly under the copy. At 1440×900 the brain
-  reached ~75% of the width; scaling it back clears the right half and
-  letterboxes the frame, which is what the reference shows. Desktop only —
-  below `lg` the copy is full-width, so there is nothing to make room for.
+- **The video stays full-bleed.** An earlier pass scaled it back during
+  clip 3 (`lg:scale-[0.66]`) to clear room for the copy, but scaling a 16:9
+  video inside a wider viewport letterboxes it — black bands top and bottom,
+  which the client rejected. Instead the statement is kept short enough to
+  sit in the space beside the brain, with a narrow right-edge gradient scrim
+  behind it (the mirror of the one the chapter copy uses on the left). Below
+  ~16:9 `object-cover` crops the sides and the brain reaches ~75% of the
+  width, so some overlap is unavoidable; the scrim shades only that corner
+  rather than dimming the whole frame.
+- **The accent word is the same calligraphy as the hero headlines**
+  (`.heading-accent` — Allura, gradient-clipped), and the copy carries a
+  `Connect With Us` CTA to `/get-quote`, the site's contact route.
 - **The statement lives in two places, from one source.**
   `PositioningCopy` holds the words; the motion build overlays it on clip 3,
   and `PositioningStatement` wraps it as a standalone centred section

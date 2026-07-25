@@ -1,14 +1,20 @@
 import { Heading } from "@/components/ui/Heading";
+import { Button } from "@/components/ui/Button";
 import { clsx } from "@/lib/clsx";
 
 /**
- * The positioning statement's words, with no section chrome of its own.
+ * The positioning statement, with no section chrome of its own.
  *
  * Shared so it reads identically in both places it appears: left-aligned in
  * a side column beside the hero's third clip (where the brain sits left and
  * the Dubai skyline resolves inside it), and centred as the standalone
  * section that reduced-motion visitors get instead of the scrub. One copy,
  * so the two cannot drift apart.
+ *
+ * Kept deliberately short. The video runs full-bleed, so the brain occupies
+ * roughly the left three-quarters of the frame and this copy has to live in
+ * what is left — a longer heading either wrapped into the artwork or forced
+ * the video to be scaled down, which letterboxed the frame.
  */
 export function PositioningCopy({
   className,
@@ -22,20 +28,21 @@ export function PositioningCopy({
   return (
     <div className={clsx(centered ? "text-center" : "text-left", className)}>
       <Heading as="h2" size="lg" className="text-balance">
-        Alcon is a Dubai-based creative agency for brands that need to move
-        fast without losing their{" "}
-        <span className="text-gradient">point of view</span>.
+        Dubai-based creative, built for{" "}
+        {/* Same calligraphy accent as the hero headlines — see
+            .heading-accent in globals.css. */}
+        <em className="heading-accent">speed</em>.
       </Heading>
-      <p
-        className={clsx(
-          "mt-6 max-w-2xl text-lg text-text-secondary",
-          centered && "mx-auto"
-        )}
-      >
-        We work as an embedded creative partner — combining strategy,
-        design, and AI-accelerated production to take a brand from a clear
-        idea to a finished, high-performing experience.
+      <p className={clsx("mt-5 text-lg text-text-secondary", centered && "mx-auto max-w-2xl")}>
+        Strategy, design, and AI-accelerated production in one embedded team.
       </p>
+      {/* Deliberately not "Connect With Us" — the announcement banner
+          already uses that label for the same destination, and two links
+          with an identical accessible name on one page is ambiguous for
+          screen readers and for anything querying by name. */}
+      <div className={clsx("mt-7 flex", centered && "justify-center")}>
+        <Button href="/get-quote">Get in Touch</Button>
+      </div>
     </div>
   );
 }

@@ -119,90 +119,84 @@ test.describe("hero reveal HUD over the scrub", () => {
       .poll(() => positioning.evaluate((el) => getComputedStyle(el).opacity))
       .toBe("1");
     await expect(
-      positioning.getByRole("heading", { name: /Dubai-based creative agency/i })
+      positioning.getByRole("heading", { name: /Dubai-based creative/i })
     ).toBeVisible();
   });
 
-  test("the statement sits clear of the brain in the right half", async ({
+  test("the statement sits in the space beside the brain, left-aligned", async ({
     page,
     viewport,
   }) => {
     test.skip(!!(viewport && viewport.width < 1024), "layout is lg-and-up");
-    // The video is object-cover, so on any viewport narrower than 16:9 it
-    // crops the sides and the brain runs across the middle. Clip 3 scales it
-    // back to keep the copy off the artwork — assert the copy really does
-    // start past the midpoint rather than trusting the transform.
     await page.goto("/");
     await scrollHeroTo(page, 1.0);
 
     const heading = page
       .getByTestId("hero-positioning")
-      .getByRole("heading", { name: /Dubai-based creative agency/i });
+      .getByRole("heading", { name: /Dubai-based creative/i });
     const box = await heading.boundingBox();
     const width = viewport!.width;
     expect(box).not.toBeNull();
+
+    // Past the midpoint: the video is full-bleed and the brain fills roughly
+    // the left three-quarters, so the copy belongs in the remainder.
     expect(box!.x).toBeGreaterThan(width * 0.45);
 
-    // Left-aligned, not centred — the copy reads as a column beside the
-    // artwork rather than a floating block.
+    // Left-aligned, not centred — reads as a column beside the artwork.
     expect(
       await heading.evaluate((el) => getComputedStyle(el).textAlign)
     ).toBe("left");
 
-    // The real invariant: a hard width cap, so the column stays contained
-    // however wide the window gets. A half-width column *alone* is ~900px at
-    // ~1900px, which ran the heading almost into the right edge — the cap is
-    // what stops that, not the half-width.
-    expect(box!.width).toBeLessThanOrEqual(600);
-
-    // Which in turn means a widening window grows the right-hand gap rather
-    // than the text. Only meaningful once the viewport exceeds the cap plus
-    // the column offset; at 1024 the half-column is itself under the cap and
-    // the gap is just its padding.
-    if (width >= 1440) {
-      expect(width - (box!.x + box!.width)).toBeGreaterThan(100);
-    }
+    // Hard width cap, so it stays a contained block however wide the window
+    // gets rather than stretching with it.
+    expect(box!.width).toBeLessThanOrEqual(480);
   });
 
-  test("clip 3 scrubs from scrolling alone — no click required", async ({
-    page,
-  }) => {
+  test("the video stays full-bleed — no letterbox bands", async ({ page }) => {
+    // An earlier pass scaled the frame down during clip 3 to clear room for
+    // the copy, which letterboxed a 16:9 video inside a wider viewport and
+    // put black bands top and bottom. The copy is short enough to fit beside
+    // the brain instead, so the frame must fill its box at every phase.
     await page.goto("/");
-    await scrollHeroTo(page, 0.78);
-    const video = page.locator("video").first();
-    const early = await video.evaluate((el: HTMLVideoElement) => el.currentTime);
-
     await scrollHeroTo(page, 1.0);
-    const late = await video.evaluate((el: HTMLVideoElement) => el.currentTime);
 
-    // Past the clip2/clip3 boundary at ~21.08s, reached by scrolling only.
-    expect(early).toBeLessThan(24);
-    expect(late).toBeGreaterThan(26);
-    expect(late).toBeGreaterThan(early);
+    const bands = await page.evaluate(() => {
+      const v = document.querySelector("video")!.getBoundingClientRect();
+      const box = document
+        .querySelector("main > section > div")!
+        .getBoundingClientRect();
+      return {
+        vertical: Math.round(box.height - v.height),
+        horizontal: Math.round(box.width - v.width),
+      };
+    });
+    expect(bands.vertical).toBe(0);
+    expect(bands.horizontal).toBe(0);
   });
 
-  test("scrolling is never blocked and there is no Continue Journey gate", async ({
+  test("the accent word is calligraphy and the CTA reaches the contact page", async ({
     page,
   }) => {
     await page.goto("/");
-    await scrollHeroTo(page, 0.78);
+    await scrollHeroTo(page, 1.0);
+    const panel = page.getByTestId("hero-positioning");
 
-    // The gate button is gone entirely.
-    await expect(page.getByTestId("continue-journey")).toHaveCount(0);
+    // Same Allura script the hero headlines use for their accent word.
+    const accent = panel.locator(".heading-accent").first();
+    await expect(accent).toBeVisible();
+    const styles = await accent.evaluate(async (el) => {
+      await document.fonts.ready;
+      const own = getComputedStyle(el);
+      return { family: own.fontFamily, color: own.color };
+    });
+    expect(styles.family).toContain("Allura");
+    // Gradient text clips the background to the glyphs, so the colour itself
+    // has to be fully transparent.
+    expect(styles.color).toBe("rgba(0, 0, 0, 0)");
 
-    // Forward wheel input moves the page rather than being cancelled.
-    const before = await page.evaluate(() => window.scrollY);
-    await page.mouse.wheel(0, 700);
-    await page.waitForTimeout(400);
-    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(before);
-
-    // And the page can leave the hero completely — nothing clamps it back.
-    const pinEnd = await pinEndOf(page);
-    await page.evaluate(() =>
-      window.scrollTo({ top: 999_999, behavior: "instant" })
-    );
-    await page.waitForTimeout(400);
-    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(pinEnd);
+    await expect(
+      panel.getByRole("link", { name: /Get in Touch/i })
+    ).toHaveAttribute("href", /\/get-quote\/?$/);
   });
 });
 

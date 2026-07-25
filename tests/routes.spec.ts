@@ -74,3 +74,28 @@ test("sitemap and robots are reachable", async ({ page, request }) => {
   const robots = await request.get("/robots.txt");
   expect(robots.ok()).toBeTruthy();
 });
+
+test("white label page shows the sample builds with titles and descriptions", async ({
+  page,
+}) => {
+  await page.goto("/white-label");
+
+  // Every sample is a real image in the build, not a placeholder box.
+  const cards = page.locator("main ul li img");
+  await expect(cards).toHaveCount(20);
+
+  // Each card carries a sector eyebrow, a brand title, and a description.
+  await expect(
+    page.getByRole("heading", { name: "Vanta Media", exact: true })
+  ).toBeVisible();
+  await expect(page.getByText("Creative Agency", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(/neon-lit agency site built to sell creative services/i)
+  ).toBeVisible();
+
+  // Images carry descriptive alt text rather than filenames.
+  await expect(cards.first()).toHaveAttribute(
+    "alt",
+    /white-label website design/i
+  );
+});

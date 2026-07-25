@@ -76,16 +76,39 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
               loop
               playsInline
               poster={assetPath("/images/intro-poster.jpg")}
-              onError={() => setVideoFailed(true)}
+              // Only a failure of the <video> itself counts. React's
+              // synthetic onError also fires for each child <source> that
+              // can't load, so a browser lacking H.264 would trip this on
+              // the mp4 and drop to the poster even though the webm below it
+              // plays perfectly well. Native `error` events from <source>
+              // don't bubble; React's simulated bubbling is what surfaces
+              // them here.
+              onError={(event) => {
+                if (event.target === event.currentTarget) setVideoFailed(true);
+              }}
             >
+              {/* MP4 first (smaller, and universally supported in the
+                  browsers real visitors use), WebM after as the fallback for
+                  builds without H.264 — same ordering as the hero. Without
+                  the WebM the intro silently degrades to its poster on any
+                  such browser, which is how this was caught. */}
               <source
                 media="(max-width: 767px)"
                 src={assetPath("/video/intro-start-mobile.mp4")}
                 type="video/mp4"
               />
               <source
+                media="(max-width: 767px)"
+                src={assetPath("/video/intro-start-mobile.webm")}
+                type="video/webm"
+              />
+              <source
                 src={assetPath("/video/intro-start.mp4")}
                 type="video/mp4"
+              />
+              <source
+                src={assetPath("/video/intro-start.webm")}
+                type="video/webm"
               />
             </video>
           ) : (

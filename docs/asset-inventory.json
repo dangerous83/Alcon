@@ -35,6 +35,40 @@
       "sizeBytes": 19597005,
       "optimization": "VP9 all-intra crf44.",
       "durationSeconds": 27.375
+    },
+    {
+      "path": "public/video/intro-start.mp4",
+      "source": "client-supplied (repo upload, \"Intro Start.mp4\")",
+      "purpose": "full-screen intro shown once per session ahead of the homepage",
+      "resolution": "1920x1080",
+      "durationSeconds": 5.04,
+      "sizeBytes": 2096446,
+      "optimization": "re-encoded H.264 crf22, faststart, audio removed. Standard GOP, not all-intra: this one plays straight through on a loop rather than being scrubbed, so per-frame seekability buys nothing and costs size."
+    },
+    {
+      "path": "public/video/intro-start-mobile.mp4",
+      "source": "derived from the same client-supplied intro clip",
+      "purpose": "intro, mobile (<768px)",
+      "resolution": "960px wide, aspect preserved",
+      "durationSeconds": 5.04,
+      "sizeBytes": 470940,
+      "optimization": "re-encoded H.264 crf24, faststart, audio removed."
+    },
+    {
+      "path": "public/video/intro-start.webm",
+      "source": "derived from the same client-supplied intro clip",
+      "purpose": "intro codec fallback for browsers without H.264",
+      "durationSeconds": 5.04,
+      "sizeBytes": 945223,
+      "optimization": "VP9 crf34, 1280px wide. Listed after the mp4 sources. Not optional: without it the intro drops to its poster on any browser lacking H.264."
+    },
+    {
+      "path": "public/video/intro-start-mobile.webm",
+      "source": "derived from the same client-supplied intro clip",
+      "purpose": "intro codec fallback, mobile",
+      "durationSeconds": 5.04,
+      "sizeBytes": 386673,
+      "optimization": "VP9 crf38, 960px wide."
     }
   ],
   "images": [
@@ -67,6 +101,12 @@
       "source": "converted from hero-poster-mobile.jpg",
       "purpose": "mobile poster, lighter-weight",
       "status": "final"
+    },
+    {
+      "path": "public/images/white-label/*.webp",
+      "source": "client-supplied sample designs (Whitelabel-1..21.webp, repo upload)",
+      "purpose": "sample build gallery on /white-label",
+      "status": "final \u2014 20 designs, re-encoded to 1280px WebP q80 (26 MB -> 1 MB total). Originals were ~1.3 MB each at full resolution, which would have added 26 MB to a site GitHub Pages is already slow to publish."
     }
   ],
   "pendingHiggsfieldAssets": {

@@ -94,8 +94,11 @@ export function SiteHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      {/* Announcement bar: tagline / CTA / contact numbers */}
-      <div className="relative border-b border-white/10 bg-surface-elevated/95 backdrop-blur">
+      {/* Announcement bar: tagline / search / contact number.
+          z-20 against the nav row's z-10 below: both are stacking contexts
+          at the same level, so without this the nav paints over the search
+          dropdown that hangs down into it and swallows its clicks. */}
+      <div className="relative z-20 border-b border-white/10 bg-surface-elevated/95 backdrop-blur">
         <div
           aria-hidden
           className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)]"
@@ -120,7 +123,7 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <div className="relative">
+      <div className="relative z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-background/85 to-transparent pointer-events-none" />
         <nav
           aria-label="Primary"

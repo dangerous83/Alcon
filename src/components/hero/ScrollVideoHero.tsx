@@ -19,10 +19,12 @@ import { assetPath } from "@/lib/asset-path";
 //
 // Each seam is a handover between overlays:
 //
-//   CLIP1_END  chapter copy fades out; the frame plays clean into the brain
-//   CLIP2_END  the HUD readout hands over to the positioning statement —
-//              through clip 3 the brain drifts left and the skyline resolves
-//              inside it, so the copy sits in the right half of the frame
+//   CLIP1_END      chapter copy fades out; the frame plays clean into the brain
+//   CLIP2_END      the HUD clears and the video panel moves left, making room
+//                  on the right for the positioning statement
+//   COPY_REVEAL_AT the statement itself only fades in once the brain has
+//                  turned into profile with the skyline resolved inside it —
+//                  a couple of seconds after CLIP2_END, not at the seam
 //
 // Scrolling runs straight through all three clips; nothing holds the page.
 const CLIP1_END = 15.041667;
@@ -38,6 +40,14 @@ const SEEK_EPSILON = 0.01;
 // that the readout gets a real stretch of scroll to itself before the
 // positioning statement takes over at the seam, rather than flashing past.
 const REVEAL_LEAD_SECONDS = 4;
+// The brain starts rotating into profile right at CLIP2_END, but the turn
+// takes a couple of seconds and the Dubai skyline only becomes recognisable
+// partway through it (checked frame-by-frame against the source). Showing
+// the positioning copy any earlier put it over a brain that was still
+// three-quarter/front-on with no skyline in it — this holds the copy until
+// the side view and skyline are both established, independent of the video
+// panel's own layout switch at CLIP2_END.
+const COPY_REVEAL_AT = 24.4;
 
 export function ScrollVideoHero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -49,6 +59,7 @@ export function ScrollVideoHero() {
   const [phaseB, setPhaseB] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [phaseC, setPhaseC] = useState(false);
+  const [copyRevealed, setCopyRevealed] = useState(false);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
 
@@ -78,6 +89,7 @@ export function ScrollVideoHero() {
     let lastPhaseB = false;
     let lastRevealed = false;
     let lastPhaseC = false;
+    let lastCopyRevealed = false;
     let hasStarted = false;
 
     function computeChapterIndex(timeInSeconds: number) {
@@ -138,6 +150,15 @@ export function ScrollVideoHero() {
           if (isPhaseC !== lastPhaseC) {
             lastPhaseC = isPhaseC;
             setPhaseC(isPhaseC);
+          }
+
+          // The copy itself waits a beat longer than the panel switch above,
+          // until the brain has actually turned into profile with the
+          // skyline visible in it.
+          const isCopyRevealed = timeInSeconds >= COPY_REVEAL_AT;
+          if (isCopyRevealed !== lastCopyRevealed) {
+            lastCopyRevealed = isCopyRevealed;
+            setCopyRevealed(isCopyRevealed);
           }
         },
       });
@@ -371,7 +392,7 @@ export function ScrollVideoHero() {
           data-testid="hero-positioning"
           className={clsx(
             "pointer-events-none absolute inset-0 z-20 flex items-center transition-opacity duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]",
-            phaseC ? "opacity-100" : "opacity-0"
+            copyRevealed ? "opacity-100" : "opacity-0"
           )}
         >
           {/* No scrim needed: clip 3 pulls the video into a panel on the left,

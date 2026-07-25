@@ -95,6 +95,42 @@ test.describe("hero reveal HUD over the scrub", () => {
     await expect(page.locator("video").first()).toBeVisible();
   });
 
+  test("the positioning copy stays hidden until the brain turns into side view", async ({
+    page,
+  }) => {
+    // At the clip2/clip3 seam the video panel already switches into the
+    // left-hand layout, but the brain is still three-quarter/front-on for a
+    // couple of seconds after that as it rotates. Revealing the copy at the
+    // seam put it against a brain with no skyline in it — the client called
+    // that state out. The copy now waits until the side-view + skyline is
+    // established (~t=24.4s), independent of the panel switch.
+    await page.goto("/");
+
+    // Just past the seam, mid-rotation: panel is in the left layout, copy
+    // must not be shown yet.
+    await scrollHeroTo(page, 0.85);
+    const t85 = await page
+      .locator("video")
+      .first()
+      .evaluate((el: HTMLVideoElement) => el.currentTime);
+    expect(t85).toBeGreaterThan(21.5);
+    expect(t85).toBeLessThan(24.4);
+    await expect
+      .poll(() =>
+        page.getByTestId("hero-positioning").evaluate((el) => getComputedStyle(el).opacity)
+      )
+      .toBe("0");
+
+    // Past the reveal threshold: the brain is now in profile with the
+    // skyline inside it, and the copy fades in.
+    await scrollHeroTo(page, 0.95);
+    await expect
+      .poll(() =>
+        page.getByTestId("hero-positioning").evaluate((el) => getComputedStyle(el).opacity)
+      )
+      .toBe("1");
+  });
+
   test("HUD hands over to the positioning statement on clip 3", async ({
     page,
   }) => {

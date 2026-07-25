@@ -154,7 +154,7 @@ Two details are load-bearing:
   the block read as misaligned.
 - **The accent word is the same calligraphy as the hero headlines**
   (`.heading-accent` — Allura, gradient-clipped), and the copy carries a
-  `Connect With Us` CTA to `/get-quote`, the site's contact route.
+  `Get in Touch` CTA to `/get-quote`, the site's contact route.
 - **The statement lives in two places, from one source.**
   `PositioningCopy` holds the words; the motion build overlays it on clip 3,
   and `PositioningStatement` wraps it as a standalone centred section

@@ -1,7 +1,27 @@
 import Link from "next/link";
 import Image from "next/image";
-import { siteConfig, footerLinks } from "@/lib/content/site";
+import { siteConfig, footerLinks, navigation } from "@/lib/content/site";
 import { assetPath } from "@/lib/asset-path";
+
+// Built from `navigation` rather than a hand-duplicated list, so the footer
+// can't quietly fall out of sync with the header again — every label/href
+// pair here is exactly what's in the nav bar, in the same order.
+const companyLinks = [
+  ...navigation
+    .filter((item) => !item.cta)
+    .map((item) => ({ label: item.label, href: item.href })),
+  ...footerLinks.companyExtra,
+  ...navigation
+    .filter((item) => item.cta)
+    .map((item) => ({ label: item.label, href: item.href })),
+];
+
+const socialLinks = [
+  { label: "Instagram", href: siteConfig.social.instagram },
+  { label: "Facebook", href: siteConfig.social.facebook },
+  { label: "TikTok", href: siteConfig.social.tiktok },
+  { label: "Twitter / X", href: siteConfig.social.twitter },
+];
 
 export function SiteFooter() {
   return (
@@ -69,7 +89,7 @@ export function SiteFooter() {
               Company
             </h2>
             <ul className="mt-4 space-y-2">
-              {footerLinks.company.map((link) => (
+              {companyLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -80,23 +100,19 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
-            <ul className="mt-6 flex gap-4">
-              <li>
-                <a
-                  href={siteConfig.social.instagram}
-                  className="text-sm text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
-                >
-                  Instagram
-                </a>
-              </li>
-              <li>
-                <a
-                  href={siteConfig.social.linkedin}
-                  className="text-sm text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
-                >
-                  LinkedIn
-                </a>
-              </li>
+            <ul className="mt-6 flex flex-wrap gap-x-4 gap-y-2">
+              {socialLinks.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </nav>
         </div>

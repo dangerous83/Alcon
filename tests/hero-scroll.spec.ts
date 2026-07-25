@@ -1,4 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect } from "./fixtures";
+import type { Page } from "@playwright/test";
 
 // Scrolls to a fraction of the hero wrapper's own pin range, not the whole
 // page — the page is much taller than the hero, so a fraction of

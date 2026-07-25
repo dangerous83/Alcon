@@ -16,7 +16,12 @@ export const organizationJsonLd = {
     addressCountry: siteConfig.location.country,
   },
   areaServed: "Dubai, United Arab Emirates",
-  sameAs: [siteConfig.social.instagram, siteConfig.social.linkedin],
+  sameAs: [
+    siteConfig.social.instagram,
+    siteConfig.social.facebook,
+    siteConfig.social.tiktok,
+    siteConfig.social.twitter,
+  ],
 };
 
 export function breadcrumbJsonLd(

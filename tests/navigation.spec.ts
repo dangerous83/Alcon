@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 
 test("desktop primary navigation links work", async ({ page, viewport }) => {
   test.skip(!!(viewport && viewport.width < 1024), "desktop-only test");
@@ -28,7 +28,7 @@ test("clients link itself goes to the work index", async ({
   await expect(page).toHaveURL(/\/client-projects\/?$/);
 });
 
-test("top announcement banner has tagline, CTA, and both phone numbers", async ({
+test("top announcement banner has tagline, search, and the expert phone number", async ({
   page,
 }) => {
   await page.goto("/");
@@ -36,14 +36,34 @@ test("top announcement banner has tagline, CTA, and both phone numbers", async (
     page.getByText("Strategy-led creative, built for how AI moves now.")
   ).toBeVisible();
 
-  const cta = page.getByRole("link", { name: "Connect With Us" });
-  await expect(cta).toHaveAttribute("href", /\/get-quote\/?$/);
+  // "Connect With Us" and the Customer Service number were dropped from the
+  // banner in favour of search — assert their absence stays that way.
+  await expect(
+    page.getByRole("link", { name: "Connect With Us" })
+  ).toHaveCount(0);
+  await expect(page.locator('header a[href="tel:+97156461565"]')).toHaveCount(0);
 
-  // The "Customer Service:"/"Expert:" text labels are hidden below the md
-  // breakpoint (space-constrained banner), so match by href rather than
-  // accessible name — that stays stable across all tested viewports.
-  await expect(page.locator('header a[href="tel:+97156461565"]')).toBeVisible();
+  await expect(
+    page.getByRole("combobox", { name: /search/i })
+  ).toBeVisible();
+
+  // The "Expert:" text label is hidden below the md breakpoint
+  // (space-constrained banner), so match by href rather than accessible
+  // name — that stays stable across all tested viewports.
   await expect(page.locator('header a[href="tel:+971561643886"]')).toBeVisible();
+});
+
+test("header search finds a real page and navigates to it", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const search = page.getByRole("combobox", { name: /search/i });
+  await search.fill("Brand Identity");
+
+  const result = page.getByRole("option", { name: /Brand Identity/i }).first();
+  await expect(result).toBeVisible();
+  await result.click();
+  await expect(page).toHaveURL(/\/services\/branding\/?$/);
 });
 
 test("mobile menu opens and navigates", async ({ page, viewport }) => {

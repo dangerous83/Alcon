@@ -1,24 +1,25 @@
 import { test, expect, type Page } from "@playwright/test";
 
-// Drives the hero toward the end of its pinned scroll range. The gate clamps
-// the page back to the CLIP2_END frame (~0.77 of the range) on the way, which
-// is where the scrub settles on the front-view brain and the HUD takes over —
-// the remaining span is clip 3, reserved for after Continue Journey.
-async function scrollToRevealPoint(page: Page) {
+// Scrolls to a fraction of the hero's own pin range. 1.0 is the last frame of
+// the scrub (the Dubai reveal); the HUD eases in from ~0.71, where the scrub
+// settles on the front-view brain. Nothing clamps or blocks the page — the
+// scrub runs straight through all three clips.
+async function scrollHeroTo(page: Page, fraction: number) {
   // Wait for the real pinned hero (not the pre-hydration placeholder) so
   // "main > section" resolves to the hero and its height is measurable.
   await page.waitForFunction(() => !!document.querySelector("video"));
-  await page.evaluate(() => {
+  await page.evaluate((f) => {
     const section = document.querySelector("main > section") as HTMLElement | null;
     if (!section) return;
     // End of the *pin* range, not the end of the section: the sticky frame
     // releases one viewport before the section's bottom edge.
+    const range = section.offsetHeight - window.innerHeight;
     window.scrollTo({
-      top: section.offsetTop + section.offsetHeight - window.innerHeight,
+      top: section.offsetTop + range * f,
       behavior: "instant",
     });
-  });
-  await page.waitForTimeout(1400); // rAF smoothing + the HUD's ease-in
+  }, fraction);
+  await page.waitForTimeout(1600); // rAF smoothing + the HUD's ease-in
 }
 
 function pinEndOf(page: Page) {
@@ -73,14 +74,12 @@ test.describe("hero reveal HUD (reduced motion: plain section)", () => {
   });
 });
 
-test.describe("hero reveal scroll gate", () => {
+test.describe("hero reveal HUD over the scrub", () => {
   test.skip(({ viewport }) => !!(viewport && viewport.width < 1024), "desktop-only");
 
-  test("HUD overlays the hero once the scrub reaches the brain", async ({
-    page,
-  }) => {
+  test("HUD eases in once the scrub reaches the brain", async ({ page }) => {
     await page.goto("/");
-    await scrollToRevealPoint(page);
+    await scrollHeroTo(page, 0.78);
 
     const panel = page.getByTestId("hero-reveal");
     await expect(panel).toBeInViewport();
@@ -93,105 +92,66 @@ test.describe("hero reveal scroll gate", () => {
     await expect(page.locator("video").first()).toBeVisible();
   });
 
-  test("forward scroll is blocked until Continue Journey is clicked", async ({
+  test("HUD stays up through the Dubai reveal on the last frame", async ({
     page,
   }) => {
+    // It used to hide itself once Continue Journey was clicked. With the gate
+    // gone the readout has to remain on screen for the whole back half of the
+    // scrub, otherwise the final frame has nothing beside it.
     await page.goto("/");
-    await scrollToRevealPoint(page);
-    await expect(page.getByTestId("hero-reveal")).toBeInViewport();
-
-    const before = await page.evaluate(() => window.scrollY);
-    await page.mouse.wheel(0, 800);
-    await page.waitForTimeout(300);
-    expect(await page.evaluate(() => window.scrollY)).toBe(before);
-
-    await page.getByTestId("continue-journey").click();
-    await page.waitForTimeout(800);
-    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(before);
-  });
-
-  test("scrolling back up stays free while the gate is closed", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    await scrollToRevealPoint(page);
-    await expect(page.getByTestId("hero-reveal")).toBeInViewport();
-
-    const before = await page.evaluate(() => window.scrollY);
-    await page.mouse.wheel(0, -600);
-    await page.waitForTimeout(300);
-    expect(await page.evaluate(() => window.scrollY)).toBeLessThan(before);
-  });
-
-  test("a jump past the hero is clamped back to the gate", async ({ page }) => {
-    // Stands in for every way the page can move without a cancellable
-    // input event: dragging the scrollbar, Tab pulling an off-screen
-    // element into view, iOS momentum, or a flick that clears the whole
-    // pin inside one frame. Blocking wheel/touch/keys alone misses all of
-    // these, so the clamp is what actually holds the gate.
-    await page.goto("/");
-    await scrollToRevealPoint(page);
-    const pinEnd = await pinEndOf(page);
-
-    await page.evaluate(() =>
-      window.scrollTo({ top: 999_999, behavior: "instant" })
-    );
-    await page.waitForTimeout(400);
-
-    // Held strictly short of the pin end — the gate sits at the CLIP2_END
-    // frame, so the clip-3 span beyond it stays unreachable.
-    expect(await page.evaluate(() => window.scrollY)).toBeLessThan(pinEnd);
-    await expect(page.getByTestId("hero-reveal")).toBeInViewport();
-  });
-
-  test("the jump clamp releases after Continue Journey", async ({ page }) => {
-    await page.goto("/");
-    await scrollToRevealPoint(page);
-    const pinEnd = await pinEndOf(page);
-
-    await page.getByTestId("continue-journey").click();
-    await page.waitForTimeout(1200);
-    await page.evaluate(() =>
-      window.scrollTo({ top: 999_999, behavior: "instant" })
-    );
-    await page.waitForTimeout(400);
-
-    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(pinEnd);
-  });
-
-  test("clip 3 only scrubs after Continue Journey, and the HUD clears for it", async ({
-    page,
-  }) => {
-    // The whole point of appending clip 3: it is the payoff behind the
-    // button, not something you can scroll into while the gate holds.
-    await page.goto("/");
-    await scrollToRevealPoint(page);
+    await scrollHeroTo(page, 1.0);
 
     const video = page.locator("video").first();
-    const atGate = await video.evaluate((el: HTMLVideoElement) => el.currentTime);
-    const duration = await video.evaluate((el: HTMLVideoElement) => el.duration);
+    expect(
+      await video.evaluate((el: HTMLVideoElement) => el.currentTime)
+    ).toBeGreaterThan(26);
 
-    // Parked on the clip2/clip3 boundary (~21.08s of ~27.38s), well short of
-    // the end, even though we asked the page to scroll past the pin.
-    expect(duration).toBeGreaterThan(26);
-    expect(atGate).toBeGreaterThan(19);
-    expect(atGate).toBeLessThan(23);
-
-    await page.getByTestId("continue-journey").click();
-    await page.waitForTimeout(2000);
-
-    // Clip 3 has now scrubbed through to the Dubai reveal on the last frame.
-    const afterContinue = await video.evaluate(
-      (el: HTMLVideoElement) => el.currentTime
-    );
-    expect(afterContinue).toBeGreaterThan(atGate + 3);
-
-    // ...and the readout got out of the way so that frame is unobstructed.
     await expect
       .poll(() =>
         page.getByTestId("hero-reveal").evaluate((el) => getComputedStyle(el).opacity)
       )
-      .toBe("0");
+      .toBe("1");
+  });
+
+  test("clip 3 scrubs from scrolling alone — no click required", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await scrollHeroTo(page, 0.78);
+    const video = page.locator("video").first();
+    const early = await video.evaluate((el: HTMLVideoElement) => el.currentTime);
+
+    await scrollHeroTo(page, 1.0);
+    const late = await video.evaluate((el: HTMLVideoElement) => el.currentTime);
+
+    // Past the clip2/clip3 boundary at ~21.08s, reached by scrolling only.
+    expect(early).toBeLessThan(24);
+    expect(late).toBeGreaterThan(26);
+    expect(late).toBeGreaterThan(early);
+  });
+
+  test("scrolling is never blocked and there is no Continue Journey gate", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await scrollHeroTo(page, 0.78);
+
+    // The gate button is gone entirely.
+    await expect(page.getByTestId("continue-journey")).toHaveCount(0);
+
+    // Forward wheel input moves the page rather than being cancelled.
+    const before = await page.evaluate(() => window.scrollY);
+    await page.mouse.wheel(0, 700);
+    await page.waitForTimeout(400);
+    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(before);
+
+    // And the page can leave the hero completely — nothing clamps it back.
+    const pinEnd = await pinEndOf(page);
+    await page.evaluate(() =>
+      window.scrollTo({ top: 999_999, behavior: "instant" })
+    );
+    await page.waitForTimeout(400);
+    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(pinEnd);
   });
 });
 

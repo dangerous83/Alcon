@@ -9,18 +9,16 @@ import { clsx } from "@/lib/clsx";
 /**
  * HUD readout that overlays the hero once the scroll-scrub lands on the
  * front-view brain: three node cards on the left wired into the centre of
- * the frame, a data panel on the right, and the Continue Journey gate
- * beneath. Purely presentational — the scroll gate and the visibility
- * trigger live in ScrollVideoHero, which owns the scroll position.
+ * the frame, and a data panel on the right. Purely presentational — the
+ * visibility trigger lives in ScrollVideoHero, which owns the scroll
+ * position. Scrolling is never blocked; the scrub runs straight through.
  */
 export function HeroReveal({
   visible,
-  onContinue,
   /** Static variant drops the entrance animation and the fixed overlay frame. */
   variant = "overlay",
 }: {
   visible: boolean;
-  onContinue: () => void;
   variant?: "overlay" | "static";
 }) {
   const [activeCard, setActiveCard] = useState(0);
@@ -62,12 +60,16 @@ export function HeroReveal({
                   aria-selected={isActive}
                   onClick={() => setActiveCard(i)}
                   className={clsx(
-                    "group relative flex flex-col items-start gap-1.5 border px-2.5 py-2.5 text-left backdrop-blur-sm transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet lg:flex-row lg:items-center lg:gap-3 lg:px-4 lg:py-3",
+                    "group relative flex flex-col items-start gap-1.5 border px-2.5 py-2.5 text-left backdrop-blur-md transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet lg:flex-row lg:items-center lg:gap-3 lg:px-4 lg:py-3",
                     // Clipped corner reads as a HUD plate rather than a card.
                     "[clip-path:polygon(0_0,calc(100%-12px)_0,100%_12px,100%_100%,12px_100%,0_calc(100%-12px))]",
+                    // Backing has to stay near-opaque: by the third clip these
+                    // plates sit over the brightest part of the brain, and a
+                    // half-transparent panel washed the labels out completely.
+                    // Active state reads through border + glow, not fill.
                     isActive
-                      ? "border-violet/70 bg-violet/[0.12] shadow-[0_0_26px_-6px_rgba(113,56,255,0.6)]"
-                      : "border-white/15 bg-black/50 hover:border-violet/45 hover:bg-black/70"
+                      ? "border-violet bg-black/85 shadow-[0_0_26px_-6px_rgba(113,56,255,0.7)]"
+                      : "border-white/20 bg-black/70 hover:border-violet/50 hover:bg-black/85"
                   )}
                 >
                   {/* Wire running from the plate toward the brain. */}
@@ -128,7 +130,7 @@ export function HeroReveal({
           <div
             role="tabpanel"
             aria-live="polite"
-            className="relative border border-violet/35 bg-black/65 p-4 backdrop-blur-md sm:p-5 lg:p-6 [clip-path:polygon(0_0,calc(100%-16px)_0,100%_16px,100%_100%,16px_100%,0_calc(100%-16px))]"
+            className="relative border border-violet/35 bg-black/80 p-4 backdrop-blur-md sm:p-5 lg:p-6 [clip-path:polygon(0_0,calc(100%-16px)_0,100%_16px,100%_100%,16px_100%,0_calc(100%-16px))]"
           >
             {/* Brand gradient hairline — the panel's strongest colour cue. */}
             <span
@@ -203,26 +205,6 @@ export function HeroReveal({
           </div>
         </div>
 
-        {/* The gate: nothing scrolls past the hero until this is clicked. */}
-        <div className="mt-5 flex flex-col items-center gap-2 lg:mt-8">
-          <button
-            type="button"
-            onClick={onContinue}
-            data-testid="continue-journey"
-            className="group relative inline-flex items-center gap-2.5 border border-violet bg-black/70 px-7 py-3.5 shadow-[0_0_22px_-8px_rgba(113,56,255,0.8)] font-mono text-xs uppercase tracking-[0.22em] text-white backdrop-blur transition-all hover:border-magenta hover:bg-violet/15 hover:shadow-[0_0_34px_-6px_rgba(209,45,255,0.7)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet [clip-path:polygon(0_0,calc(100%-10px)_0,100%_10px,100%_100%,10px_100%,0_calc(100%-10px))]"
-          >
-            Continue Journey
-            <ArrowRight
-              size={14}
-              strokeWidth={2}
-              aria-hidden
-              className="transition-transform group-hover:translate-x-1"
-            />
-          </button>
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/35">
-            Explore the nodes — the page holds here until you continue
-          </p>
-        </div>
       </div>
     </div>
   );

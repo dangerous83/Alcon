@@ -66,6 +66,60 @@ test.describe("scroll-scrubbed hero", () => {
     expect(after).toBeLessThan(mid);
   });
 
+  test("heading is bold with an italic gradient accent word", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const accent = page.locator(".heading-accent").first();
+    await expect(accent).toBeVisible();
+
+    const styles = await accent.evaluate(async (el) => {
+      await document.fonts.ready;
+      const own = getComputedStyle(el);
+      const heading = el.closest("p, h1") as HTMLElement;
+      return {
+        accentStyle: own.fontStyle,
+        accentFamily: own.fontFamily,
+        // Gradient text works by clipping the background to the glyphs, so
+        // the colour itself must be fully transparent.
+        accentColor: own.color,
+        headingWeight: getComputedStyle(heading).fontWeight,
+      };
+    });
+
+    expect(styles.accentStyle).toBe("italic");
+    expect(styles.accentFamily).toContain("Instrument Serif");
+    expect(styles.accentColor).toBe("rgba(0, 0, 0, 0)");
+    expect(Number(styles.headingWeight)).toBeGreaterThanOrEqual(700);
+  });
+
+  test("hero copy sits vertically centred, not pinned to the bottom", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    // The hero renders an empty placeholder until hydration resolves the
+    // reduced-motion query, so wait for real content before measuring.
+    await expect(page.locator(".heading-accent").first()).toBeVisible();
+
+    const metrics = await page.evaluate(async () => {
+      // Fallback font metrics differ from the webfonts', which shifts the
+      // heading box — measuring before fonts settle gives a stale position.
+      await document.fonts.ready;
+      const heading = document
+        .querySelector(".heading-accent")
+        ?.closest("p, h1");
+      const rect = heading!.getBoundingClientRect();
+      return {
+        centre: rect.top + rect.height / 2,
+        viewport: window.innerHeight,
+      };
+    });
+    // Comfortably inside the middle band of the frame rather than hugging
+    // the lower edge, which is what "justify-end" produced before.
+    expect(metrics.centre).toBeGreaterThan(metrics.viewport * 0.25);
+    expect(metrics.centre).toBeLessThan(metrics.viewport * 0.7);
+  });
+
   test("chapter indicator reflects scroll position (01 -> 02 -> 03)", async ({
     page,
   }) => {
@@ -91,7 +145,7 @@ test.describe("reduced motion", () => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
     await expect(
-      page.getByRole("heading", { name: "Ideas engineered to move people." })
+      page.getByRole("heading", { name: /Ideas that refuse to sit still/ })
     ).toBeVisible({ timeout: 10_000 });
     await expect(page.getByRole("link", { name: "Start a Project" }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: "Explore Our Work" }).first()).toBeVisible();

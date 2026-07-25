@@ -21,6 +21,7 @@
 
   --font-heading: var(--font-space-grotesk), "Sora", "Manrope", sans-serif;
   --font-body: var(--font-inter), "Manrope", sans-serif;
+  --font-accent: var(--font-instrument-serif), Georgia, serif;
 
   --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -38,6 +39,22 @@
   --color-border: var(--border);
   --font-sans: var(--font-body);
   --font-heading: var(--font-heading);
+  --font-accent: var(--font-accent);
+}
+
+/* Emphasised word inside a display heading: real italic serif carrying the
+   brand gradient. Sits slightly larger than the surrounding sans to
+   optically match its x-height. */
+.heading-accent {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.08em;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-right: 0.04em;
 }
 
 * {

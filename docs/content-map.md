@@ -17,7 +17,7 @@ match the brief's known structure, not scraped or invented factual claims.
 | `/services/tutorials` | Placeholder | Slug preserved per brief |
 | `/client-projects` | Placeholder, honesty-constrained | Generic "selected work" entries, no fabricated clients/results |
 | `/blog` + posts | Placeholder | 2 sample articles; author attributed to "Alcon Team", not a real named person |
-| `/get-quote` | Functional, content placeholder | Form is fully working (validation, API route); contact details are TODO placeholders |
+| `/get-quote` | Functional, content placeholder | Form validates client-side and posts to a configurable form service (`NEXT_PUBLIC_FORM_ENDPOINT`); with none set it offers a pre-filled email rather than faking a send. Contact details are TODO placeholders |
 | Footer (contact, social) | Placeholder | Email/phone/social handles marked `TODO(content-swap)` in `src/lib/content/site.ts` |
 
 ## Swapping in real content

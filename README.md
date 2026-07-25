@@ -28,12 +28,18 @@ Opens at `http://localhost:3000`.
 
 ## Environment variables
 
+All are build-time variables (baked into the static export), so changing
+one requires a rebuild.
+
 | Variable | Required | Purpose |
 |---|---|---|
-| `NOTIFY_WEBHOOK_URL` | No | If set, `/api/quote` POSTs validated form submissions here (e.g. a Zapier/Make webhook, or your own notification endpoint). If unset, submissions are validated and logged server-side (`console.info("[quote-submission]", ...)`) instead of silently discarded — see "Form configuration" below. |
+| `NEXT_PUBLIC_FORM_ENDPOINT` | No | URL that accepts a JSON POST from the quote form — Formspree, Web3Forms, Getform, Basin, or your own endpoint. If unset, the form does **not** fake a send: it offers a pre-filled email instead. See "Form configuration". |
+| `NEXT_PUBLIC_BASE_PATH` | No | Subpath the site is served from, e.g. `/Alcon` for GitHub Pages. Leave unset for a domain root. Set automatically by the Pages workflow. |
+| `NEXT_PUBLIC_SITE_URL` | No | Canonical/OG/sitemap base URL. Defaults to `https://www.alcon-online.site`. |
 
-No secrets are used in client-side code. Copy `.env.example`-style values
-into `.env.local` if you add credentials for a real email/CRM provider.
+These are all `NEXT_PUBLIC_*` (visible in the client bundle) by design —
+none is a secret. Don't put API keys here; a static site has no server to
+keep them on.
 
 ## Image generation status
 
@@ -58,13 +64,18 @@ delivery — see `docs/site-audit.md` "Video source audit" and
 
 ## Form configuration
 
-`/get-quote` posts to `/api/quote` (`src/app/api/quote/route.ts`), which
-validates server-side (mirroring `src/lib/validation/quote.ts`, also used
-client-side) and includes a honeypot field for spam protection. Without
-`NOTIFY_WEBHOOK_URL` configured, submissions are accepted and logged, not
-silently lost — but nobody gets an email. Wire a real provider (Resend,
-a CRM webhook, etc.) via that env var, or swap the route's delivery logic
-for a provider SDK, before relying on this in production.
+`/get-quote` validates client-side
+(`src/lib/validation/quote.ts`) and includes a honeypot field for basic
+spam filtering, then POSTs JSON to `NEXT_PUBLIC_FORM_ENDPOINT`.
+
+**Without that variable set, the form does not pretend to send anything** —
+it surfaces a pre-filled `mailto:` link and the studio's email address, so
+an enquiry is never silently lost.
+
+Because this is a static site there is no server-side validation anymore
+(the old `/api/quote` route was removed when switching to static export).
+Whatever form service you point it at should do its own validation and
+spam protection.
 
 ## Testing
 
@@ -94,38 +105,47 @@ npm run start
 
 ## Deployment
 
-This is a real Next.js app with a server-rendered API route
-(`/api/quote`), so it needs something that runs `node`/`npm run start` —
-**not** static hosting (GitHub Pages, S3, etc. can't run it as-is; see
-`docs/site-audit.md` if you're wondering why the repo's GitHub Pages link
-didn't work).
+The site is a **static export** (`output: "export"` in `next.config.ts`),
+so it deploys to any static host — including GitHub Pages.
 
-### Docker (self-hosted / any VPS)
+### GitHub Pages (configured)
 
-A `Dockerfile` is included, using Next.js's `output: "standalone"` mode
-(set in `next.config.ts`) for a minimal production image — no
-`node_modules` copy, just the traced runtime files.
+`.github/workflows/deploy-pages.yml` builds the export and publishes it on
+every push to `main`.
+
+**One-time setup:** repo **Settings → Pages → Source → GitHub Actions**.
+(Not "Deploy from a branch" — that mode just serves raw repo files, which
+is why the site previously showed the README instead of the website.)
+
+The workflow sets `NEXT_PUBLIC_BASE_PATH` to `/<repo-name>` automatically,
+since Pages serves the site from a subpath. To wire the quote form up, add
+a repo variable `NEXT_PUBLIC_FORM_ENDPOINT` (Settings → Secrets and
+variables → Actions → Variables).
+
+### Docker / any VPS
+
+The included `Dockerfile` builds the export and serves it with nginx
+(`nginx.conf`):
 
 ```bash
 docker build -t alcon-web .
-docker run -p 3000:3000 --env NOTIFY_WEBHOOK_URL=... alcon-web
+docker run -p 8080:80 alcon-web
 ```
 
-> This Dockerfile could not be build-tested in the environment that
-> produced it — its own network policy blocked pulling the `node:22-alpine`
-> base image from Docker Hub. It follows Next.js's own documented
-> `output: standalone` multi-stage pattern exactly, but run `docker build`
-> yourself before trusting it in production.
+Pass build args to configure it:
+`--build-arg FORM_ENDPOINT=... --build-arg SITE_URL=https://your-domain`.
 
-Point any reverse proxy (nginx, Caddy, Traefik) or platform (Coolify,
-Dokku, a plain VPS + systemd) at the container's port 3000.
+> Not build-tested in the environment that produced it — that sandbox's
+> network policy blocked pulling base images from Docker Hub. Run
+> `docker build` yourself before relying on it.
 
-### Node PaaS (Railway, Render, Fly.io, Vercel, etc.)
+### Custom domain
 
-These auto-detect Next.js and run `npm run build` / `npm run start` for
-you — no Dockerfile needed, just connect the repo.
+Leave `NEXT_PUBLIC_BASE_PATH` unset (the site then lives at the domain
+root) and set `NEXT_PUBLIC_SITE_URL` to the real domain so canonical tags,
+the sitemap, and OG URLs match.
 
-### Before going live either way
+### Before going live
 
 1. Finish the content swap (`docs/content-map.md`).
 2. Decide on self-hosting the Higgsfield images vs. keeping the CDN

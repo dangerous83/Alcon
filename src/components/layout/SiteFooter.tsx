@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { siteConfig, footerLinks } from "@/lib/content/site";
+import { assetPath } from "@/lib/asset-path";
 
 export function SiteFooter() {
   return (
@@ -8,17 +9,16 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-2">
+            <Link href="/" className="inline-flex items-center">
+              {/* Native aspect ratio — see the note in SiteHeader. The
+                  wordmark already reads "Alcon", so no text label beside it. */}
               <Image
-                src="/images/logo.jpg"
+                src={assetPath("/images/logo.jpg")}
                 alt="Alcon"
-                width={36}
-                height={36}
-                className="h-8 w-8 rounded-full object-cover"
+                width={450}
+                height={162}
+                className="h-9 w-auto object-contain"
               />
-              <span className="font-heading text-lg font-medium text-text-primary">
-                Alcon
-              </span>
             </Link>
             <p className="mt-4 max-w-sm text-sm text-text-secondary">
               {siteConfig.description}

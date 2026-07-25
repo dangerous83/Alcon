@@ -5,8 +5,39 @@ import { services } from "@/lib/content/services";
 import { validateQuoteForm, type QuoteFormErrors } from "@/lib/validation/quote";
 import { Button } from "@/components/ui/Button";
 import { clsx } from "@/lib/clsx";
+import { siteConfig } from "@/lib/content/site";
 
 type Status = "idle" | "submitting" | "success" | "error";
+
+/**
+ * The site is a static export (no server, see next.config.ts), so
+ * submissions go to a third-party form endpoint — Formspree, Web3Forms,
+ * Getform, Basin, or any URL that accepts a JSON POST. Set it at build
+ * time via NEXT_PUBLIC_FORM_ENDPOINT.
+ *
+ * When it isn't configured we do NOT pretend the message was sent; the
+ * form hands the visitor a pre-filled email instead.
+ */
+const FORM_ENDPOINT = process.env.NEXT_PUBLIC_FORM_ENDPOINT ?? "";
+
+function buildMailtoHref(values: Record<string, string>) {
+  const body = [
+    `Name: ${values.name ?? ""}`,
+    `Email: ${values.email ?? ""}`,
+    values.phone ? `Phone: ${values.phone}` : null,
+    values.company ? `Company: ${values.company}` : null,
+    `Service: ${values.service ?? ""}`,
+    values.budget ? `Budget: ${values.budget}` : null,
+    "",
+    values.message ?? "",
+  ]
+    .filter((line) => line !== null)
+    .join("\n");
+
+  return `mailto:${siteConfig.contact.email}?subject=${encodeURIComponent(
+    `Project enquiry — ${values.name ?? ""}`
+  )}&body=${encodeURIComponent(body)}`;
+}
 
 const budgetOptions = [
   "Under AED 10,000",
@@ -21,6 +52,7 @@ export function QuoteForm() {
   const [errors, setErrors] = useState<QuoteFormErrors>({});
   const [status, setStatus] = useState<Status>("idle");
   const [formError, setFormError] = useState<string | null>(null);
+  const [mailtoHref, setMailtoHref] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -46,23 +78,40 @@ export function QuoteForm() {
     }
 
     setErrors({});
+
+    // Honeypot: bots fill every field, including ones hidden from people.
+    if (values.website) {
+      setStatus("success");
+      form.reset();
+      return;
+    }
+
+    if (!FORM_ENDPOINT) {
+      // No delivery service configured — hand over a pre-filled email
+      // rather than claiming a message was sent.
+      setMailtoHref(buildMailtoHref(values));
+      setStatus("error");
+      setFormError(null);
+      return;
+    }
+
     setStatus("submitting");
 
     try {
-      const response = await fetch("/api/quote", {
+      const response = await fetch(FORM_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         body: JSON.stringify(values),
       });
 
-      const data = await response.json();
-
-      if (!response.ok || !data.ok) {
-        if (data.errors) setErrors(data.errors);
+      if (!response.ok) {
         setFormError(
-          data.errors?.form ??
-            "Something went wrong sending your request. Please try again."
+          "Something went wrong sending your request. Please try again, or email us directly."
         );
+        setMailtoHref(buildMailtoHref(values));
         setStatus("error");
         return;
       }
@@ -71,8 +120,9 @@ export function QuoteForm() {
       form.reset();
     } catch {
       setFormError(
-        "We couldn't reach the server. Check your connection and try again."
+        "We couldn't reach the server. Check your connection and try again, or email us directly."
       );
+      setMailtoHref(buildMailtoHref(values));
       setStatus("error");
     }
   }
@@ -201,10 +251,32 @@ export function QuoteForm() {
         project. We don't share your details with third parties.
       </p>
 
-      {formError && (
-        <p role="alert" className="text-sm text-magenta">
-          {formError}
-        </p>
+      {(formError || mailtoHref) && (
+        <div
+          role="alert"
+          className="rounded-xl border border-border bg-surface-elevated p-4 text-sm"
+        >
+          {formError && <p className="text-magenta">{formError}</p>}
+          {mailtoHref && (
+            <p className={clsx("text-text-secondary", formError && "mt-2")}>
+              Your details are ready to send by email —{" "}
+              <a
+                href={mailtoHref}
+                className="font-medium text-text-primary underline hover:text-cyan-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
+              >
+                open a pre-filled email
+              </a>
+              , or write to us at{" "}
+              <a
+                href={`mailto:${siteConfig.contact.email}`}
+                className="font-medium text-text-primary underline hover:text-cyan-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
+              >
+                {siteConfig.contact.email}
+              </a>
+              .
+            </p>
+          )}
+        </div>
       )}
 
       <Button type="submit" size="lg" disabled={status === "submitting"}>

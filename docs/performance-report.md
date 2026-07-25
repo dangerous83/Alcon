@@ -63,6 +63,24 @@ None of these are stubbed out silently — each is called out at its exact
 failure point (proxy status output, `canPlayType` result, `npx playwright
 install` error) in code comments and in these docs.
 
+## Deployment mode change (post-audit)
+
+After this report's Lighthouse runs, the site was converted from a Node
+server build (`output: "standalone"`) to a **static export**
+(`output: "export"`) so it can deploy to GitHub Pages. Practical effects:
+
+- `/api/quote` was removed (static hosting has no server). The quote form
+  now posts to a configurable third-party endpoint, falling back to a
+  pre-filled email rather than faking a send — see README "Form
+  configuration".
+- `next/image` runs with `unoptimized: true` (no server-side optimizer).
+  Images are served as authored, so self-hosting the Higgsfield PNGs as
+  pre-sized AVIF/WebP matters more now than it did before — see
+  `docs/higgsfield-image-prompts.md`.
+- The scores above were measured pre-conversion. Static export should meet
+  or beat them (no server render step), but **re-run Lighthouse against a
+  deployed build** before treating those numbers as current.
+
 ## Video optimization summary
 
 See `docs/site-audit.md` "Video source audit" for the full before/after

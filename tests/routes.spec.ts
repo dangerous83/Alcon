@@ -22,15 +22,18 @@ for (const route of routes) {
     const errors: string[] = [];
     page.on("console", (msg) => {
       if (msg.type() !== "error") return;
-      // /_next/image proxies Higgsfield-hosted imagery (see
-      // docs/higgsfield-image-prompts.md). This sandbox's network egress
-      // policy blocks that CDN host outright (confirmed via curl:
-      // `403 host_not_allowed`), so the optimizer errors here (403 or 500
-      // depending on which layer surfaces it) even though the same request
-      // succeeds from a normal internet connection. Excluded here so a
-      // real regression elsewhere still fails the test.
-      if (/Failed to load resource: the server responded with a status of (403|500)/.test(msg.text()))
-        return;
+      // Higgsfield-hosted imagery (see docs/higgsfield-image-prompts.md)
+      // lives on a CDN this sandbox's network egress policy blocks
+      // outright (confirmed via curl: `403 host_not_allowed`). Under
+      // static export the browser requests that host directly — rather
+      // than through Next's image optimizer — so the block surfaces as a
+      // tunnel error instead of a 403/500. Both shapes are excluded here;
+      // a real regression on a same-origin asset still fails the test.
+      const text = msg.text();
+      const isBlockedCdnAsset =
+        /Failed to load resource: the server responded with a status of (403|500)/.test(text) ||
+        /net::ERR_TUNNEL_CONNECTION_FAILED/.test(text);
+      if (isBlockedCdnAsset) return;
       errors.push(msg.text());
     });
     page.on("pageerror", (err) => errors.push(err.message));

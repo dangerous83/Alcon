@@ -152,26 +152,57 @@ test.describe("hero reveal HUD over the scrub", () => {
     expect(box!.width).toBeLessThanOrEqual(480);
   });
 
-  test("the video stays full-bleed — no letterbox bands", async ({ page }) => {
-    // An earlier pass scaled the frame down during clip 3 to clear room for
-    // the copy, which letterboxed a 16:9 video inside a wider viewport and
-    // put black bands top and bottom. The copy is short enough to fit beside
-    // the brain instead, so the frame must fill its box at every phase.
+  test("clip 3 puts the video in a left panel, clear of the copy", async ({
+    page,
+    viewport,
+  }) => {
+    test.skip(!!(viewport && viewport.width < 1024), "layout is lg-and-up");
+    // Two failed attempts sit behind this. Scaling the full-width element
+    // letterboxed it across the whole viewport (black bars). Leaving it
+    // full-bleed made the brain fill ~75% of the width and run under the
+    // copy. Clip 3 now narrows the element and switches it to object-contain
+    // so the frame shrinks and anchors left, with the copy beside it.
     await page.goto("/");
     await scrollHeroTo(page, 1.0);
 
-    const bands = await page.evaluate(() => {
+    const geom = await page.evaluate(() => {
       const v = document.querySelector("video")!.getBoundingClientRect();
-      const box = document
-        .querySelector("main > section > div")!
+      const h = document
+        .querySelector('[data-testid="hero-positioning"] h2')!
         .getBoundingClientRect();
+      return { vLeft: Math.round(v.left), vRight: Math.round(v.right), hLeft: Math.round(h.left) };
+    });
+
+    // Anchored to the left edge, and not spanning the full width.
+    expect(geom.vLeft).toBe(0);
+    expect(geom.vRight).toBeLessThan(viewport!.width);
+
+    // And it stops before the copy starts, so nothing overlaps.
+    expect(geom.vRight).toBeLessThanOrEqual(geom.hLeft);
+  });
+
+  test("the copy's heading and paragraph share a right edge", async ({
+    page,
+    viewport,
+  }) => {
+    test.skip(!!(viewport && viewport.width < 1024), "layout is lg-and-up");
+    // text-balance shortened the heading's lines while the paragraph filled
+    // the column, so their right edges disagreed and the block read as
+    // misaligned. Both should wrap to the same column width.
+    await page.goto("/");
+    await scrollHeroTo(page, 1.0);
+
+    const edges = await page.evaluate(() => {
+      const root = document.querySelector('[data-testid="hero-positioning"]')!;
+      const h = root.querySelector("h2")!.getBoundingClientRect();
+      const p = root.querySelector("p")!.getBoundingClientRect();
       return {
-        vertical: Math.round(box.height - v.height),
-        horizontal: Math.round(box.width - v.width),
+        leftDelta: Math.abs(Math.round(h.left - p.left)),
+        rightDelta: Math.abs(Math.round(h.right - p.right)),
       };
     });
-    expect(bands.vertical).toBe(0);
-    expect(bands.horizontal).toBe(0);
+    expect(edges.leftDelta).toBeLessThanOrEqual(1);
+    expect(edges.rightDelta).toBeLessThanOrEqual(1);
   });
 
   test("the accent word is calligraphy and the CTA reaches the contact page", async ({

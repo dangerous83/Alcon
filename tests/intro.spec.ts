@@ -21,7 +21,7 @@ test.describe("intro gate", () => {
     ).toBeVisible();
   });
 
-  test("the button is centred in the frame, with no black overlay", async ({
+  test("the button sits below the artwork, with no black overlay", async ({
     page,
     viewport,
   }) => {
@@ -39,9 +39,34 @@ test.describe("intro gate", () => {
     expect(videoBox).not.toBeNull();
     expect(buttonBox).not.toBeNull();
 
+    // Below the brain, which fills the upper-middle of the frame, but well
+    // short of the bottom edge.
     const buttonCentre = buttonBox!.y + buttonBox!.height / 2;
-    expect(buttonCentre).toBeGreaterThan(viewport!.height * 0.4);
-    expect(buttonCentre).toBeLessThan(viewport!.height * 0.6);
+    expect(buttonCentre).toBeGreaterThan(viewport!.height * 0.62);
+    expect(buttonCentre).toBeLessThan(viewport!.height * 0.78);
+  });
+
+  test("the intro clip carries the tail that lands on the hero's opening frame", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    const video = page
+      .getByRole("dialog", { name: /Alcon intro/i })
+      .locator("video");
+
+    // The source clip runs 5.04s; it is re-encoded with a ~0.29s tail that
+    // dissolves into the hero video's frame 0 and holds it, so the handoff to
+    // the homepage lands on a matching image. Asserting the duration here
+    // catches a re-encode that drops that tail. (Deliberately checked on the
+    // loaded metadata rather than by playing to the end — the overlay
+    // unmounts on `ended`, so polling currentTime races the teardown.)
+    await expect(async () => {
+      const duration = await video.evaluate(
+        (el: HTMLVideoElement) => el.duration
+      );
+      expect(duration).toBeGreaterThan(5.2);
+    }).toPass({ timeout: 10_000 });
   });
 
   test("the video holds on its first frame until the button is pressed", async ({

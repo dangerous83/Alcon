@@ -32,6 +32,9 @@ export function ScrollVideoHero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressFillRef = useRef<HTMLDivElement>(null);
+  // Mirrors `confirmed` for the scroll clamp, which needs the released state
+  // synchronously rather than on the next render.
+  const confirmedRef = useRef(false);
 
   const [activeChapter, setActiveChapter] = useState(0);
   const [started, setStarted] = useState(false);
@@ -155,9 +158,44 @@ export function ScrollVideoHero() {
     };
   }, [reducedMotion, videoFailed]);
 
-  // The gate. Once the scrub has landed on the brain and the HUD is up,
-  // nothing advances past the hero until Continue Journey is clicked —
-  // scrolling back up stays free the whole time.
+  // The hard stop. Clamping the scroll position itself — rather than only
+  // cancelling input events — is what actually guarantees the gate: a
+  // scrollbar drag, a Tab that pulls an off-screen element into view, iOS
+  // momentum, or a flick fast enough to jump the whole pin in one frame all
+  // move the page without ever producing a cancellable wheel/touch/key
+  // event. This runs from the start (not just once the HUD is up) so a fast
+  // scroller can't clear the hero before `revealed` has flipped.
+  useEffect(() => {
+    if (reducedMotion !== false || confirmed) return;
+
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    // End of the pin range — the last frame of the scrub. Recomputed per
+    // call so viewport resizes don't strand the limit at a stale value.
+    const gateMax = () =>
+      wrapper.offsetTop + wrapper.offsetHeight - window.innerHeight;
+
+    function clamp() {
+      if (confirmedRef.current) return;
+      const max = gateMax();
+      if (window.scrollY > max) {
+        window.scrollTo({ top: max, behavior: "instant" });
+      }
+    }
+
+    window.addEventListener("scroll", clamp, { passive: true });
+    window.addEventListener("resize", clamp);
+    clamp(); // catch a restored scroll position on reload
+    return () => {
+      window.removeEventListener("scroll", clamp);
+      window.removeEventListener("resize", clamp);
+    };
+  }, [reducedMotion, confirmed]);
+
+  // Input-level blocking on top of the clamp. This is purely about feel:
+  // once the HUD is up, forward gestures stop dead at the wall instead of
+  // travelling and being snapped back. Scrolling back up stays free.
   useEffect(() => {
     if (reducedMotion !== false) return;
     if (!revealed || confirmed) return;
@@ -192,6 +230,10 @@ export function ScrollVideoHero() {
   }, [reducedMotion, revealed, confirmed]);
 
   function handleContinue() {
+    // Released via the ref first: the clamp listener reads the ref, so this
+    // has to be true before the scroll below starts, not a state update
+    // later. Otherwise the clamp fights its own release animation.
+    confirmedRef.current = true;
     setConfirmed(true);
     const wrapper = wrapperRef.current;
     if (!wrapper) return;

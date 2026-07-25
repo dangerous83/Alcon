@@ -301,11 +301,15 @@ export function ScrollVideoHero() {
           />
         )}
 
-        {/* Legibility scrim only — a narrow gradient behind the copy column.
-            No full-frame black wash, so the video reads at full contrast. */}
+        {/* Legibility scrim for the copy column, and nothing else — it fades
+            out with the copy at the seam so the brain plays at full
+            brightness for the reveal instead of sitting under a wash. */}
         <div
           aria-hidden
-          className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-background/85 via-background/35 to-transparent sm:w-[70%]"
+          className={clsx(
+            "absolute inset-y-0 left-0 w-full bg-gradient-to-r from-background/85 via-background/35 to-transparent transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:w-[70%]",
+            phaseB ? "opacity-0" : "opacity-100"
+          )}
         />
 
         {/* mx-auto matches the header's container, so the copy column starts
@@ -401,16 +405,10 @@ export function ScrollVideoHero() {
           <span className="h-8 w-px bg-gradient-to-b from-text-secondary to-transparent" />
         </div>
 
-        {/* Scrim under the HUD only — keeps the readout legible without
-            washing out the brain it sits on top of. */}
-        <div
-          aria-hidden
-          className={clsx(
-            "absolute inset-0 z-10 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.55)_70%)] transition-opacity duration-1000",
-            revealed ? "opacity-100" : "opacity-0"
-          )}
-        />
-
+        {/* No scrim under the HUD. The readout and node plates each carry
+            their own translucent black backing plus a backdrop blur, so they
+            stay legible on their own — a full-frame wash on top of that only
+            dimmed the brain, which is the thing worth looking at here. */}
         <HeroReveal visible={revealed} onContinue={handleContinue} />
       </div>
     </section>

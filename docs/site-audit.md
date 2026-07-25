@@ -89,6 +89,20 @@ Re-encoding to a keyframe every 8 frames (~3x more keyframes) makes
 arbitrary seeks near-instant. See `docs/performance-report.md` for the full
 optimization writeup.
 
+### Second clip merged in (`scroll scrubbed 2.mp4`)
+
+A follow-up clip, `scroll scrubbed 2.mp4` (1920×1080, H.264, 24fps, 6.04s,
+delivered the same way — repo upload), was added later to extend the hero
+scrub into an interactive reveal. It picks up exactly where the first clip
+ends (the AI-core brain canister shot) and ends on a front-view close-up of
+the brain. It was re-encoded to the same all-intra H.264 parameters as the
+first clip (`-g 1 -keyint_min 1 -sc_threshold 0 -crf 24 -preset slow
+-pix_fmt yuv420p`), then joined to `hero-scroll.mp4` with an ffmpeg
+`concat` filter (matching codec params end to end, so every frame across
+the ~21.08s merged timeline is independently seekable, not just each half).
+`public/video/hero-scroll*.{mp4,webm}` now contain the merged, ~21.08s
+timeline — see `docs/asset-inventory.json` for exact file sizes.
+
 
 ## GitHub Pages deployment (why the repo's Pages URL showed only text)
 

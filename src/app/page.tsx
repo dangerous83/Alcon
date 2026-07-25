@@ -1,4 +1,5 @@
 import { ScrollVideoHero } from "@/components/hero/ScrollVideoHero";
+import { HeroReveal } from "@/components/hero/HeroReveal";
 import { PositioningStatement } from "@/components/sections/PositioningStatement";
 import { MainServices } from "@/components/sections/MainServices";
 import { FeaturedProjects } from "@/components/sections/FeaturedProjects";
@@ -12,6 +13,7 @@ export default function HomePage() {
   return (
     <>
       <ScrollVideoHero />
+      <HeroReveal />
       <PositioningStatement />
       <MainServices />
       <FeaturedProjects />

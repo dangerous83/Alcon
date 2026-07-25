@@ -8,7 +8,13 @@ import { Button } from "@/components/ui/Button";
 import { clsx } from "@/lib/clsx";
 import { assetPath } from "@/lib/asset-path";
 
-const VIDEO_DURATION_FALLBACK = 15;
+// Video is now two scroll-scrubbed clips concatenated into one file: the
+// original ~15.04s chapter loop, seamlessly followed by a ~6.04s "continue"
+// clip that zooms into a front-on brain close-up. VIDEO1_END is that seam —
+// past it we're in "phase B", where chapter copy fades out and the frame
+// plays silently into the reveal panel below.
+const VIDEO1_END = 15.041667;
+const VIDEO_DURATION_FALLBACK = 21.083333;
 // The source is encoded all-intra (every frame a keyframe), so seeking is a
 // single-frame decode rather than a decode-forward from the last keyframe.
 // That makes a snappier follow factor affordable without stutter.
@@ -23,6 +29,7 @@ export function ScrollVideoHero() {
 
   const [activeChapter, setActiveChapter] = useState(0);
   const [started, setStarted] = useState(false);
+  const [phaseB, setPhaseB] = useState(false);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
 
@@ -49,6 +56,7 @@ export function ScrollVideoHero() {
     let targetTime = 0;
     let smoothedTime = 0;
     let lastChapterIndex = -1;
+    let lastPhaseB = false;
     let hasStarted = false;
 
     function computeChapterIndex(timeInSeconds: number) {
@@ -80,10 +88,17 @@ export function ScrollVideoHero() {
             progressFillRef.current.style.transform = `scaleX(${progress})`;
           }
 
-          const chapterIdx = computeChapterIndex(progress * duration);
+          const timeInSeconds = progress * duration;
+          const chapterIdx = computeChapterIndex(timeInSeconds);
           if (chapterIdx !== lastChapterIndex) {
             lastChapterIndex = chapterIdx;
             setActiveChapter(chapterIdx);
+          }
+
+          const isPhaseB = timeInSeconds >= VIDEO1_END;
+          if (isPhaseB !== lastPhaseB) {
+            lastPhaseB = isPhaseB;
+            setPhaseB(isPhaseB);
           }
         },
       });
@@ -137,7 +152,7 @@ export function ScrollVideoHero() {
   return (
     <section
       ref={wrapperRef}
-      className="relative h-[280vh] lg:h-[340vh]"
+      className="relative h-[392vh] lg:h-[476vh]"
       aria-label="Alcon — Creative Intelligence"
     >
       <h1 className="sr-only">{heroSummary}</h1>
@@ -191,7 +206,16 @@ export function ScrollVideoHero() {
         {/* mx-auto matches the header's container, so the copy column starts
             on the same vertical line as the logo. justify-center sits the
             copy on the optical middle of the frame. */}
-        <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-4 py-24 sm:px-6 lg:px-8">
+        {/* Phase B (past the video1/video2 seam): the chapter copy and CTAs
+            fade out so the final ~6s plays as a silent zoom into the brain,
+            uninterrupted by text, handing off cleanly to the reveal panel. */}
+        <div
+          data-testid="hero-chapter-copy"
+          className={clsx(
+            "relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-4 py-24 transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:px-6 lg:px-8",
+            phaseB ? "pointer-events-none opacity-0" : "opacity-100"
+          )}
+        >
           <div aria-hidden className="max-w-xl">
             {heroChapters.map((chapter, index) => (
               <div
@@ -237,7 +261,10 @@ export function ScrollVideoHero() {
         {/* Chapter meta pinned to the bottom of the frame so centring the
             copy doesn't drag the progress indicator up with it. */}
         <div
-          className="absolute inset-x-0 bottom-8 z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8"
+          className={clsx(
+            "absolute inset-x-0 bottom-8 z-10 mx-auto w-full max-w-7xl px-4 transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:px-6 lg:px-8",
+            phaseB ? "opacity-0" : "opacity-100"
+          )}
           aria-hidden
         >
           <div className="flex items-center gap-4">

@@ -62,12 +62,12 @@ export function HeroReveal({
                   aria-selected={isActive}
                   onClick={() => setActiveCard(i)}
                   className={clsx(
-                    "group relative flex flex-col items-start gap-1.5 border px-2.5 py-2.5 text-left backdrop-blur-sm transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent lg:flex-row lg:items-center lg:gap-3 lg:px-4 lg:py-3",
+                    "group relative flex flex-col items-start gap-1.5 border px-2.5 py-2.5 text-left backdrop-blur-sm transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet lg:flex-row lg:items-center lg:gap-3 lg:px-4 lg:py-3",
                     // Clipped corner reads as a HUD plate rather than a card.
                     "[clip-path:polygon(0_0,calc(100%-12px)_0,100%_12px,100%_100%,12px_100%,0_calc(100%-12px))]",
                     isActive
-                      ? "border-cyan-accent/70 bg-cyan-accent/[0.08] shadow-[0_0_24px_-6px_rgba(34,211,238,0.5)]"
-                      : "border-white/15 bg-black/50 hover:border-cyan-accent/40 hover:bg-black/70"
+                      ? "border-violet/70 bg-violet/[0.12] shadow-[0_0_26px_-6px_rgba(113,56,255,0.6)]"
+                      : "border-white/15 bg-black/50 hover:border-violet/45 hover:bg-black/70"
                   )}
                 >
                   {/* Wire running from the plate toward the brain. */}
@@ -76,7 +76,7 @@ export function HeroReveal({
                     className={clsx(
                       "pointer-events-none absolute left-full top-1/2 hidden h-px transition-all duration-500 lg:block",
                       isActive
-                        ? "w-10 bg-gradient-to-r from-cyan-accent to-transparent opacity-100"
+                        ? "w-10 bg-gradient-to-r from-magenta to-transparent opacity-100"
                         : "w-6 bg-gradient-to-r from-white/30 to-transparent opacity-60"
                     )}
                   />
@@ -85,8 +85,8 @@ export function HeroReveal({
                     className={clsx(
                       "flex h-7 w-7 shrink-0 items-center justify-center border transition-colors lg:h-9 lg:w-9",
                       isActive
-                        ? "border-cyan-accent/60 bg-cyan-accent/10 text-cyan-accent"
-                        : "border-white/20 text-white/60 group-hover:text-cyan-accent"
+                        ? "border-violet/60 bg-violet/15 text-magenta"
+                        : "border-white/20 text-white/60 group-hover:text-violet"
                     )}
                   >
                     <CardIcon size={16} strokeWidth={1.75} />
@@ -95,7 +95,7 @@ export function HeroReveal({
                     <span
                       className={clsx(
                         "block font-mono text-[10px] tracking-[0.2em] transition-colors",
-                        isActive ? "text-cyan-accent" : "text-white/40"
+                        isActive ? "text-magenta" : "text-white/40"
                       )}
                     >
                       {c.code}
@@ -111,7 +111,7 @@ export function HeroReveal({
                     className={clsx(
                       "hidden shrink-0 transition-all lg:block",
                       isActive
-                        ? "translate-x-0 text-cyan-accent opacity-100"
+                        ? "translate-x-0 text-magenta opacity-100"
                         : "-translate-x-1 text-white/30 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
                     )}
                   />
@@ -128,22 +128,25 @@ export function HeroReveal({
           <div
             role="tabpanel"
             aria-live="polite"
-            className="relative border border-cyan-accent/25 bg-black/65 p-4 backdrop-blur-md sm:p-5 lg:p-6 [clip-path:polygon(0_0,calc(100%-16px)_0,100%_16px,100%_100%,16px_100%,0_calc(100%-16px))]"
+            className="relative border border-violet/35 bg-black/65 p-4 backdrop-blur-md sm:p-5 lg:p-6 [clip-path:polygon(0_0,calc(100%-16px)_0,100%_16px,100%_100%,16px_100%,0_calc(100%-16px))]"
           >
+            {/* Brand gradient hairline — the panel's strongest colour cue. */}
             <span
               aria-hidden
-              className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-accent/70 to-transparent"
+              className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent_0%,#2870FF_20%,#7138FF_50%,#D12DFF_80%,transparent_100%)]"
             />
 
             <div className="flex items-center justify-between gap-3">
-              <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.24em] text-cyan-accent">
+              <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.24em] text-magenta">
+                {/* The one deliberate cyan note left in the panel: a live
+                    status light reads as an indicator, not as a theme. */}
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-accent opacity-75" />
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-cyan-accent" />
                 </span>
                 {card.code} // ONLINE
               </span>
-              <Icon size={16} strokeWidth={1.75} aria-hidden className="text-cyan-accent/70" />
+              <Icon size={16} strokeWidth={1.75} aria-hidden className="text-violet" />
             </div>
 
             <h2 className="mt-3 font-heading text-base font-bold leading-tight text-white sm:text-xl lg:mt-4 lg:text-2xl">
@@ -159,7 +162,11 @@ export function HeroReveal({
                   <dt className="font-mono text-[9px] uppercase tracking-[0.18em] text-white/40">
                     {metric.label}
                   </dt>
-                  <dd className="mt-1 font-heading text-sm font-semibold text-cyan-accent">
+                  {/* Violet -> magenta rather than the full brand gradient:
+                      each value clips the ramp across its own narrow box, so
+                      a two-character figure would otherwise sample only the
+                      blue end and read as a blue number. */}
+                  <dd className="mt-1 bg-[linear-gradient(110deg,#7138FF_0%,#D12DFF_100%)] bg-clip-text font-heading text-sm font-semibold text-transparent">
                     {metric.value}
                   </dd>
                 </div>
@@ -175,7 +182,7 @@ export function HeroReveal({
                   key={bullet}
                   className="flex items-start gap-2.5 font-mono text-xs leading-relaxed text-white/70"
                 >
-                  <span aria-hidden className="mt-1.5 h-1 w-1 shrink-0 bg-cyan-accent" />
+                  <span aria-hidden className="mt-1.5 h-1 w-1 shrink-0 bg-magenta" />
                   {bullet}
                 </li>
               ))}
@@ -183,7 +190,7 @@ export function HeroReveal({
 
             <Link
               href={card.cta.href}
-              className="group mt-4 inline-flex items-center gap-2 border border-cyan-accent/50 bg-cyan-accent/10 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-cyan-accent sm:text-xs lg:mt-6 transition-colors hover:bg-cyan-accent/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+              className="group mt-4 inline-flex items-center gap-2 bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)] px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white sm:text-xs lg:mt-6 transition-all hover:brightness-115 hover:shadow-[0_0_26px_-6px_rgba(209,45,255,0.7)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet"
             >
               {card.cta.label}
               <ArrowRight
@@ -202,7 +209,7 @@ export function HeroReveal({
             type="button"
             onClick={onContinue}
             data-testid="continue-journey"
-            className="group relative inline-flex items-center gap-2.5 border border-cyan-accent/60 bg-black/70 px-7 py-3.5 font-mono text-xs uppercase tracking-[0.22em] text-white backdrop-blur transition-all hover:border-cyan-accent hover:bg-cyan-accent/10 hover:shadow-[0_0_30px_-6px_rgba(34,211,238,0.6)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent [clip-path:polygon(0_0,calc(100%-10px)_0,100%_10px,100%_100%,10px_100%,0_calc(100%-10px))]"
+            className="group relative inline-flex items-center gap-2.5 border border-violet bg-black/70 px-7 py-3.5 shadow-[0_0_22px_-8px_rgba(113,56,255,0.8)] font-mono text-xs uppercase tracking-[0.22em] text-white backdrop-blur transition-all hover:border-magenta hover:bg-violet/15 hover:shadow-[0_0_34px_-6px_rgba(209,45,255,0.7)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet [clip-path:polygon(0_0,calc(100%-10px)_0,100%_10px,100%_100%,10px_100%,0_calc(100%-10px))]"
           >
             Continue Journey
             <ArrowRight
@@ -213,7 +220,7 @@ export function HeroReveal({
             />
           </button>
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/35">
-            Select a node above, then continue
+            Explore the nodes — the page holds here until you continue
           </p>
         </div>
       </div>

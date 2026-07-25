@@ -114,4 +114,81 @@ test.describe("hero reveal scroll gate", () => {
     await page.waitForTimeout(300);
     expect(await page.evaluate(() => window.scrollY)).toBeLessThan(before);
   });
+
+  test("a jump past the hero is clamped back to the gate", async ({ page }) => {
+    // Stands in for every way the page can move without a cancellable
+    // input event: dragging the scrollbar, Tab pulling an off-screen
+    // element into view, iOS momentum, or a flick that clears the whole
+    // pin inside one frame. Blocking wheel/touch/keys alone misses all of
+    // these, so the clamp is what actually holds the gate.
+    await page.goto("/");
+    await scrollToRevealPoint(page);
+
+    const pinEnd = await page.evaluate(() => {
+      const section = document.querySelector("main > section") as HTMLElement;
+      return section.offsetTop + section.offsetHeight - window.innerHeight;
+    });
+
+    await page.evaluate(() =>
+      window.scrollTo({ top: 999_999, behavior: "instant" })
+    );
+    await page.waitForTimeout(400);
+
+    // Allow a pixel of rounding slack, but nothing that would clear the hero.
+    expect(await page.evaluate(() => window.scrollY)).toBeLessThanOrEqual(
+      pinEnd + 1
+    );
+    await expect(page.getByTestId("hero-reveal")).toBeInViewport();
+  });
+
+  test("the jump clamp releases after Continue Journey", async ({ page }) => {
+    await page.goto("/");
+    await scrollToRevealPoint(page);
+
+    const pinEnd = await page.evaluate(() => {
+      const section = document.querySelector("main > section") as HTMLElement;
+      return section.offsetTop + section.offsetHeight - window.innerHeight;
+    });
+
+    await page.getByTestId("continue-journey").click();
+    await page.waitForTimeout(800);
+    await page.evaluate(() =>
+      window.scrollTo({ top: 999_999, behavior: "instant" })
+    );
+    await page.waitForTimeout(400);
+
+    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(pinEnd);
+  });
+});
+
+test.describe("hero reveal branding", () => {
+  test("the readout leads with the brand gradient, not cyan", async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    const panel = page.getByTestId("hero-reveal");
+    await panel.scrollIntoViewIfNeeded();
+
+    // Panel CTA carries the brand gradient (blue -> violet -> magenta).
+    const ctaBackground = await panel
+      .getByRole("link", { name: /Explore Services/i })
+      .evaluate((el) => getComputedStyle(el).backgroundImage);
+    expect(ctaBackground).toContain("rgb(40, 112, 255)");
+    expect(ctaBackground).toContain("rgb(113, 56, 255)");
+    expect(ctaBackground).toContain("rgb(209, 45, 255)");
+
+    // Metric figures are gradient-clipped, so their own colour is transparent.
+    const metric = panel.locator("dd").first();
+    await expect
+      .poll(() => metric.evaluate((el) => getComputedStyle(el).color))
+      .toBe("rgba(0, 0, 0, 0)");
+
+    // The status label moved off cyan onto brand magenta. The pulsing dot
+    // beside it is deliberately still cyan — one indicator, not a theme.
+    const statusColor = await panel
+      .getByText(/NODE-01 \/\/ ONLINE/)
+      .evaluate((el) => getComputedStyle(el).color);
+    expect(statusColor).toBe("rgb(209, 45, 255)");
+  });
 });

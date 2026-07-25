@@ -6,17 +6,33 @@
       "purpose": "scroll-scrubbed hero, desktop/tablet",
       "resolution": "1920x1080",
       "durationSeconds": 15.08,
-      "sizeBytes": 11790443,
-      "optimization": "re-encoded H.264 crf20, keyframe every 8 frames, no B-frames, faststart, audio removed"
+      "sizeBytes": 16889582,
+      "optimization": "re-encoded H.264 ALL-INTRA (-g 1: every frame a keyframe), crf24, faststart, audio removed. All-intra makes an arbitrary seek a single-frame decode instead of decoding forward from the previous keyframe, which is what makes scroll-scrubbing feel smooth."
     },
     {
       "path": "public/video/hero-scroll-mobile.mp4",
       "source": "derived from the same client-supplied video",
       "purpose": "scroll-scrubbed hero, mobile (<768px)",
-      "resolution": "810px wide, aspect preserved",
+      "resolution": "960px wide, aspect preserved",
       "durationSeconds": 15.08,
-      "sizeBytes": 2817566,
-      "optimization": "re-encoded H.264 crf22, keyframe every 8 frames, no B-frames, faststart, audio removed"
+      "sizeBytes": 5438155,
+      "optimization": "re-encoded H.264 all-intra (-g 1), crf25, faststart, audio removed."
+    },
+    {
+      "path": "public/video/hero-scroll.webm",
+      "source": "derived from the same client-supplied video",
+      "purpose": "codec fallback only for browsers without H.264 (listed AFTER the mp4 sources)",
+      "resolution": "1280px wide",
+      "sizeBytes": 15733457,
+      "optimization": "VP9 all-intra crf40. VP9 compresses intra-only poorly, so this is larger than the 1080p H.264 despite lower resolution \u2014 hence mp4-first source ordering."
+    },
+    {
+      "path": "public/video/hero-scroll-mobile.webm",
+      "source": "derived from the same client-supplied video",
+      "purpose": "mobile codec fallback",
+      "resolution": "960px wide",
+      "sizeBytes": 8732358,
+      "optimization": "VP9 all-intra crf44."
     }
   ],
   "images": [
@@ -24,7 +40,7 @@
       "path": "public/images/logo.jpg",
       "source": "client-attached repo asset (Logo.jpg)",
       "purpose": "nav + footer logo",
-      "status": "final — used as-is per brief (do not redraw/distort)"
+      "status": "final \u2014 used as-is per brief (do not redraw/distort)"
     },
     {
       "path": "public/images/hero-poster.jpg",

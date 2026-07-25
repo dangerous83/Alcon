@@ -9,7 +9,12 @@ import { clsx } from "@/lib/clsx";
 import { assetPath } from "@/lib/asset-path";
 
 const VIDEO_DURATION_FALLBACK = 15;
-const SMOOTHING = 0.14;
+// The source is encoded all-intra (every frame a keyframe), so seeking is a
+// single-frame decode rather than a decode-forward from the last keyframe.
+// That makes a snappier follow factor affordable without stutter.
+const SMOOTHING = 0.22;
+// Roughly a quarter-frame at 24fps — below this a seek isn't visible.
+const SEEK_EPSILON = 0.01;
 
 export function ScrollVideoHero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -85,7 +90,12 @@ export function ScrollVideoHero() {
 
       function tick() {
         smoothedTime += (targetTime - smoothedTime) * SMOOTHING;
-        if (Math.abs(smoothedTime - video!.currentTime) > 0.008) {
+
+        // Only issue a seek when the previous one has completed. Assigning
+        // currentTime while `seeking` is true queues requests faster than the
+        // decoder retires them, which is the main cause of laggy, rubbery
+        // scrubbing — the video ends up chasing a backlog of stale positions.
+        if (!video!.seeking && Math.abs(smoothedTime - video!.currentTime) > SEEK_EPSILON) {
           try {
             video!.currentTime = smoothedTime;
           } catch {
@@ -143,18 +153,23 @@ export function ScrollVideoHero() {
             poster={assetPath("/images/hero-poster.jpg")}
             aria-hidden
           >
-            <source
-              media="(max-width: 767px)"
-              src={assetPath("/video/hero-scroll-mobile.webm")}
-              type="video/webm"
-            />
+            {/* MP4/H.264 is listed first deliberately: the browser picks the
+                first source it can play, and the all-intra H.264 encodes are
+                far smaller than the VP9 equivalents (VP9 compresses intra
+                frames poorly). WebM is kept only for builds without H.264
+                support, which then fall through to it. */}
             <source
               media="(max-width: 767px)"
               src={assetPath("/video/hero-scroll-mobile.mp4")}
               type="video/mp4"
             />
-            <source src={assetPath("/video/hero-scroll.webm")} type="video/webm" />
+            <source
+              media="(max-width: 767px)"
+              src={assetPath("/video/hero-scroll-mobile.webm")}
+              type="video/webm"
+            />
             <source src={assetPath("/video/hero-scroll.mp4")} type="video/mp4" />
+            <source src={assetPath("/video/hero-scroll.webm")} type="video/webm" />
           </video>
         ) : (
           <div
@@ -164,13 +179,16 @@ export function ScrollVideoHero() {
           />
         )}
 
+        {/* Legibility scrim only — a narrow gradient behind the copy column.
+            No full-frame black wash, so the video reads at full contrast. */}
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-r from-background via-background/55 to-transparent"
+          className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-background/85 via-background/35 to-transparent sm:w-[70%]"
         />
-        <div aria-hidden className="absolute inset-0 bg-black/25" />
 
-        <div className="relative z-10 flex h-full max-w-7xl flex-col justify-end px-4 pb-20 sm:px-6 sm:pb-28 lg:px-8">
+        {/* mx-auto matches the header's container, so the copy column starts
+            on the same vertical line as the logo. */}
+        <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col justify-end px-4 pb-20 sm:px-6 sm:pb-28 lg:px-8">
           <div aria-hidden className="max-w-xl">
             {heroChapters.map((chapter, index) => (
               <div
@@ -246,10 +264,10 @@ function StaticHero() {
       />
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-r from-background via-background/55 to-transparent"
+        className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-background/85 via-background/35 to-transparent sm:w-[70%]"
       />
-      <div aria-hidden className="absolute inset-0 bg-black/25" />
-      <div className="relative z-10 max-w-xl px-4 pb-20 sm:px-6 sm:pb-28 lg:px-8">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-20 sm:px-6 sm:pb-28 lg:px-8">
+        <div className="max-w-xl">
         <p className="font-heading text-xs font-medium uppercase tracking-[0.2em] text-cyan-accent">
           {first.eyebrow}
         </p>
@@ -259,13 +277,14 @@ function StaticHero() {
         <p className="mt-4 max-w-lg text-base text-text-secondary sm:text-lg">
           {first.paragraph}
         </p>
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          <Button href="/get-quote" size="lg">
-            Start a Project
-          </Button>
-          <Button href="/client-projects" variant="secondary" size="lg">
-            Explore Our Work
-          </Button>
+          <div className="mt-8 flex flex-wrap items-center gap-4">
+            <Button href="/get-quote" size="lg">
+              Start a Project
+            </Button>
+            <Button href="/client-projects" variant="secondary" size="lg">
+              Explore Our Work
+            </Button>
+          </div>
         </div>
       </div>
     </section>

@@ -5,6 +5,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { heroChapters, heroSummary, heroCtas } from "@/lib/content/hero";
 import { HeroReveal } from "@/components/hero/HeroReveal";
+import { PositioningCopy } from "@/components/sections/PositioningCopy";
+import { PositioningStatement } from "@/components/sections/PositioningStatement";
 import { Button } from "@/components/ui/Button";
 import { clsx } from "@/lib/clsx";
 import { assetPath } from "@/lib/asset-path";
@@ -15,10 +17,14 @@ import { assetPath } from "@/lib/asset-path";
 //   15.04s ..... 21.08s   zoom out to a front-on brain close-up
 //   21.08s ..... 27.38s   the brain wires up and Dubai appears inside it
 //
-// CLIP1_END is where the chapter copy fades out ("phase B"). CLIP2_END is
-// where the scrub settles on the centred front-view brain, which is where
-// the HUD readout eases in. Scrolling runs straight through all three clips
-// — nothing interrupts or holds the page.
+// Each seam is a handover between overlays:
+//
+//   CLIP1_END  chapter copy fades out; the frame plays clean into the brain
+//   CLIP2_END  the HUD readout hands over to the positioning statement —
+//              through clip 3 the brain drifts left and the skyline resolves
+//              inside it, so the copy sits in the right half of the frame
+//
+// Scrolling runs straight through all three clips; nothing holds the page.
 const CLIP1_END = 15.041667;
 const CLIP2_END = 21.083333;
 const VIDEO_DURATION_FALLBACK = 27.375;
@@ -28,9 +34,10 @@ const VIDEO_DURATION_FALLBACK = 27.375;
 const SMOOTHING = 0.22;
 // Roughly a quarter-frame at 24fps — below this a seek isn't visible.
 const SEEK_EPSILON = 0.01;
-// How much video before the gate the HUD starts easing in, so it is fully
-// up by the time the scrub settles rather than popping in on arrival.
-const REVEAL_LEAD_SECONDS = 1.6;
+// How much video before CLIP2_END the HUD starts easing in. Generous enough
+// that the readout gets a real stretch of scroll to itself before the
+// positioning statement takes over at the seam, rather than flashing past.
+const REVEAL_LEAD_SECONDS = 4;
 
 export function ScrollVideoHero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -41,6 +48,7 @@ export function ScrollVideoHero() {
   const [started, setStarted] = useState(false);
   const [phaseB, setPhaseB] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  const [phaseC, setPhaseC] = useState(false);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
 
@@ -69,6 +77,7 @@ export function ScrollVideoHero() {
     let lastChapterIndex = -1;
     let lastPhaseB = false;
     let lastRevealed = false;
+    let lastPhaseC = false;
     let hasStarted = false;
 
     function computeChapterIndex(timeInSeconds: number) {
@@ -122,6 +131,13 @@ export function ScrollVideoHero() {
           if (isRevealed !== lastRevealed) {
             lastRevealed = isRevealed;
             setRevealed(isRevealed);
+          }
+
+          // Clip 3: the HUD steps aside for the positioning statement.
+          const isPhaseC = timeInSeconds >= CLIP2_END;
+          if (isPhaseC !== lastPhaseC) {
+            lastPhaseC = isPhaseC;
+            setPhaseC(isPhaseC);
           }
         },
       });
@@ -187,7 +203,16 @@ export function ScrollVideoHero() {
         {!videoFailed ? (
           <video
             ref={videoRef}
-            className="absolute inset-0 h-full w-full object-cover [object-position:65%_center] sm:[object-position:center]"
+            className={clsx(
+              "absolute inset-0 h-full w-full object-cover [object-position:65%_center] transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] sm:[object-position:center]",
+              // Clip 3 settles the frame down and to the left. object-cover
+              // crops the sides on any viewport narrower than 16:9, which
+              // pushes the brain across the middle and under the copy; scaling
+              // it back lets the whole composition breathe and clears the
+              // right half for the statement. Desktop only — below lg the copy
+              // is full-width, so there is nothing to make room for.
+              phaseC ? "lg:scale-[0.66] lg:-translate-x-[22%]" : "lg:scale-100"
+            )}
             muted
             playsInline
             preload="auto"
@@ -328,9 +353,25 @@ export function ScrollVideoHero() {
             their own translucent black backing plus a backdrop blur, so they
             stay legible on their own — a full-frame wash on top of that only
             dimmed the brain, which is the thing worth looking at here. */}
-        {/* Stays up from the front-brain moment through the Dubai reveal, so
-            the readout is on screen for the whole back half of the scrub. */}
-        <HeroReveal visible={revealed} />
+        {/* HUD owns the front-brain stretch, then clears at the seam. */}
+        <HeroReveal visible={revealed && !phaseC} />
+
+        {/* Clip 3: the brain drifts to the left of frame and the Dubai
+            skyline resolves inside it, leaving the right half open — that is
+            where the positioning statement lands. Half-width and offset to
+            the right rather than centred, so the copy never sits on top of
+            the artwork. */}
+        <div
+          data-testid="hero-positioning"
+          className={clsx(
+            "pointer-events-none absolute inset-0 z-20 flex items-center transition-opacity duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            phaseC ? "opacity-100" : "opacity-0"
+          )}
+        >
+          <div className="ml-auto w-full px-6 text-center sm:px-10 lg:w-1/2 lg:pr-16">
+            <PositioningCopy />
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -382,11 +423,16 @@ function StaticHero() {
     </section>
 
     {/* Reduced motion: the HUD is still worth showing, but as a plain
-        section with no entrance animation and no scroll gate — a user who
-        asked for less motion shouldn't have their scroll held hostage. */}
+        section with no entrance animation. */}
     <section className="relative w-full bg-background px-4 py-20 sm:px-6 lg:px-8">
       <HeroReveal visible variant="static" />
     </section>
+
+    {/* The motion build overlays this copy on clip 3, which reduced-motion
+        visitors never see, so it is rendered here as its own centred section
+        instead. Without this the statement would be missing entirely for
+        them — it is deliberately not in page.tsx. */}
+    <PositioningStatement />
     </>
   );
 }

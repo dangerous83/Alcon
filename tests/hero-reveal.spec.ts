@@ -79,7 +79,9 @@ test.describe("hero reveal HUD over the scrub", () => {
 
   test("HUD eases in once the scrub reaches the brain", async ({ page }) => {
     await page.goto("/");
-    await scrollHeroTo(page, 0.78);
+    // Inside the HUD's window: it eases in from ~0.62 (4s of video before the
+    // clip2/clip3 seam) and hands over to the statement at the seam, ~0.77.
+    await scrollHeroTo(page, 0.70);
 
     const panel = page.getByTestId("hero-reveal");
     await expect(panel).toBeInViewport();
@@ -92,12 +94,12 @@ test.describe("hero reveal HUD over the scrub", () => {
     await expect(page.locator("video").first()).toBeVisible();
   });
 
-  test("HUD stays up through the Dubai reveal on the last frame", async ({
+  test("HUD hands over to the positioning statement on clip 3", async ({
     page,
   }) => {
-    // It used to hide itself once Continue Journey was clicked. With the gate
-    // gone the readout has to remain on screen for the whole back half of the
-    // scrub, otherwise the final frame has nothing beside it.
+    // Clip 3 pulls the brain to the left of frame and resolves the Dubai
+    // skyline inside it, so the readout steps aside and the positioning
+    // statement takes the open right half instead.
     await page.goto("/");
     await scrollHeroTo(page, 1.0);
 
@@ -110,7 +112,36 @@ test.describe("hero reveal HUD over the scrub", () => {
       .poll(() =>
         page.getByTestId("hero-reveal").evaluate((el) => getComputedStyle(el).opacity)
       )
+      .toBe("0");
+
+    const positioning = page.getByTestId("hero-positioning");
+    await expect
+      .poll(() => positioning.evaluate((el) => getComputedStyle(el).opacity))
       .toBe("1");
+    await expect(
+      positioning.getByRole("heading", { name: /Dubai-based creative agency/i })
+    ).toBeVisible();
+  });
+
+  test("the statement sits clear of the brain in the right half", async ({
+    page,
+    viewport,
+  }) => {
+    test.skip(!!(viewport && viewport.width < 1024), "layout is lg-and-up");
+    // The video is object-cover, so on any viewport narrower than 16:9 it
+    // crops the sides and the brain runs across the middle. Clip 3 scales it
+    // back to keep the copy off the artwork — assert the copy really does
+    // start past the midpoint rather than trusting the transform.
+    await page.goto("/");
+    await scrollHeroTo(page, 1.0);
+
+    const box = await page
+      .getByTestId("hero-positioning")
+      .getByRole("heading", { name: /Dubai-based creative agency/i })
+      .boundingBox();
+    const width = viewport!.width;
+    expect(box).not.toBeNull();
+    expect(box!.x).toBeGreaterThan(width * 0.45);
   });
 
   test("clip 3 scrubs from scrolling alone — no click required", async ({

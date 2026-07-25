@@ -1,5 +1,4 @@
 import { ScrollVideoHero } from "@/components/hero/ScrollVideoHero";
-import { PositioningStatement } from "@/components/sections/PositioningStatement";
 import { MainServices } from "@/components/sections/MainServices";
 import { FeaturedProjects } from "@/components/sections/FeaturedProjects";
 import { CreativeProcess } from "@/components/sections/CreativeProcess";
@@ -12,7 +11,6 @@ export default function HomePage() {
   return (
     <>
       <ScrollVideoHero />
-      <PositioningStatement />
       <MainServices />
       <FeaturedProjects />
       <CreativeProcess />

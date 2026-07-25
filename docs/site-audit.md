@@ -123,12 +123,36 @@ Two things follow from that removal, both deliberate:
   original ~18.6vh-per-second ratio would have meant 620vh of travel by the
   third clip. The wrapper is back to the original `h-[280vh] lg:h-[340vh]`,
   so the scrub simply advances faster per pixel.
-- **The HUD readout stays up from the front-brain moment (~1.6s before the
-  clip2/clip3 boundary) through to the last frame**, rather than hiding on
-  release. Its node plates sit over the brightest part of the brain during
-  clip 3, so their backing is near-opaque (`bg-black/70`–`/85` plus a
-  backdrop blur) and the active state is carried by border and glow rather
-  than fill — a translucent panel washed the labels out completely.
+- **Each seam is an overlay handover.** The HUD readout owns the front-brain
+  stretch (easing in ~4s of video before the clip2/clip3 boundary), then
+  clears at the seam so the positioning statement can take clip 3. Its node
+  plates still overlap bright artwork, so their backing is near-opaque
+  (`bg-black/70`–`/85` plus a backdrop blur) with the active state carried by
+  border and glow rather than fill — a translucent panel washed the labels
+  out completely.
+
+### Clip 3 composition
+
+Clip 3 drifts the brain to the left of frame and resolves the Dubai skyline
+inside it, leaving the right side open — that is where the positioning
+statement sits, matching the client's reference composition.
+
+Two details are load-bearing:
+
+- **The video is scaled back during clip 3** (`lg:scale-[0.66]
+  lg:-translate-x-[22%]`). The `<video>` is `object-cover`, so on any
+  viewport narrower than 16:9 it crops the sides, which pushes the brain
+  across the middle and directly under the copy. At 1440×900 the brain
+  reached ~75% of the width; scaling it back clears the right half and
+  letterboxes the frame, which is what the reference shows. Desktop only —
+  below `lg` the copy is full-width, so there is nothing to make room for.
+- **The statement lives in two places, from one source.**
+  `PositioningCopy` holds the words; the motion build overlays it on clip 3,
+  and `PositioningStatement` wraps it as a standalone centred section
+  rendered *only* on the reduced-motion path (see `StaticHero`). It is
+  deliberately absent from `page.tsx` — leaving it there would show the same
+  sentence twice in a row, and dropping it entirely would hide the statement
+  from reduced-motion visitors.
 
 `public/video/hero-scroll*.{mp4,webm}` now contain the merged, ~27.38s
 timeline — see `docs/asset-inventory.json` for exact file sizes.

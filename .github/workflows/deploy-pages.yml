@@ -70,13 +70,23 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Publishing normally takes seconds, but Pages has stalled in
+    # `updating_pages` for the full 10 minutes at least once, and the
+    # published site is ~99 MB (four hero video encodes), which is slow to
+    # distribute. Both the action's own timeout and this job's used to expire
+    # together at 10 minutes, cancelling a deploy whose artifact had built
+    # fine and leaving the site a commit behind. Give Pages room, and keep
+    # the job's ceiling above the action's so the action reports the real
+    # error instead of being killed mid-poll.
+    timeout-minutes: 25
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          timeout: 1200000 # 20 minutes, up from the 10-minute default
 
       # The environment URL above only renders as a link on the run page and
       # in the repo's Deployments panel, both of which are easy to miss (and

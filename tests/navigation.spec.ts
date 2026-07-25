@@ -1,51 +1,52 @@
 import { test, expect } from "@playwright/test";
 
 test("desktop primary navigation links work", async ({ page, viewport }) => {
-  test.skip(!!(viewport && viewport.width < 768), "desktop-only test");
+  test.skip(!!(viewport && viewport.width < 1024), "desktop-only test");
   await page.goto("/");
   const nav = page.getByRole("navigation", { name: "Primary" });
 
-  await nav.getByRole("link", { name: "Work" }).click();
-  await expect(page).toHaveURL(/\/client-projects\/?$/);
+  await nav.getByRole("link", { name: "Services" }).click();
+  await expect(page).toHaveURL(/\/services\/?$/);
 
-  await nav.getByRole("link", { name: "Journal" }).click();
-  await expect(page).toHaveURL(/\/blog\/?$/);
+  await page.goto("/");
+  await nav.getByRole("link", { name: "Solutions" }).click();
+  await expect(page).toHaveURL(/\/solutions\/?$/);
+
+  await page.goto("/");
+  await nav.getByRole("link", { name: "White Label" }).click();
+  await expect(page).toHaveURL(/\/white-label\/?$/);
 });
 
-test("services dropdown opens and links to each service", async ({
+test("clients dropdown opens and links to platform and website", async ({
   page,
   viewport,
 }) => {
-  test.skip(!!(viewport && viewport.width < 768), "desktop-only test");
+  test.skip(!!(viewport && viewport.width < 1024), "desktop-only test");
   await page.goto("/");
   const nav = page.getByRole("navigation", { name: "Primary" });
-  const trigger = nav.getByRole("link", { name: /^Services/ });
+  const trigger = nav.getByRole("link", { name: /^Clients/ });
 
   await expect(trigger).toHaveAttribute("aria-expanded", "false");
   await trigger.hover();
   await expect(trigger).toHaveAttribute("aria-expanded", "true");
+  await expect(nav.getByRole("link", { name: "Platform" })).toBeVisible();
+  await expect(nav.getByRole("link", { name: "Website" })).toBeVisible();
 
-  // Every service should be reachable from the panel.
-  for (const name of [
-    "Branding & Identity",
-    "Motion Graphics",
-    "Video Editing",
-    "Social Media",
-    "Weekend Tutorials",
-  ]) {
-    await expect(nav.getByRole("link", { name })).toBeVisible();
-  }
+  await nav.getByRole("link", { name: "Platform" }).click();
+  await expect(page).toHaveURL(/\/client-projects\/platform\/?$/);
 
-  await nav.getByRole("link", { name: "Branding & Identity" }).click();
-  await expect(page).toHaveURL(/\/services\/branding\/?$/);
+  await page.goto("/");
+  await nav.getByRole("link", { name: /^Clients/ }).hover();
+  await nav.getByRole("link", { name: "Website" }).click();
+  await expect(page).toHaveURL(/\/client-projects\/website\/?$/);
 });
 
-test("services dropdown closes on Escape", async ({ page, viewport }) => {
-  test.skip(!!(viewport && viewport.width < 768), "desktop-only test");
+test("clients dropdown closes on Escape", async ({ page, viewport }) => {
+  test.skip(!!(viewport && viewport.width < 1024), "desktop-only test");
   await page.goto("/");
   const trigger = page
     .getByRole("navigation", { name: "Primary" })
-    .getByRole("link", { name: /^Services/ });
+    .getByRole("link", { name: /^Clients/ });
 
   await trigger.hover();
   await expect(trigger).toHaveAttribute("aria-expanded", "true");
@@ -53,20 +54,25 @@ test("services dropdown closes on Escape", async ({ page, viewport }) => {
   await expect(trigger).toHaveAttribute("aria-expanded", "false");
 });
 
-test("services index is reachable via the dropdown's All services link", async ({
+test("clients link itself goes to the work index", async ({
   page,
   viewport,
 }) => {
-  test.skip(!!(viewport && viewport.width < 768), "desktop-only test");
+  test.skip(!!(viewport && viewport.width < 1024), "desktop-only test");
   await page.goto("/");
   const nav = page.getByRole("navigation", { name: "Primary" });
-  await nav.getByRole("link", { name: /^Services/ }).hover();
-  await nav.getByRole("link", { name: "All services" }).click();
-  await expect(page).toHaveURL(/\/services\/?$/);
+  await nav.getByRole("link", { name: /^Clients/ }).click();
+  await expect(page).toHaveURL(/\/client-projects\/?$/);
 });
 
-test("mobile menu opens and navigates", async ({ page, isMobile, viewport }) => {
-  test.skip(!!(viewport && viewport.width > 767), "mobile-only test");
+test("top announcement banner links to /get-quote", async ({ page }) => {
+  await page.goto("/");
+  const banner = page.getByRole("link", { name: /start a project/i }).first();
+  await expect(banner).toHaveAttribute("href", /\/get-quote\/?$/);
+});
+
+test("mobile menu opens and navigates", async ({ page, viewport }) => {
+  test.skip(!!(viewport && viewport.width >= 1024), "mobile-only test");
   await page.goto("/");
   const toggle = page.getByRole("button", { name: /open menu/i });
   await toggle.click();
@@ -76,15 +82,15 @@ test("mobile menu opens and navigates", async ({ page, isMobile, viewport }) => 
   await expect(page).toHaveURL(/\/get-quote\/?$/);
 });
 
-test("mobile menu exposes services submenu", async ({ page, viewport }) => {
-  test.skip(!!(viewport && viewport.width > 767), "mobile-only test");
+test("mobile menu exposes clients submenu", async ({ page, viewport }) => {
+  test.skip(!!(viewport && viewport.width >= 1024), "mobile-only test");
   await page.goto("/");
   await page.getByRole("button", { name: /open menu/i }).click();
 
   const menu = page.locator("#mobile-menu");
-  await menu.getByRole("button", { name: /expand services list/i }).click();
-  await menu.getByRole("link", { name: "Motion Graphics" }).click();
-  await expect(page).toHaveURL(/\/services\/motion\/?$/);
+  await menu.getByRole("button", { name: /expand clients list/i }).click();
+  await menu.getByRole("link", { name: "Website" }).click();
+  await expect(page).toHaveURL(/\/client-projects\/website\/?$/);
 });
 
 test("hero primary CTA goes to /get-quote and secondary to /client-projects", async ({

@@ -16,7 +16,7 @@ type ButtonAsButton = CommonProps &
   Omit<ComponentPropsWithoutRef<"button">, "className">;
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full font-heading font-medium transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex items-center justify-center gap-2 rounded-[7px] font-heading font-medium transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent disabled:opacity-50 disabled:pointer-events-none";
 
 const sizes = {
   md: "px-6 py-3 text-sm min-h-11",

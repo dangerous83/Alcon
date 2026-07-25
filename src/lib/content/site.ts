@@ -41,12 +41,36 @@ export const siteConfig = {
   },
 } as const;
 
+/**
+ * Primary navigation. `children` renders as a dropdown.
+ *
+ * Journal (/blog) is intentionally not in the primary bar — the requested
+ * nav is these four items — but it stays linked from the footer and in the
+ * sitemap so it is neither orphaned nor dropped from search.
+ */
 export const navigation = [
   { label: "Services", href: "/services", cta: false },
-  { label: "Work", href: "/client-projects", cta: false },
-  { label: "Journal", href: "/blog", cta: false },
+  { label: "Solutions", href: "/solutions", cta: false },
+  { label: "White Label", href: "/white-label", cta: false },
+  {
+    label: "Clients",
+    href: "/client-projects",
+    cta: false,
+    children: [
+      { label: "Platform", href: "/client-projects/platform" },
+      { label: "Website", href: "/client-projects/website" },
+    ],
+  },
   { label: "Get a Quote", href: "/get-quote", cta: true },
 ] as const;
+
+/** Slim announcement bar above the header. */
+export const topBanner = {
+  // TODO(content-swap): replace with a real announcement.
+  text: "Alcon is taking on new projects for Q4 2026.",
+  linkLabel: "Start a project",
+  href: "/get-quote",
+} as const;
 
 export const footerLinks = {
   services: [
@@ -57,7 +81,9 @@ export const footerLinks = {
     { label: "Weekend Tutorials", href: "/services/tutorials" },
   ],
   company: [
-    { label: "Our Work", href: "/client-projects" },
+    { label: "Solutions", href: "/solutions" },
+    { label: "White Label", href: "/white-label" },
+    { label: "Clients", href: "/client-projects" },
     { label: "Journal", href: "/blog" },
     { label: "Get a Quote", href: "/get-quote" },
   ],

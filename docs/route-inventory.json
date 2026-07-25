@@ -42,6 +42,26 @@
       "type": "static"
     },
     {
+      "path": "/solutions",
+      "status": "implemented",
+      "type": "static"
+    },
+    {
+      "path": "/white-label",
+      "status": "implemented",
+      "type": "static"
+    },
+    {
+      "path": "/client-projects/platform",
+      "status": "implemented",
+      "type": "static"
+    },
+    {
+      "path": "/client-projects/website",
+      "status": "implemented",
+      "type": "static"
+    },
+    {
       "path": "/blog",
       "status": "implemented",
       "type": "static"

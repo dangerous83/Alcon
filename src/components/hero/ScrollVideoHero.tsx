@@ -203,10 +203,10 @@ export function ScrollVideoHero() {
                     : "absolute opacity-0 translate-y-3 blur-sm pointer-events-none"
                 )}
               >
-                <p className="font-heading text-xs font-medium uppercase tracking-[0.2em] text-cyan-accent">
+                <p className="font-heading text-xs font-medium uppercase tracking-[0.2em] text-[#C7CBD6]">
                   {chapter.eyebrow}
                 </p>
-                <p className="mt-5 font-heading text-4xl font-bold leading-[1.05] tracking-tight text-text-primary sm:text-5xl lg:text-6xl">
+                <p className="mt-2.5 font-heading text-4xl font-bold leading-[1.05] tracking-tight text-text-primary sm:text-5xl lg:text-6xl">
                   {chapter.heading.map((segment, i) =>
                     segment.emphasis ? (
                       <em key={i} className="heading-accent">
@@ -286,10 +286,10 @@ function StaticHero() {
       />
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
         <div className="max-w-xl">
-          <p className="font-heading text-xs font-medium uppercase tracking-[0.2em] text-cyan-accent">
+          <p className="font-heading text-xs font-medium uppercase tracking-[0.2em] text-[#C7CBD6]">
             {first.eyebrow}
           </p>
-          <h1 className="mt-5 font-heading text-4xl font-bold leading-[1.05] tracking-tight text-text-primary sm:text-5xl lg:text-6xl">
+          <h1 className="mt-2.5 font-heading text-4xl font-bold leading-[1.05] tracking-tight text-text-primary sm:text-5xl lg:text-6xl">
             {first.heading.map((segment, i) =>
               segment.emphasis ? (
                 <em key={i} className="heading-accent">

@@ -21,15 +21,15 @@ test.describe("intro gate", () => {
     ).toBeVisible();
   });
 
-  test("the button sits clear of the artwork, with no black overlay", async ({
+  test("the button is centred in the frame, with no black overlay", async ({
     page,
     viewport,
   }) => {
     await page.goto("/");
 
     // No scrim element between the video and the button: the client asked
-    // for the video unobscured, so legibility comes from the button's own
-    // backdrop-blur pill rather than a wash over the whole frame.
+    // for the video unobscured, so the button simply fades out once playback
+    // starts rather than a wash sitting over the whole frame.
     const intro = page.getByRole("dialog", { name: /Alcon intro/i });
     const videoBox = await intro.locator("video").boundingBox();
     const buttonBox = await page
@@ -39,18 +39,40 @@ test.describe("intro gate", () => {
     expect(videoBox).not.toBeNull();
     expect(buttonBox).not.toBeNull();
 
-    // The artwork occupies the upper portion of the frame; the button lives
-    // in the empty lower band so it never covers it.
-    expect(buttonBox!.y).toBeGreaterThan(viewport!.height * 0.7);
+    const buttonCentre = buttonBox!.y + buttonBox!.height / 2;
+    expect(buttonCentre).toBeGreaterThan(viewport!.height * 0.4);
+    expect(buttonCentre).toBeLessThan(viewport!.height * 0.6);
   });
 
-  test("clicking Begin Your Journey reveals the homepage", async ({ page }) => {
+  test("the video holds on its first frame until the button is pressed", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    const video = page
+      .getByRole("dialog", { name: /Alcon intro/i })
+      .locator("video");
+
+    // Neither autoplay nor loop: it waits, plays once, and rests on its last
+    // frame — which is the homepage hero's opening frame.
+    await expect(video).not.toHaveAttribute("autoplay", /.*/);
+    await expect(video).not.toHaveAttribute("loop", /.*/);
+    await expect(video).toHaveJSProperty("paused", true);
+
+    await page.getByRole("button", { name: /Begin Your Journey/i }).click();
+    await expect(video).toHaveJSProperty("paused", false);
+  });
+
+  test("clicking Begin Your Journey plays through, then reveals the homepage", async ({
+    page,
+  }) => {
     await page.goto("/");
     await page.getByRole("button", { name: /Begin Your Journey/i }).click();
 
+    // The overlay stays up for the length of the clip (~5s) plus the fade.
     await expect(
       page.getByRole("dialog", { name: /Alcon intro/i })
-    ).toBeHidden();
+    ).toBeHidden({ timeout: 20_000 });
 
     // The homepage itself, not a navigation — the intro overlays it.
     await expect(page).toHaveURL(/\/$/);
@@ -62,7 +84,7 @@ test.describe("intro gate", () => {
     await page.getByRole("button", { name: /Begin Your Journey/i }).click();
     await expect(
       page.getByRole("dialog", { name: /Alcon intro/i })
-    ).toBeHidden();
+    ).toBeHidden({ timeout: 20_000 });
 
     await page.reload();
     await expect(

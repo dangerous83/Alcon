@@ -40,16 +40,23 @@
   --font-heading: var(--font-heading);
 }
 
-/* Emphasised word inside a display heading. Stays in the heading sans at
-   the same weight — an italic serif here read as a mismatched graft — and
-   carries the brand gradient as the only differentiator. */
+/* Emphasised word inside a display heading: a calligraphy script carrying
+   the brand gradient, set apart from the surrounding geometric sans. Sized
+   up and nudged down — script faces run narrower/shorter in x-height than
+   a sans at the same font-size, and Allura's baseline sits high, so a
+   naive 1:1 swap looks small and floats above the line. */
 .heading-accent {
+  font-family: var(--font-allura), cursive;
   font-style: normal;
+  font-weight: 400;
+  font-size: 1.7em;
+  line-height: 1;
+  vertical-align: -0.14em;
+  padding-inline: 0.08em 0.12em;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  padding-right: 0.04em;
 }
 
 * {

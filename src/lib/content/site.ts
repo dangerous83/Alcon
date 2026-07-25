@@ -28,10 +28,11 @@ export const siteConfig = {
     country: "United Arab Emirates",
   },
   contact: {
-    // TODO(content-swap): replace with the real values from alcon-online.site
+    // TODO(content-swap): email still pending — replace once confirmed.
     email: "hello@alcon-online.site",
-    phone: "+971-000-0000",
-    whatsapp: "https://wa.me/971000000000",
+    // Client-supplied real numbers.
+    phone: "+971561643886",
+    whatsapp: "https://wa.me/971561643886",
   },
   social: {
     // TODO(content-swap): confirm handles against the live site footer
@@ -49,13 +50,14 @@ export const siteConfig = {
  * sitemap so it is neither orphaned nor dropped from search.
  */
 export const navigation = [
-  { label: "Services", href: "/services", cta: false },
-  { label: "Solutions", href: "/solutions", cta: false },
+  { label: "Services", href: "/services", cta: false, mega: "services" },
+  { label: "Portfolio", href: "/portfolio", cta: false, mega: "portfolio" },
   { label: "White Label", href: "/white-label", cta: false },
   {
     label: "Clients",
     href: "/client-projects",
     cta: false,
+    mega: "clients",
     children: [
       { label: "Platform", href: "/client-projects/platform" },
       { label: "Website", href: "/client-projects/website" },
@@ -64,12 +66,20 @@ export const navigation = [
   { label: "Get a Quote", href: "/get-quote", cta: true },
 ] as const;
 
-/** Slim announcement bar above the header. */
+/**
+ * Top announcement bar: tagline (left), a CTA (centre), and two phone
+ * numbers (right). Phone numbers are as supplied by the client — not
+ * validated or reformatted, only stripped of spaces for the tel: link.
+ */
 export const topBanner = {
-  // TODO(content-swap): replace with a real announcement.
-  text: "Alcon is taking on new projects for Q4 2026.",
-  linkLabel: "Start a project",
-  href: "/get-quote",
+  // A few tagline options were suggested; this is the recommended one —
+  // swap freely, it's a one-line content edit.
+  tagline: "Strategy-led creative, built for how AI moves now.",
+  cta: { label: "Connect With Us", href: "/get-quote" },
+  phones: [
+    { label: "Customer Service", number: "+97156461565" },
+    { label: "Expert", number: "+971561643886" },
+  ],
 } as const;
 
 export const footerLinks = {
@@ -81,7 +91,7 @@ export const footerLinks = {
     { label: "Weekend Tutorials", href: "/services/tutorials" },
   ],
   company: [
-    { label: "Solutions", href: "/solutions" },
+    { label: "Portfolio", href: "/portfolio" },
     { label: "White Label", href: "/white-label" },
     { label: "Clients", href: "/client-projects" },
     { label: "Journal", href: "/blog" },

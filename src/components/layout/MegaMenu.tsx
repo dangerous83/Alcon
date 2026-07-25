@@ -1,0 +1,206 @@
+import Link from "next/link";
+import { ArrowRight, FileText, ExternalLink } from "lucide-react";
+import { clsx } from "@/lib/clsx";
+import type { MegaMenuColumn, ExternalLinkItem } from "@/lib/content/mega-menu";
+
+export function ServicesStyleMegaMenu({
+  columns,
+  stats,
+  ctaLabel,
+  ctaHref,
+  onNavigate,
+  testId,
+}: {
+  columns: MegaMenuColumn[];
+  stats: readonly { value: string; label: string }[];
+  ctaLabel: string;
+  ctaHref: string;
+  onNavigate: () => void;
+  testId: string;
+}) {
+  return (
+    <div
+      data-testid={testId}
+      className="w-[min(64rem,calc(100vw-2rem))] overflow-hidden rounded-[7px] border border-border bg-surface-elevated/98 shadow-[0_30px_70px_-25px_rgba(0,0,0,0.9)] backdrop-blur"
+    >
+      <div className="grid gap-8 p-6 sm:grid-cols-3 sm:gap-6 sm:p-8">
+        {columns.map((column) => (
+          <div key={column.heading}>
+            {column.heading && (
+              <p className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-text-secondary">
+                <span
+                  aria-hidden
+                  className="h-1.5 w-1.5 rounded-full bg-[linear-gradient(110deg,#2870FF_0%,#D12DFF_100%)]"
+                />
+                {column.heading}
+              </p>
+            )}
+            <ul className="space-y-1">
+              {column.items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <li key={item.label}>
+                    <Link
+                      href={item.href}
+                      onClick={onNavigate}
+                      className="group flex items-start gap-3 rounded-[7px] px-2 py-2.5 transition-colors hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+                    >
+                      <span
+                        aria-hidden
+                        className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[7px] border border-border bg-surface text-text-secondary transition-colors group-hover:border-cyan-accent/40 group-hover:text-cyan-accent"
+                      >
+                        <Icon size={16} strokeWidth={1.75} />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-text-primary">
+                            {item.label}
+                          </span>
+                          {item.badge && (
+                            <span className="rounded-full bg-[linear-gradient(110deg,#2870FF_0%,#D12DFF_100%)] px-1.5 py-0.5 text-[10px] font-semibold leading-none text-text-primary">
+                              {item.badge}
+                            </span>
+                          )}
+                        </span>
+                        <span className="mt-0.5 block truncate text-xs text-text-secondary">
+                          {item.description}
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border bg-surface/60 px-6 py-4 sm:px-8">
+        <ul className="flex flex-wrap items-center gap-x-6 gap-y-1">
+          {stats.map((stat) => (
+            <li key={stat.label} className="text-xs text-text-secondary">
+              <span className="font-heading font-semibold text-text-primary">
+                {stat.value}
+              </span>{" "}
+              {stat.label}
+            </li>
+          ))}
+        </ul>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/get-quote"
+            onClick={onNavigate}
+            className="hidden items-center gap-1.5 text-xs font-medium text-text-secondary hover:text-text-primary sm:inline-flex focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
+          >
+            <FileText size={14} strokeWidth={1.75} aria-hidden />
+            Proposals
+          </Link>
+          <Link
+            href={ctaHref}
+            onClick={onNavigate}
+            className="inline-flex items-center gap-1.5 rounded-[7px] bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)] px-4 py-2 text-xs font-semibold text-text-primary transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+          >
+            {ctaLabel}
+            <ArrowRight size={14} strokeWidth={2} aria-hidden />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ClientsMegaMenu({
+  platform,
+  website,
+}: {
+  platform: ExternalLinkItem[];
+  website: ExternalLinkItem[];
+}) {
+  const columns: { heading: string; href: string; items: ExternalLinkItem[] }[] = [
+    { heading: "Platform", href: "/client-projects/platform", items: platform },
+    { heading: "Website", href: "/client-projects/website", items: website },
+  ];
+
+  return (
+    <div
+      data-testid="clients-mega-menu"
+      className="w-[min(40rem,calc(100vw-2rem))] overflow-hidden rounded-[7px] border border-border bg-surface-elevated/98 shadow-[0_30px_70px_-25px_rgba(0,0,0,0.9)] backdrop-blur"
+    >
+      <div className="grid gap-8 p-6 sm:grid-cols-2 sm:gap-6 sm:p-8">
+        {columns.map((column) => (
+          <div key={column.heading}>
+            <div className="mb-4 flex items-center justify-between">
+              <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-text-secondary">
+                <span
+                  aria-hidden
+                  className="h-1.5 w-1.5 rounded-full bg-[linear-gradient(110deg,#2870FF_0%,#D12DFF_100%)]"
+                />
+                {column.heading}
+              </p>
+              <Link
+                href={column.href}
+                className="text-[11px] font-medium text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
+              >
+                View all
+              </Link>
+            </div>
+            <ul className="max-h-72 space-y-0.5 overflow-y-auto pr-1">
+              {column.items.map((item) => (
+                <li key={item.label}>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-between gap-2 rounded-[7px] px-2 py-2 text-sm text-text-secondary transition-colors hover:bg-white/[0.06] hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+                  >
+                    {item.label}
+                    <ExternalLink
+                      size={12}
+                      strokeWidth={1.75}
+                      aria-hidden
+                      className="shrink-0 text-text-secondary/50 transition-colors group-hover:text-cyan-accent"
+                    />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function MegaMenuWrapper({
+  open,
+  children,
+  onMouseEnter,
+  onMouseLeave,
+}: {
+  open: boolean;
+  children: React.ReactNode;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}) {
+  return (
+    <div
+      // `inert` (not just opacity/pointer-events) while closed: without it,
+      // the panel's links stay in the tab order and in the a11y tree even
+      // though they're invisible — a keyboard user tabbing through the nav
+      // would land on hidden menu items. `inert` removes them from focus
+      // and from assistive tech while still letting the close transition
+      // animate.
+      inert={!open}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className={clsx(
+        "absolute left-1/2 top-full -translate-x-1/2 pt-3 transition-all duration-200",
+        open
+          ? "pointer-events-auto translate-y-0 opacity-100"
+          : "pointer-events-none -translate-y-1 opacity-0"
+      )}
+    >
+      {children}
+    </div>
+  );
+}

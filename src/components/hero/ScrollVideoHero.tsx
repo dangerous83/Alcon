@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { heroChapters, heroSummary, heroCtas } from "@/lib/content/hero";
 import { Button } from "@/components/ui/Button";
 import { clsx } from "@/lib/clsx";
+import { assetPath } from "@/lib/asset-path";
 
 const VIDEO_DURATION_FALLBACK = 15;
 const SMOOTHING = 0.14;
@@ -139,27 +140,27 @@ export function ScrollVideoHero() {
             muted
             playsInline
             preload="auto"
-            poster="/images/hero-poster.jpg"
+            poster={assetPath("/images/hero-poster.jpg")}
             aria-hidden
           >
             <source
               media="(max-width: 767px)"
-              src="/video/hero-scroll-mobile.webm"
+              src={assetPath("/video/hero-scroll-mobile.webm")}
               type="video/webm"
             />
             <source
               media="(max-width: 767px)"
-              src="/video/hero-scroll-mobile.mp4"
+              src={assetPath("/video/hero-scroll-mobile.mp4")}
               type="video/mp4"
             />
-            <source src="/video/hero-scroll.webm" type="video/webm" />
-            <source src="/video/hero-scroll.mp4" type="video/mp4" />
+            <source src={assetPath("/video/hero-scroll.webm")} type="video/webm" />
+            <source src={assetPath("/video/hero-scroll.mp4")} type="video/mp4" />
           </video>
         ) : (
           <div
             aria-hidden
             className="absolute inset-0 h-full w-full bg-cover bg-center"
-            style={{ backgroundImage: "url(/images/hero-poster.jpg)" }}
+            style={{ backgroundImage: `url(${assetPath("/images/hero-poster.jpg")})` }}
           />
         )}
 
@@ -241,7 +242,7 @@ function StaticHero() {
       <div
         aria-hidden
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url(/images/hero-poster.jpg)" }}
+        style={{ backgroundImage: `url(${assetPath("/images/hero-poster.jpg")})` }}
       />
       <div
         aria-hidden

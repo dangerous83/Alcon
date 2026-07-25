@@ -88,3 +88,40 @@ keyframe for an arbitrary seek, which stutters during fast scroll-scrub.
 Re-encoding to a keyframe every 8 frames (~3x more keyframes) makes
 arbitrary seeks near-instant. See `docs/performance-report.md` for the full
 optimization writeup.
+
+
+## GitHub Pages deployment (why the repo's Pages URL showed only text)
+
+`https://dangerous83.github.io/Alcon/` originally rendered as a wall of
+text rather than the website. Root cause, confirmed against the repo tree:
+
+Pages was configured as **"Deploy from a branch" → main → / (root)**. That
+mode serves the branch's files *verbatim* — it runs no build step. The
+repo root contains Next.js **source** (`src/`, `package.json`, …) and no
+`index.html`, so Pages fell through to rendering `README.md`. Nothing was
+ever built or deployed; there was no bug in the site itself.
+
+Fix applied:
+
+1. `next.config.ts` switched to `output: "export"` — the app now builds to
+   a fully static `out/` directory that any static host can serve.
+2. `.github/workflows/deploy-pages.yml` builds that export on every push to
+   `main` and publishes it via the official Pages actions.
+3. `NEXT_PUBLIC_BASE_PATH` handling added, because Pages serves the site
+   from `/Alcon` rather than the domain root. `next/link` and `next/image`
+   apply a `basePath` automatically, but raw `<video src>`, `poster`, and
+   CSS `url()` do not — those go through `src/lib/asset-path.ts`.
+   `next/image` with `unoptimized: true` also skips the prefix, which is
+   why the logo is routed through the same helper.
+4. `public/.nojekyll` added, or Pages' Jekyll layer would strip the
+   `_next/` directory containing all CSS and JS.
+5. `/api/quote` removed — static hosting has no server. See README "Form
+   configuration" for what replaced it.
+
+**Required one-time setting:** Settings → Pages → Source → **GitHub
+Actions**. Leaving it on "Deploy from a branch" reproduces the original
+problem regardless of what the workflow does.
+
+Verified locally by serving the built `out/` from a `/Alcon` subpath: all
+routes returned 200, the hero video loaded (`readyState` 4), and there
+were zero failed requests or console errors.

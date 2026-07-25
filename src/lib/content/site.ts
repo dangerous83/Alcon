@@ -18,7 +18,10 @@ export const siteConfig = {
   tagline: "Creative Intelligence",
   description:
     "Alcon is a Dubai-based creative and advertising agency combining strategy, design, and emerging technology to build brand experiences that move people.",
-  url: "https://www.alcon-online.site",
+  // Canonical/OG base URL. Defaults to the intended production domain;
+  // the Pages deploy overrides it via NEXT_PUBLIC_SITE_URL so canonical
+  // tags match where the site is actually served from.
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.alcon-online.site",
   locale: "en-AE",
   location: {
     city: "Dubai",

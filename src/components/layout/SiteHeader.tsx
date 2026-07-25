@@ -6,6 +6,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { navigation } from "@/lib/content/site";
 import { clsx } from "@/lib/clsx";
+import { assetPath } from "@/lib/asset-path";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -22,13 +23,17 @@ export function SiteHeader() {
           href="/"
           className="flex items-center gap-2 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-accent"
         >
+          {/* The supplied logo is a wide wordmark (450x162) on solid black.
+              Kept at its native aspect ratio — cropping it to a square/circle
+              slices the lettering apart — and left black-backed so it sits
+              naturally on the near-black nav. */}
           <Image
-            src="/images/logo.jpg"
+            src={assetPath("/images/logo.jpg")}
             alt="Alcon"
-            width={40}
-            height={40}
+            width={450}
+            height={162}
             priority
-            className="h-9 w-9 rounded-full object-cover"
+            className="h-8 w-auto object-contain"
           />
           <span className="sr-only">Alcon — Creative Intelligence, home</span>
         </Link>

@@ -10,10 +10,18 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   webServer: {
-    command: "npm run start -- -p 3100",
+    // The app is a static export (next.config.ts `output: "export"`), so
+    // there is no `next start` server — tests run against the built `out/`
+    // directory the same way a static host serves it. Built without a
+    // basePath so routes sit at the root here; the Pages deploy adds one.
+    // NOTE: no `-s` flag. That is `serve`'s single-page-app mode, which
+    // rewrites every path to index.html — /services would silently return
+    // the homepage and unknown paths would 200 instead of 404, hiding real
+    // routing bugs. Plain static serving matches how GitHub Pages behaves.
+    command: "npm run build && npx --yes serve out -l 3100",
     url: "http://localhost:3100",
-    reuseExistingServer: true,
-    timeout: 60_000,
+    reuseExistingServer: !process.env.CI,
+    timeout: 180_000,
   },
   // NOTE: this sandbox can only reach the pre-installed Chromium build (see
   // docs/performance-report.md "Testing limitations") — WebKit and Firefox

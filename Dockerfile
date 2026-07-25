@@ -1,39 +1,27 @@
-# syntax=docker/dockerfile:1
+# Builds the static export and serves it with nginx.
+#
+# The app is a static site (next.config.ts `output: "export"`), so there is
+# no Node server at runtime — this image is just nginx over the built HTML.
+# Use it for self-hosting; GitHub Pages uses .github/workflows/deploy-pages.yml
+# instead.
 
-FROM node:22-alpine AS base
-
-# ---- deps: install dependencies only (cached separately from source) ----
-FROM base AS deps
+FROM node:22-alpine AS builder
 WORKDIR /app
+
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# ---- builder: build the Next.js app ----
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# No base path: this image serves the site from the domain root. Pass
+# --build-arg FORM_ENDPOINT=... to wire the quote form to a form service.
+ARG FORM_ENDPOINT=""
+ARG SITE_URL=""
+ENV NEXT_PUBLIC_FORM_ENDPOINT=$FORM_ENDPOINT
+ENV NEXT_PUBLIC_SITE_URL=$SITE_URL
 RUN npm run build
 
-# ---- runner: minimal production image ----
-FROM base AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-
-RUN addgroup --system --gid 1001 nodejs \
-  && adduser --system --uid 1001 nextjs
-
-# `output: "standalone"` (next.config.ts) traces only the files the server
-# actually needs, so this is the full runtime — no node_modules copy needed.
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-USER nextjs
-EXPOSE 3000
-ENV PORT=3000
-ENV HOSTNAME=0.0.0.0
-
-CMD ["node", "server.js"]
+FROM nginx:1.27-alpine AS runner
+COPY --from=builder /app/out /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80

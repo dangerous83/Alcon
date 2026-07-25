@@ -1,23 +1,83 @@
 {
-  "generatedFrom": "brief route list + implemented app routes (no live crawl — see docs/site-audit.md)",
+  "generatedFrom": "brief route list + implemented app routes (no live crawl \u2014 see docs/site-audit.md)",
   "routes": [
-    { "path": "/", "status": "implemented", "type": "static" },
-    { "path": "/services", "status": "implemented", "type": "static" },
-    { "path": "/services/branding", "status": "implemented", "type": "static (generateStaticParams)" },
-    { "path": "/services/motion", "status": "implemented", "type": "static (generateStaticParams)" },
-    { "path": "/services/editing", "status": "implemented", "type": "static (generateStaticParams)" },
-    { "path": "/services/social", "status": "implemented", "type": "static (generateStaticParams)" },
-    { "path": "/services/tutorials", "status": "implemented", "type": "static (generateStaticParams)" },
-    { "path": "/client-projects", "status": "implemented", "type": "static" },
-    { "path": "/blog", "status": "implemented", "type": "static" },
-    { "path": "/blog/building-brand-systems-that-scale", "status": "implemented", "type": "static (generateStaticParams)" },
-    { "path": "/blog/motion-as-a-brand-asset", "status": "implemented", "type": "static (generateStaticParams)" },
-    { "path": "/get-quote", "status": "implemented", "type": "static + client form" },
-    { "path": "/api/quote", "status": "implemented", "type": "dynamic API route (POST)" },
-    { "path": "/sitemap.xml", "status": "implemented", "type": "generated" },
-    { "path": "/robots.txt", "status": "implemented", "type": "generated" },
-    { "path": "/404", "status": "implemented", "type": "not-found boundary" }
+    {
+      "path": "/",
+      "status": "implemented",
+      "type": "static"
+    },
+    {
+      "path": "/services",
+      "status": "implemented",
+      "type": "static"
+    },
+    {
+      "path": "/services/branding",
+      "status": "implemented",
+      "type": "static (generateStaticParams)"
+    },
+    {
+      "path": "/services/motion",
+      "status": "implemented",
+      "type": "static (generateStaticParams)"
+    },
+    {
+      "path": "/services/editing",
+      "status": "implemented",
+      "type": "static (generateStaticParams)"
+    },
+    {
+      "path": "/services/social",
+      "status": "implemented",
+      "type": "static (generateStaticParams)"
+    },
+    {
+      "path": "/services/tutorials",
+      "status": "implemented",
+      "type": "static (generateStaticParams)"
+    },
+    {
+      "path": "/client-projects",
+      "status": "implemented",
+      "type": "static"
+    },
+    {
+      "path": "/blog",
+      "status": "implemented",
+      "type": "static"
+    },
+    {
+      "path": "/blog/building-brand-systems-that-scale",
+      "status": "implemented",
+      "type": "static (generateStaticParams)"
+    },
+    {
+      "path": "/blog/motion-as-a-brand-asset",
+      "status": "implemented",
+      "type": "static (generateStaticParams)"
+    },
+    {
+      "path": "/get-quote",
+      "status": "implemented",
+      "type": "static + client form (posts to external endpoint)"
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": "implemented",
+      "type": "generated"
+    },
+    {
+      "path": "/robots.txt",
+      "status": "implemented",
+      "type": "generated"
+    },
+    {
+      "path": "/404",
+      "status": "implemented",
+      "type": "not-found boundary"
+    }
   ],
   "discoveredFromLiveSite": [],
-  "note": "The live site's actual route list could not be discovered because alcon-online.site was unreachable from this build environment. Routes above are the ones named explicitly in the project brief. Re-run a crawl once access exists and diff against this file."
+  "note": "The live site's actual route list could not be discovered because alcon-online.site was unreachable from this build environment. Routes above are the ones named explicitly in the project brief. Re-run a crawl once access exists and diff against this file. The /api/quote route was removed when the app was converted to a static export; see README 'Form configuration'.",
+  "buildMode": "static export (next.config.ts output: \"export\") \u2014 deployed to GitHub Pages via .github/workflows/deploy-pages.yml"
 }

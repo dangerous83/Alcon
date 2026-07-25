@@ -4,13 +4,13 @@ test("desktop primary navigation links work", async ({ page, viewport }) => {
   test.skip(!!(viewport && viewport.width < 768), "desktop-only test");
   await page.goto("/");
   await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Services" }).click();
-  await expect(page).toHaveURL(/\/services$/);
+  await expect(page).toHaveURL(/\/services\/?$/);
 
   await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Work" }).click();
-  await expect(page).toHaveURL(/\/client-projects$/);
+  await expect(page).toHaveURL(/\/client-projects\/?$/);
 
   await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Journal" }).click();
-  await expect(page).toHaveURL(/\/blog$/);
+  await expect(page).toHaveURL(/\/blog\/?$/);
 });
 
 test("mobile menu opens and navigates", async ({ page, isMobile, viewport }) => {
@@ -21,7 +21,7 @@ test("mobile menu opens and navigates", async ({ page, isMobile, viewport }) => 
   const mobileMenu = page.locator("#mobile-menu");
   await expect(mobileMenu).toBeVisible();
   await mobileMenu.getByRole("link", { name: "Get a Quote" }).click();
-  await expect(page).toHaveURL(/\/get-quote$/);
+  await expect(page).toHaveURL(/\/get-quote\/?$/);
 });
 
 test("hero primary CTA goes to /get-quote and secondary to /client-projects", async ({
@@ -29,10 +29,10 @@ test("hero primary CTA goes to /get-quote and secondary to /client-projects", as
 }) => {
   await page.goto("/");
   const primary = page.getByRole("link", { name: "Start a Project" }).first();
-  await expect(primary).toHaveAttribute("href", "/get-quote");
+  await expect(primary).toHaveAttribute("href", /\/get-quote\/?$/);
 
   const secondary = page.getByRole("link", { name: "Explore Our Work" }).first();
-  await expect(secondary).toHaveAttribute("href", "/client-projects");
+  await expect(secondary).toHaveAttribute("href", /\/client-projects\/?$/);
 });
 
 test("footer links are not broken", async ({ page, request }) => {

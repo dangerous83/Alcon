@@ -188,7 +188,10 @@ export function ScrollVideoHero() {
 
         {/* mx-auto matches the header's container, so the copy column starts
             on the same vertical line as the logo. */}
-        <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col justify-end px-4 pb-20 sm:px-6 sm:pb-28 lg:px-8">
+        {/* mx-auto matches the header's container, so the copy column starts
+            on the same vertical line as the logo. justify-center sits the
+            copy on the optical middle of the frame. */}
+        <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-4 py-24 sm:px-6 lg:px-8">
           <div aria-hidden className="max-w-xl">
             {heroChapters.map((chapter, index) => (
               <div
@@ -203,17 +206,25 @@ export function ScrollVideoHero() {
                 <p className="font-heading text-xs font-medium uppercase tracking-[0.2em] text-cyan-accent">
                   {chapter.eyebrow}
                 </p>
-                <p className="mt-4 font-heading text-3xl font-medium leading-[1.1] text-text-primary sm:text-4xl lg:text-5xl">
-                  {chapter.heading}
+                <p className="mt-5 font-heading text-4xl font-bold leading-[1.05] tracking-tight text-text-primary sm:text-5xl lg:text-6xl">
+                  {chapter.heading.map((segment, i) =>
+                    segment.emphasis ? (
+                      <em key={i} className="heading-accent">
+                        {segment.text}
+                      </em>
+                    ) : (
+                      <span key={i}>{segment.text}</span>
+                    )
+                  )}
                 </p>
-                <p className="mt-4 max-w-lg text-base text-text-secondary sm:text-lg">
+                <p className="mt-5 max-w-lg text-base text-text-secondary sm:text-lg">
                   {chapter.paragraph}
                 </p>
               </div>
             ))}
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          <div className="mt-9 flex flex-wrap items-center gap-4">
             <Button href={heroCtas.primary.href} size="lg">
               {heroCtas.primary.label}
             </Button>
@@ -221,12 +232,19 @@ export function ScrollVideoHero() {
               {heroCtas.secondary.label}
             </Button>
           </div>
+        </div>
 
-          <div className="mt-10 flex items-center gap-4" aria-hidden>
+        {/* Chapter meta pinned to the bottom of the frame so centring the
+            copy doesn't drag the progress indicator up with it. */}
+        <div
+          className="absolute inset-x-0 bottom-8 z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8"
+          aria-hidden
+        >
+          <div className="flex items-center gap-4">
             <span className="font-mono text-xs text-text-secondary">
               0{activeChapter + 1} / 03
             </span>
-            <div className="h-px w-32 flex-1 max-w-40 bg-white/15">
+            <div className="h-px w-32 max-w-40 flex-1 bg-white/15">
               <div
                 ref={progressFillRef}
                 className="h-full w-full origin-left bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)]"
@@ -256,7 +274,7 @@ export function ScrollVideoHero() {
 function StaticHero() {
   const first = heroChapters[0];
   return (
-    <section className="relative flex min-h-[100svh] w-full items-end overflow-hidden bg-background">
+    <section className="relative flex min-h-[100svh] w-full items-center overflow-hidden bg-background">
       <div
         aria-hidden
         className="absolute inset-0 bg-cover bg-center"
@@ -266,18 +284,26 @@ function StaticHero() {
         aria-hidden
         className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-background/85 via-background/35 to-transparent sm:w-[70%]"
       />
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-20 sm:px-6 sm:pb-28 lg:px-8">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
         <div className="max-w-xl">
-        <p className="font-heading text-xs font-medium uppercase tracking-[0.2em] text-cyan-accent">
-          {first.eyebrow}
-        </p>
-        <h1 className="mt-4 font-heading text-3xl font-medium leading-[1.1] text-text-primary sm:text-4xl lg:text-5xl">
-          {first.heading}
-        </h1>
-        <p className="mt-4 max-w-lg text-base text-text-secondary sm:text-lg">
-          {first.paragraph}
-        </p>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          <p className="font-heading text-xs font-medium uppercase tracking-[0.2em] text-cyan-accent">
+            {first.eyebrow}
+          </p>
+          <h1 className="mt-5 font-heading text-4xl font-bold leading-[1.05] tracking-tight text-text-primary sm:text-5xl lg:text-6xl">
+            {first.heading.map((segment, i) =>
+              segment.emphasis ? (
+                <em key={i} className="heading-accent">
+                  {segment.text}
+                </em>
+              ) : (
+                <span key={i}>{segment.text}</span>
+              )
+            )}
+          </h1>
+          <p className="mt-5 max-w-lg text-base text-text-secondary sm:text-lg">
+            {first.paragraph}
+          </p>
+          <div className="mt-9 flex flex-wrap items-center gap-4">
             <Button href="/get-quote" size="lg">
               Start a Project
             </Button>

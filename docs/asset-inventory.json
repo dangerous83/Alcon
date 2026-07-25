@@ -2,37 +2,39 @@
   "video": [
     {
       "path": "public/video/hero-scroll.mp4",
-      "source": "client-supplied (repo upload, originally referenced via a Cloudinary URL blocked by network policy)",
+      "source": "client-supplied (repo upload) \u2014 this file is the original hero clip concatenated with a second client-supplied clip (\"scroll scrubbed 2.mp4\") that continues the same scroll-scrub into a front-view close-up of the brain, ending where the interactive reveal panel picks up.",
       "purpose": "scroll-scrubbed hero, desktop/tablet",
       "resolution": "1920x1080",
-      "durationSeconds": 15.08,
-      "sizeBytes": 16889582,
-      "optimization": "re-encoded H.264 ALL-INTRA (-g 1: every frame a keyframe), crf24, faststart, audio removed. All-intra makes an arbitrary seek a single-frame decode instead of decoding forward from the previous keyframe, which is what makes scroll-scrubbing feel smooth."
+      "durationSeconds": 21.08,
+      "sizeBytes": 25268816,
+      "optimization": "re-encoded H.264 ALL-INTRA (-g 1: every frame a keyframe), crf24, faststart, audio removed. The two clips were re-encoded to identical codec parameters and joined with an ffmpeg concat filter before this final all-intra pass, so every frame across the full merged timeline \u2014 not just each original clip \u2014 is independently seekable. All-intra makes an arbitrary seek a single-frame decode instead of decoding forward from the previous keyframe, which is what makes scroll-scrubbing feel smooth."
     },
     {
       "path": "public/video/hero-scroll-mobile.mp4",
-      "source": "derived from the same client-supplied video",
+      "source": "client-supplied (repo upload) \u2014 this file is the original hero clip concatenated with a second client-supplied clip (\"scroll scrubbed 2.mp4\") that continues the same scroll-scrub into a front-view close-up of the brain, ending where the interactive reveal panel picks up.",
       "purpose": "scroll-scrubbed hero, mobile (<768px)",
       "resolution": "960px wide, aspect preserved",
-      "durationSeconds": 15.08,
-      "sizeBytes": 5438155,
+      "durationSeconds": 21.08,
+      "sizeBytes": 8252122,
       "optimization": "re-encoded H.264 all-intra (-g 1), crf25, faststart, audio removed."
     },
     {
       "path": "public/video/hero-scroll.webm",
-      "source": "derived from the same client-supplied video",
+      "source": "client-supplied (repo upload) \u2014 this file is the original hero clip concatenated with a second client-supplied clip (\"scroll scrubbed 2.mp4\") that continues the same scroll-scrub into a front-view close-up of the brain, ending where the interactive reveal panel picks up.",
       "purpose": "codec fallback only for browsers without H.264 (listed AFTER the mp4 sources)",
       "resolution": "1280px wide",
-      "sizeBytes": 15733457,
-      "optimization": "VP9 all-intra crf40. VP9 compresses intra-only poorly, so this is larger than the 1080p H.264 despite lower resolution \u2014 hence mp4-first source ordering."
+      "sizeBytes": 24569487,
+      "optimization": "VP9 all-intra crf40. VP9 compresses intra-only poorly, so this is larger than the 1080p H.264 despite lower resolution \u2014 hence mp4-first source ordering.",
+      "durationSeconds": 21.08
     },
     {
       "path": "public/video/hero-scroll-mobile.webm",
-      "source": "derived from the same client-supplied video",
+      "source": "client-supplied (repo upload) \u2014 this file is the original hero clip concatenated with a second client-supplied clip (\"scroll scrubbed 2.mp4\") that continues the same scroll-scrub into a front-view close-up of the brain, ending where the interactive reveal panel picks up.",
       "purpose": "mobile codec fallback",
       "resolution": "960px wide",
-      "sizeBytes": 8732358,
-      "optimization": "VP9 all-intra crf44."
+      "sizeBytes": 13956801,
+      "optimization": "VP9 all-intra crf44.",
+      "durationSeconds": 21.08
     }
   ],
   "images": [

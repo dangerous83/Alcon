@@ -130,13 +130,38 @@ test.describe("scroll-scrubbed hero", () => {
 
     await expect(page.getByText("01 / 03")).toBeVisible();
 
-    await scrollToFraction(page, 0.5); // ~7.5s into a 15s timeline -> chapter 2
+    // Total scrubbed timeline is now ~21.08s (video1 chapters + the
+    // "continue" clip). Chapters only span the first ~15.04s, so fractions
+    // are scaled down from the old 15s-only test to land inside that range.
+    await scrollToFraction(page, 0.35); // ~7.4s -> chapter 2
     await page.waitForTimeout(700);
     await expect(page.getByText("02 / 03")).toBeVisible();
 
-    await scrollToFraction(page, 0.95); // near the end -> chapter 3
+    await scrollToFraction(page, 0.67); // ~14.1s -> chapter 3, still phase A
     await page.waitForTimeout(700);
     await expect(page.getByText("03 / 03")).toBeVisible();
+  });
+
+  test("chapter copy fades out during the silent phase-B zoom into the brain", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await waitForVideoReady(page);
+
+    const column = page.getByTestId("hero-chapter-copy");
+
+    await expect(page.locator(".heading-accent").first()).toBeVisible();
+    await expect
+      .poll(() => column.evaluate((el) => getComputedStyle(el).opacity))
+      .toBe("1");
+
+    // Past the video1/video2 seam (~15.04s of ~21.08s -> ~0.72 fraction).
+    await scrollToFraction(page, 0.9);
+    await page.waitForTimeout(700);
+
+    await expect
+      .poll(() => column.evaluate((el) => getComputedStyle(el).opacity))
+      .toBe("0");
   });
 });
 

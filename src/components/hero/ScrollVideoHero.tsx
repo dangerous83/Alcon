@@ -9,23 +9,29 @@ import { Button } from "@/components/ui/Button";
 import { clsx } from "@/lib/clsx";
 import { assetPath } from "@/lib/asset-path";
 
-// Video is now two scroll-scrubbed clips concatenated into one file: the
-// original ~15.04s chapter loop, seamlessly followed by a ~6.04s "continue"
-// clip that zooms into a front-on brain close-up. VIDEO1_END is that seam —
-// past it we're in "phase B", where chapter copy fades out and the frame
-// plays silently into the reveal panel below.
-const VIDEO1_END = 15.041667;
-const VIDEO_DURATION_FALLBACK = 21.083333;
+// One file, three scroll-scrubbed clips concatenated seamlessly:
+//
+//   0 .......... 15.04s   chapter loop (three headlines)
+//   15.04s ..... 21.08s   zoom out to a front-on brain close-up
+//   21.08s ..... 27.38s   the brain wires up and Dubai appears inside it
+//
+// CLIP1_END is where the chapter copy fades out ("phase B"). CLIP2_END is
+// where the scrub settles on the centred front-view brain — that frame is
+// the gate: the HUD sits on it and the page holds there. The third clip is
+// the payoff *behind* Continue Journey, so the button earns its name rather
+// than just jumping to the next section.
+const CLIP1_END = 15.041667;
+const CLIP2_END = 21.083333;
+const VIDEO_DURATION_FALLBACK = 27.375;
 // The source is encoded all-intra (every frame a keyframe), so seeking is a
 // single-frame decode rather than a decode-forward from the last keyframe.
 // That makes a snappier follow factor affordable without stutter.
 const SMOOTHING = 0.22;
 // Roughly a quarter-frame at 24fps — below this a seek isn't visible.
 const SEEK_EPSILON = 0.01;
-// Scroll progress at which the scrub has settled on the front-view brain and
-// the HUD reveal takes over. Slightly short of 1 so the panel is already
-// there by the time the pin releases, rather than popping in at the seam.
-const REVEAL_AT = 0.94;
+// How much video before the gate the HUD starts easing in, so it is fully
+// up by the time the scrub settles rather than popping in on arrival.
+const REVEAL_LEAD_SECONDS = 1.6;
 const FORWARD_KEYS = new Set(["ArrowDown", "PageDown", " ", "Spacebar", "End"]);
 
 export function ScrollVideoHero() {
@@ -35,6 +41,11 @@ export function ScrollVideoHero() {
   // Mirrors `confirmed` for the scroll clamp, which needs the released state
   // synchronously rather than on the next render.
   const confirmedRef = useRef(false);
+  // Fraction of the pin range the gate holds at — the CLIP2_END frame rather
+  // than the end of the scrub, since clip 3 plays only after Continue
+  // Journey. Derived from the real duration once metadata lands; seeded from
+  // the fallback so the clamp is never wrong-but-active on first paint.
+  const gateProgressRef = useRef(CLIP2_END / VIDEO_DURATION_FALLBACK);
 
   const [activeChapter, setActiveChapter] = useState(0);
   const [started, setStarted] = useState(false);
@@ -83,6 +94,14 @@ export function ScrollVideoHero() {
           ? video!.duration
           : VIDEO_DURATION_FALLBACK;
 
+      // Derived from the real duration so the gate lands on the right frame
+      // even if the encode's length shifts by a frame or two.
+      gateProgressRef.current = Math.min(1, CLIP2_END / duration);
+      const revealAt = Math.max(
+        0,
+        (CLIP2_END - REVEAL_LEAD_SECONDS) / duration
+      );
+
       scrollTrigger = ScrollTrigger.create({
         trigger: wrapper,
         start: "top top",
@@ -107,13 +126,13 @@ export function ScrollVideoHero() {
             setActiveChapter(chapterIdx);
           }
 
-          const isPhaseB = timeInSeconds >= VIDEO1_END;
+          const isPhaseB = timeInSeconds >= CLIP1_END;
           if (isPhaseB !== lastPhaseB) {
             lastPhaseB = isPhaseB;
             setPhaseB(isPhaseB);
           }
 
-          const isRevealed = progress >= REVEAL_AT;
+          const isRevealed = progress >= revealAt;
           if (isRevealed !== lastRevealed) {
             lastRevealed = isRevealed;
             setRevealed(isRevealed);
@@ -171,10 +190,13 @@ export function ScrollVideoHero() {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
 
-    // End of the pin range — the last frame of the scrub. Recomputed per
-    // call so viewport resizes don't strand the limit at a stale value.
+    // The gate frame's scroll position — where the scrub settles on the
+    // centred brain, not the end of the pin. Everything past it is clip 3,
+    // which is reserved for after Continue Journey. Recomputed per call so
+    // viewport resizes don't strand the limit at a stale value.
     const gateMax = () =>
-      wrapper.offsetTop + wrapper.offsetHeight - window.innerHeight;
+      wrapper.offsetTop +
+      (wrapper.offsetHeight - window.innerHeight) * gateProgressRef.current;
 
     function clamp() {
       if (confirmedRef.current) return;
@@ -237,11 +259,12 @@ export function ScrollVideoHero() {
     setConfirmed(true);
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
-    // Land just past the pin so the next section starts at the top of the
-    // frame rather than mid-release.
+    // Scroll to the end of the pin, not past it: that span is clip 3, so
+    // this scrubs the Dubai reveal as the payoff for clicking. The user is
+    // left on the last frame and scrolls onward themselves.
     requestAnimationFrame(() => {
       window.scrollTo({
-        top: wrapper.offsetTop + wrapper.offsetHeight,
+        top: wrapper.offsetTop + wrapper.offsetHeight - window.innerHeight,
         behavior: "smooth",
       });
     });
@@ -259,7 +282,10 @@ export function ScrollVideoHero() {
   return (
     <section
       ref={wrapperRef}
-      className="relative h-[392vh] lg:h-[476vh]"
+      /* Height stays proportional to the scrub's length (~18.6vh per second
+         of video, ~22.6vh at lg) so scroll speed feels unchanged as clips
+         are appended. */
+      className="relative h-[510vh] lg:h-[620vh]"
       aria-label="Alcon — Creative Intelligence"
     >
       <h1 className="sr-only">{heroSummary}</h1>
@@ -409,7 +435,9 @@ export function ScrollVideoHero() {
             their own translucent black backing plus a backdrop blur, so they
             stay legible on their own — a full-frame wash on top of that only
             dimmed the brain, which is the thing worth looking at here. */}
-        <HeroReveal visible={revealed} onContinue={handleContinue} />
+        {/* Hidden again once confirmed, so clip 3's Dubai reveal plays with
+            a clear frame instead of under the readout. */}
+        <HeroReveal visible={revealed && !confirmed} onContinue={handleContinue} />
       </div>
     </section>
   );

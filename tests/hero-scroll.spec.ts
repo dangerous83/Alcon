@@ -130,14 +130,14 @@ test.describe("scroll-scrubbed hero", () => {
 
     await expect(page.getByText("01 / 03")).toBeVisible();
 
-    // Total scrubbed timeline is now ~21.08s (video1 chapters + the
-    // "continue" clip). Chapters only span the first ~15.04s, so fractions
-    // are scaled down from the old 15s-only test to land inside that range.
-    await scrollToFraction(page, 0.35); // ~7.4s -> chapter 2
+    // Total scrubbed timeline is ~27.38s across three concatenated clips.
+    // Chapters only span the first ~15.04s, so fractions are scaled against
+    // the full length to land inside that range.
+    await scrollToFraction(page, 0.27); // ~7.4s -> chapter 2
     await page.waitForTimeout(700);
     await expect(page.getByText("02 / 03")).toBeVisible();
 
-    await scrollToFraction(page, 0.67); // ~14.1s -> chapter 3, still phase A
+    await scrollToFraction(page, 0.47); // ~12.9s -> chapter 3, still phase A
     await page.waitForTimeout(700);
     await expect(page.getByText("03 / 03")).toBeVisible();
   });
@@ -155,8 +155,9 @@ test.describe("scroll-scrubbed hero", () => {
       .poll(() => column.evaluate((el) => getComputedStyle(el).opacity))
       .toBe("1");
 
-    // Past the video1/video2 seam (~15.04s of ~21.08s -> ~0.72 fraction).
-    await scrollToFraction(page, 0.9);
+    // Past the clip1/clip2 seam (~15.04s of ~27.38s -> ~0.55) but short of
+    // the gate at ~0.77, so the clamp doesn't move us before we measure.
+    await scrollToFraction(page, 0.70);
     await page.waitForTimeout(700);
 
     await expect

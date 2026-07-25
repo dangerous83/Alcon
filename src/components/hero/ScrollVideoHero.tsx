@@ -203,16 +203,12 @@ export function ScrollVideoHero() {
         {!videoFailed ? (
           <video
             ref={videoRef}
-            className={clsx(
-              "absolute inset-0 h-full w-full object-cover [object-position:65%_center] transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] sm:[object-position:center]",
-              // Clip 3 settles the frame down and to the left. object-cover
-              // crops the sides on any viewport narrower than 16:9, which
-              // pushes the brain across the middle and under the copy; scaling
-              // it back lets the whole composition breathe and clears the
-              // right half for the statement. Desktop only — below lg the copy
-              // is full-width, so there is nothing to make room for.
-              phaseC ? "lg:scale-[0.66] lg:-translate-x-[22%]" : "lg:scale-100"
-            )}
+            // Full-bleed at every phase. An earlier pass scaled the frame down
+            // during clip 3 to clear room for the statement, but scaling a
+            // 16:9 video inside a wider viewport letterboxes it — black bands
+            // top and bottom. The copy is kept short enough to sit in the
+            // space beside the brain instead.
+            className="absolute inset-0 h-full w-full object-cover [object-position:65%_center] sm:[object-position:center]"
             muted
             playsInline
             preload="auto"
@@ -368,14 +364,24 @@ export function ScrollVideoHero() {
             phaseC ? "opacity-100" : "opacity-0"
           )}
         >
-          {/* Capped width, not just a half-width column: at ~1900px a
-              half-width column is still ~900px, so the heading sprawled
-              almost to the right edge. max-w-xl keeps it a contained block
-              of copy at any viewport, and mr-auto anchors it to the left of
-              the right half so it stays put as the window widens rather
-              than drifting further out. */}
-          <div className="ml-auto w-full px-6 sm:px-10 lg:w-1/2 lg:pl-4 lg:pr-10">
-            <PositioningCopy className="mr-auto max-w-xl" />
+          {/* Legibility scrim behind the copy only — a narrow gradient off
+              the right edge, the mirror of the one the chapter copy uses on
+              the left. Needed because the video is full-bleed: below ~16:9
+              object-cover crops the sides and the brain reaches ~75% of the
+              width, so the copy unavoidably overlaps its edge. A full-frame
+              wash would dim the whole brain; this only shades the corner the
+              text sits in. */}
+          <div
+            aria-hidden
+            className="absolute inset-y-0 right-0 w-full bg-gradient-to-l from-background/95 via-background/60 to-transparent lg:w-[55%]"
+          />
+
+          {/* Anchored to the right edge and capped, because the video is
+              full-bleed: the brain fills roughly the left three-quarters of
+              the frame, so this lives in the remainder rather than in a
+              nominal "right half" that would sit well inside the artwork. */}
+          <div className="relative ml-auto w-full px-6 sm:px-10 lg:w-[38%] lg:pl-0 lg:pr-12 xl:w-1/3">
+            <PositioningCopy className="ml-auto max-w-sm xl:max-w-md" />
           </div>
         </div>
       </div>

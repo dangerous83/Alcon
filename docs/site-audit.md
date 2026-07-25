@@ -100,7 +100,26 @@ first clip (`-g 1 -keyint_min 1 -sc_threshold 0 -crf 24 -preset slow
 -pix_fmt yuv420p`), then joined to `hero-scroll.mp4` with an ffmpeg
 `concat` filter (matching codec params end to end, so every frame across
 the ~21.08s merged timeline is independently seekable, not just each half).
-`public/video/hero-scroll*.{mp4,webm}` now contain the merged, ~21.08s
+### Third clip merged in (`scroll scrubbed 3.mp4`)
+
+A third clip (1920×1080, H.264, 24fps, 6.29s, again a repo upload) extends
+the scrub once more. It starts on the same front-view brain the second clip
+ends on, then wires the brain up and reveals the Dubai skyline inside it.
+Same treatment: re-encoded all-intra to identical parameters, audio
+stripped, joined with an ffmpeg `concat` filter. Verified all 657 frames of
+the ~27.38s result are keyframes, and the seam at 21.08s is visually
+continuous.
+
+This clip is deliberately *not* reachable by scrolling. The gate holds the
+page at the clip2/clip3 boundary (~21.08s, progress ~0.77 of the pin
+range), which is where the HUD sits; clip 3 scrubs only after Continue
+Journey is clicked, so the button delivers the payoff instead of merely
+skipping to the next section. `ScrollVideoHero` derives that gate position
+from the live video duration rather than a hard-coded fraction, so
+appending a fourth clip only means updating `CLIP2_END` and the wrapper
+height.
+
+`public/video/hero-scroll*.{mp4,webm}` now contain the merged, ~27.38s
 timeline — see `docs/asset-inventory.json` for exact file sizes.
 
 

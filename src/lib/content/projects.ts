@@ -1,7 +1,11 @@
-// PLACEHOLDER CONTENT — see src/lib/content/site.ts header.
-// No client names, metrics, or testimonials are invented here — entries are
-// generic "selected work" placeholders until real project data is migrated
-// from alcon-online.site/client-projects.
+// Featured project slots.
+//
+// These are deliberately-empty placeholder cards, designed to be filled
+// in with real project work as it is added. Copy is honest about that:
+// each slot names the discipline it will host and reads as "slot pending
+// upload", not as a fabricated case study. Swap the summary and hook up a
+// real image asset in FeaturedProjects.tsx / the /client-projects page
+// when the project is ready to publish.
 
 export type Project = {
   slug: string;
@@ -9,6 +13,12 @@ export type Project = {
   category: (typeof projectCategories)[number]["slug"];
   summary: string;
   externalUrl?: string;
+  /**
+   * Marks the slot as an unfilled placeholder so the UI can render it as
+   * an "add project here" tile rather than pretending to be finished work.
+   * Set to false (or omit) once real content is in.
+   */
+  placeholder?: boolean;
 };
 
 export const projectCategories = [
@@ -20,31 +30,35 @@ export const projectCategories = [
 
 export const projects: Project[] = [
   {
-    slug: "selected-work-01",
-    title: "Selected Work — Identity System",
+    slug: "featured-slot-01",
+    title: "Featured Project Slot",
     category: "branding",
     summary:
-      "Placeholder entry pending migration of real project data, links, and media from the live client-projects page.",
+      "Reserved for a branding & identity case study — replace this entry with the client name, hero image, and outcome once the project is cleared to publish.",
+    placeholder: true,
   },
   {
-    slug: "selected-work-02",
-    title: "Selected Work — Campaign Motion",
+    slug: "featured-slot-02",
+    title: "Featured Project Slot",
     category: "motion",
     summary:
-      "Placeholder entry pending migration of real project data, links, and media from the live client-projects page.",
+      "Reserved for a motion or video advertising case study — replace this entry with the client name, hero image, and outcome once the project is cleared to publish.",
+    placeholder: true,
   },
   {
-    slug: "selected-work-03",
-    title: "Selected Work — Brand Film Edit",
+    slug: "featured-slot-03",
+    title: "Featured Project Slot",
     category: "editing",
     summary:
-      "Placeholder entry pending migration of real project data, links, and media from the live client-projects page.",
+      "Reserved for a post-production or brand film case study — replace this entry with the client name, hero image, and outcome once the project is cleared to publish.",
+    placeholder: true,
   },
   {
-    slug: "selected-work-04",
-    title: "Selected Work — Social Content System",
+    slug: "featured-slot-04",
+    title: "Featured Project Slot",
     category: "social",
     summary:
-      "Placeholder entry pending migration of real project data, links, and media from the live client-projects page.",
+      "Reserved for a social marketing or paid campaign case study — replace this entry with the client name, hero image, and outcome once the project is cleared to publish.",
+    placeholder: true,
   },
 ];

@@ -49,8 +49,12 @@ export default async function ServicePage({
   if (!service) notFound();
 
   const related = services.filter((s) => s.slug !== service.slug).slice(0, 3);
+  // Related work only shows once real (non-placeholder) projects exist —
+  // otherwise the section would be a grid of empty slots on every service
+  // detail page, which reads as unfinished. Placeholder tiles live on the
+  // Portfolio and Client Projects pages where they read intentionally.
   const relatedProjects = projects.filter(
-    (project) => project.category === service.slug
+    (project) => project.category === service.slug && !project.placeholder
   );
 
   return (
@@ -128,7 +132,7 @@ export default async function ServicePage({
             </div>
           ) : (
             <MediaFrame
-              label={`${service.name} — placeholder visual`}
+              label={`${service.name} — hero image slot`}
               ratio="4/5"
             />
           )}

@@ -124,9 +124,9 @@ export function ClientsMegaMenu({
   return (
     <div
       data-testid="clients-mega-menu"
-      className="w-[min(40rem,calc(100vw-2rem))] overflow-hidden rounded-[7px] border border-border bg-surface-elevated/98 shadow-[0_30px_70px_-25px_rgba(0,0,0,0.9)] backdrop-blur"
+      className="w-[min(52rem,calc(100vw-2rem))] overflow-hidden rounded-[7px] border border-border bg-surface-elevated/98 shadow-[0_30px_70px_-25px_rgba(0,0,0,0.9)] backdrop-blur"
     >
-      <div className="grid gap-8 p-6 sm:grid-cols-2 sm:gap-6 sm:p-8">
+      <div className="grid gap-8 p-6 sm:grid-cols-2 sm:gap-8 sm:p-8">
         {columns.map((column) => (
           <div key={column.heading}>
             <div className="mb-4 flex items-center justify-between">
@@ -144,16 +144,18 @@ export function ClientsMegaMenu({
                 View all
               </Link>
             </div>
-            <ul className="max-h-72 space-y-0.5 overflow-y-auto pr-1">
+            {/* Two sub-columns so every link is visible at once — no
+                internal scroll — even at 9-10 items per section. */}
+            <ul className="grid grid-cols-2 gap-x-3 gap-y-0.5">
               {column.items.map((item) => (
                 <li key={item.label}>
                   <a
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center justify-between gap-2 rounded-[7px] px-2 py-2 text-sm text-text-secondary transition-colors hover:bg-white/[0.06] hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+                    className="group flex items-center justify-between gap-1.5 rounded-[7px] px-2 py-2 text-sm text-text-secondary transition-colors hover:bg-white/[0.06] hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
                   >
-                    {item.label}
+                    <span className="truncate">{item.label}</span>
                     <ExternalLink
                       size={12}
                       strokeWidth={1.75}

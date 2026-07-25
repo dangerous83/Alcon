@@ -163,12 +163,14 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
             />
           )}
 
-          {/* No scrim over the video. The button is centred in the frame and
-              fades out the moment playback starts, so nothing sits on top of
-              the clip while it runs. */}
+          {/* No scrim over the video. The button sits just below the brain —
+              low enough to clear the artwork at every aspect ratio, high
+              enough to still read as part of the composition — and fades out
+              the moment playback starts, so nothing sits on top of the clip
+              while it runs. */}
           <div
             className={clsx(
-              "absolute inset-0 z-10 flex items-center justify-center px-4",
+              "absolute inset-x-0 top-[70%] z-10 flex -translate-y-1/2 justify-center px-4",
               "transition-opacity duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
               phase === "idle"
                 ? "opacity-100"

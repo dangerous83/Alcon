@@ -33,9 +33,14 @@ const VIDEO_DURATION_FALLBACK = 27.375;
 // The source is encoded all-intra (every frame a keyframe), so seeking is a
 // single-frame decode rather than a decode-forward from the last keyframe.
 // That makes a snappier follow factor affordable without stutter.
-const SMOOTHING = 0.22;
+const SMOOTHING = 0.35;
 // Roughly a quarter-frame at 24fps — below this a seek isn't visible.
 const SEEK_EPSILON = 0.01;
+// Above this gap between target and smoothed time the ease is abandoned and
+// the video snaps to the target. On a fast flick the smoothing was leaving
+// the brain many frames behind the scroll position — visible as a laggy,
+// rubbery hero — while seeks queued up chasing stale positions.
+const SNAP_DELTA_SECONDS = 0.6;
 // How much video before CLIP2_END the HUD starts easing in. Generous enough
 // that the readout gets a real stretch of scroll to itself before the
 // positioning statement takes over at the seam, rather than flashing past.
@@ -163,19 +168,41 @@ export function ScrollVideoHero() {
         },
       });
 
+      // fastSeek, where supported, skips to the nearest keyframe without the
+      // full seek pipeline. The source is all-intra so every frame is a
+      // keyframe — this is effectively a direct jump.
+      const seekVideo = (t: number) => {
+        try {
+          const v = video!;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const anyV = v as any;
+          if (typeof anyV.fastSeek === "function") {
+            anyV.fastSeek(t);
+          } else {
+            v.currentTime = t;
+          }
+        } catch {
+          // ignore transient seek errors while metadata settles
+        }
+      };
+
       function tick() {
-        smoothedTime += (targetTime - smoothedTime) * SMOOTHING;
+        const delta = targetTime - smoothedTime;
+
+        if (Math.abs(delta) > SNAP_DELTA_SECONDS) {
+          // Fast scroll: abandon the ease so the frame catches up in one
+          // step instead of trailing the scroll position for many frames.
+          smoothedTime = targetTime;
+        } else {
+          smoothedTime += delta * SMOOTHING;
+        }
 
         // Only issue a seek when the previous one has completed. Assigning
         // currentTime while `seeking` is true queues requests faster than the
         // decoder retires them, which is the main cause of laggy, rubbery
         // scrubbing — the video ends up chasing a backlog of stale positions.
         if (!video!.seeking && Math.abs(smoothedTime - video!.currentTime) > SEEK_EPSILON) {
-          try {
-            video!.currentTime = smoothedTime;
-          } catch {
-            // ignore transient seek errors while metadata settles
-          }
+          seekVideo(smoothedTime);
         }
         rafId = requestAnimationFrame(tick);
       }

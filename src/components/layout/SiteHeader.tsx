@@ -4,7 +4,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Phone } from "lucide-react";
+import {
+  Phone,
+  Layers,
+  Briefcase,
+  Tag,
+  Users,
+  ArrowRight,
+  type LucideIcon,
+} from "lucide-react";
 import { navigation, topBanner } from "@/lib/content/site";
 import { clsx } from "@/lib/clsx";
 import { assetPath } from "@/lib/asset-path";
@@ -26,7 +34,20 @@ import {
 const linkBase =
   "relative rounded-[7px] px-3.5 py-2 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent";
 
+const navIcons: Record<string, LucideIcon> = {
+  layers: Layers,
+  briefcase: Briefcase,
+  tag: Tag,
+  users: Users,
+  "arrow-right": ArrowRight,
+};
+
 type NavItem = (typeof navigation)[number];
+
+function iconFor(item: NavItem): LucideIcon | null {
+  const key = "icon" in item ? item.icon : undefined;
+  return key ? (navIcons[key] ?? null) : null;
+}
 
 function hasChildren(
   item: NavItem
@@ -158,6 +179,8 @@ export function SiteHeader() {
               const menuOpen = openMenu === item.href;
               const mega = hasMega(item) ? item.mega : null;
 
+              const Icon = iconFor(item);
+
               if (!mega && !hasChildren(item)) {
                 return (
                   <li key={item.href}>
@@ -166,11 +189,13 @@ export function SiteHeader() {
                       aria-current={active ? "page" : undefined}
                       className={clsx(
                         linkBase,
+                        "inline-flex items-center gap-1.5",
                         active
                           ? "text-text-primary"
                           : "text-text-secondary hover:text-text-primary"
                       )}
                     >
+                      {Icon && <Icon size={14} strokeWidth={2} aria-hidden />}
                       {item.label}
                       {active && (
                         <span
@@ -208,6 +233,7 @@ export function SiteHeader() {
                         : "text-text-secondary hover:text-text-primary"
                     )}
                   >
+                    {Icon && <Icon size={14} strokeWidth={2} aria-hidden />}
                     {item.label}
                     <span
                       aria-hidden
@@ -279,9 +305,10 @@ export function SiteHeader() {
           {ctaLink && (
             <Link
               href={ctaLink.href}
-              className="hidden shrink-0 items-center rounded-[7px] bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)] px-5 py-2.5 text-sm font-heading font-medium text-text-primary transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent lg:inline-flex"
+              className="hidden shrink-0 items-center gap-1.5 rounded-[7px] bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)] px-5 py-2.5 text-sm font-heading font-medium text-text-primary transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent lg:inline-flex"
             >
               {ctaLink.label}
+              <ArrowRight size={14} strokeWidth={2.25} aria-hidden />
             </Link>
           )}
 
@@ -328,6 +355,7 @@ export function SiteHeader() {
                   ? portfolioMegaMenu.flatMap((c) => c.items)
                   : null;
             const expandable = Boolean(submenuItems);
+            const MobileIcon = iconFor(item);
 
             return (
               <li key={item.href}>
@@ -335,8 +363,11 @@ export function SiteHeader() {
                   <Link
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="min-h-11 flex-1 rounded-[7px] px-3 py-3 text-base font-medium text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+                    className="min-h-11 flex-1 inline-flex items-center gap-2 rounded-[7px] px-3 py-3 text-base font-medium text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
                   >
+                    {MobileIcon && (
+                      <MobileIcon size={16} strokeWidth={2} aria-hidden />
+                    )}
                     {item.label}
                   </Link>
                   {expandable && (

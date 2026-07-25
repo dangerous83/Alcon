@@ -51,20 +51,21 @@ export const siteConfig = {
  * sitemap so it is neither orphaned nor dropped from search.
  */
 export const navigation = [
-  { label: "Services", href: "/services", cta: false, mega: "services" },
-  { label: "Portfolio", href: "/portfolio", cta: false, mega: "portfolio" },
-  { label: "White Label", href: "/white-label", cta: false },
+  { label: "Services", href: "/services", cta: false, mega: "services", icon: "layers" },
+  { label: "Portfolio", href: "/portfolio", cta: false, mega: "portfolio", icon: "briefcase" },
+  { label: "White Label", href: "/white-label", cta: false, icon: "tag" },
   {
     label: "Clients",
     href: "/client-projects",
     cta: false,
     mega: "clients",
+    icon: "users",
     children: [
       { label: "Platform", href: "/client-projects/platform" },
       { label: "Website", href: "/client-projects/website" },
     ],
   },
-  { label: "Get a Quote", href: "/get-quote", cta: true },
+  { label: "Get a Quote", href: "/get-quote", cta: true, icon: "arrow-right" },
 ] as const;
 
 /**

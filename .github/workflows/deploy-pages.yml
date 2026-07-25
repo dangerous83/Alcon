@@ -46,13 +46,24 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
 
+      # Derive the URL path prefix from the actual Pages base URL.
+      # - github.io deploy: base_url = https://<user>.github.io/<repo>  -> /<repo>
+      # - custom domain:    base_url = https://example.com              -> "" (empty)
+      # Hardcoding /<repo> broke the site once a CNAME was attached: every
+      # asset URL became /<repo>/_next/... and 404'd on the custom domain,
+      # leaving only unstyled HTML text.
+      - name: Derive base path from Pages URL
+        id: basepath
+        run: |
+          url="${{ steps.pages.outputs.base_url }}"
+          path=$(printf '%s' "$url" | sed -E 's|^https?://[^/]+||; s|/$||')
+          echo "path=$path" >> "$GITHUB_OUTPUT"
+
       - name: Build static export
         env:
-          # The site is served from https://<user>.github.io/<repo>, so
-          # assets and links need the repo-name prefix. Delete this (and
-          # the basePath in next.config.ts picks up "") when moving to a
-          # custom domain served at the root.
-          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+          # Empty on a custom domain, /<repo> on github.io — whichever is
+          # actually correct for this deployment's URL.
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.basepath.outputs.path }}
           # Keeps canonical tags / sitemap / OG URLs pointing at where the
           # site actually lives. Replace with the real domain once one is
           # attached.

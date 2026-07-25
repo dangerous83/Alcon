@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { heroChapters, heroSummary, heroCtas } from "@/lib/content/hero";
+import { HeroReveal } from "@/components/hero/HeroReveal";
 import { Button } from "@/components/ui/Button";
 import { clsx } from "@/lib/clsx";
 import { assetPath } from "@/lib/asset-path";
@@ -21,6 +22,11 @@ const VIDEO_DURATION_FALLBACK = 21.083333;
 const SMOOTHING = 0.22;
 // Roughly a quarter-frame at 24fps — below this a seek isn't visible.
 const SEEK_EPSILON = 0.01;
+// Scroll progress at which the scrub has settled on the front-view brain and
+// the HUD reveal takes over. Slightly short of 1 so the panel is already
+// there by the time the pin releases, rather than popping in at the seam.
+const REVEAL_AT = 0.94;
+const FORWARD_KEYS = new Set(["ArrowDown", "PageDown", " ", "Spacebar", "End"]);
 
 export function ScrollVideoHero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -30,6 +36,8 @@ export function ScrollVideoHero() {
   const [activeChapter, setActiveChapter] = useState(0);
   const [started, setStarted] = useState(false);
   const [phaseB, setPhaseB] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
 
@@ -57,6 +65,7 @@ export function ScrollVideoHero() {
     let smoothedTime = 0;
     let lastChapterIndex = -1;
     let lastPhaseB = false;
+    let lastRevealed = false;
     let hasStarted = false;
 
     function computeChapterIndex(timeInSeconds: number) {
@@ -100,6 +109,12 @@ export function ScrollVideoHero() {
             lastPhaseB = isPhaseB;
             setPhaseB(isPhaseB);
           }
+
+          const isRevealed = progress >= REVEAL_AT;
+          if (isRevealed !== lastRevealed) {
+            lastRevealed = isRevealed;
+            setRevealed(isRevealed);
+          }
         },
       });
 
@@ -139,6 +154,56 @@ export function ScrollVideoHero() {
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, [reducedMotion, videoFailed]);
+
+  // The gate. Once the scrub has landed on the brain and the HUD is up,
+  // nothing advances past the hero until Continue Journey is clicked —
+  // scrolling back up stays free the whole time.
+  useEffect(() => {
+    if (reducedMotion !== false) return;
+    if (!revealed || confirmed) return;
+
+    let touchY: number | null = null;
+
+    function onWheel(e: WheelEvent) {
+      if (e.deltaY > 0) e.preventDefault();
+    }
+    function onTouchStart(e: TouchEvent) {
+      touchY = e.touches[0]?.clientY ?? null;
+    }
+    function onTouchMove(e: TouchEvent) {
+      if (touchY == null) return;
+      const currentY = e.touches[0]?.clientY ?? touchY;
+      if (touchY - currentY > 0) e.preventDefault(); // finger up = scrolling down
+    }
+    function onKeyDown(e: KeyboardEvent) {
+      if (FORWARD_KEYS.has(e.key)) e.preventDefault();
+    }
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [reducedMotion, revealed, confirmed]);
+
+  function handleContinue() {
+    setConfirmed(true);
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    // Land just past the pin so the next section starts at the top of the
+    // frame rather than mid-release.
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: wrapper.offsetTop + wrapper.offsetHeight,
+        behavior: "smooth",
+      });
+    });
+  }
 
   if (reducedMotion === null) {
     // Avoid a flash of the wrong variant before we know the user's preference.
@@ -293,6 +358,18 @@ export function ScrollVideoHero() {
           </span>
           <span className="h-8 w-px bg-gradient-to-b from-text-secondary to-transparent" />
         </div>
+
+        {/* Scrim under the HUD only — keeps the readout legible without
+            washing out the brain it sits on top of. */}
+        <div
+          aria-hidden
+          className={clsx(
+            "absolute inset-0 z-10 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.55)_70%)] transition-opacity duration-1000",
+            revealed ? "opacity-100" : "opacity-0"
+          )}
+        />
+
+        <HeroReveal visible={revealed} onContinue={handleContinue} />
       </div>
     </section>
   );
@@ -301,6 +378,7 @@ export function ScrollVideoHero() {
 function StaticHero() {
   const first = heroChapters[0];
   return (
+    <>
     <section className="relative flex min-h-[100svh] w-full items-center overflow-hidden bg-background">
       <div
         aria-hidden
@@ -341,5 +419,13 @@ function StaticHero() {
         </div>
       </div>
     </section>
+
+    {/* Reduced motion: the HUD is still worth showing, but as a plain
+        section with no entrance animation and no scroll gate — a user who
+        asked for less motion shouldn't have their scroll held hostage. */}
+    <section className="relative w-full bg-background px-4 py-20 sm:px-6 lg:px-8">
+      <HeroReveal visible onContinue={() => {}} variant="static" />
+    </section>
+    </>
   );
 }

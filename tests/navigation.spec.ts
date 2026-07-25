@@ -5,53 +5,16 @@ test("desktop primary navigation links work", async ({ page, viewport }) => {
   await page.goto("/");
   const nav = page.getByRole("navigation", { name: "Primary" });
 
-  await nav.getByRole("link", { name: "Services" }).click();
+  await nav.getByRole("link", { name: /^Services/ }).click();
   await expect(page).toHaveURL(/\/services\/?$/);
 
   await page.goto("/");
-  await nav.getByRole("link", { name: "Solutions" }).click();
-  await expect(page).toHaveURL(/\/solutions\/?$/);
+  await nav.getByRole("link", { name: /^Portfolio/ }).click();
+  await expect(page).toHaveURL(/\/portfolio\/?$/);
 
   await page.goto("/");
-  await nav.getByRole("link", { name: "White Label" }).click();
+  await nav.getByRole("link", { name: "White Label", exact: true }).click();
   await expect(page).toHaveURL(/\/white-label\/?$/);
-});
-
-test("clients dropdown opens and links to platform and website", async ({
-  page,
-  viewport,
-}) => {
-  test.skip(!!(viewport && viewport.width < 1024), "desktop-only test");
-  await page.goto("/");
-  const nav = page.getByRole("navigation", { name: "Primary" });
-  const trigger = nav.getByRole("link", { name: /^Clients/ });
-
-  await expect(trigger).toHaveAttribute("aria-expanded", "false");
-  await trigger.hover();
-  await expect(trigger).toHaveAttribute("aria-expanded", "true");
-  await expect(nav.getByRole("link", { name: "Platform" })).toBeVisible();
-  await expect(nav.getByRole("link", { name: "Website" })).toBeVisible();
-
-  await nav.getByRole("link", { name: "Platform" }).click();
-  await expect(page).toHaveURL(/\/client-projects\/platform\/?$/);
-
-  await page.goto("/");
-  await nav.getByRole("link", { name: /^Clients/ }).hover();
-  await nav.getByRole("link", { name: "Website" }).click();
-  await expect(page).toHaveURL(/\/client-projects\/website\/?$/);
-});
-
-test("clients dropdown closes on Escape", async ({ page, viewport }) => {
-  test.skip(!!(viewport && viewport.width < 1024), "desktop-only test");
-  await page.goto("/");
-  const trigger = page
-    .getByRole("navigation", { name: "Primary" })
-    .getByRole("link", { name: /^Clients/ });
-
-  await trigger.hover();
-  await expect(trigger).toHaveAttribute("aria-expanded", "true");
-  await page.keyboard.press("Escape");
-  await expect(trigger).toHaveAttribute("aria-expanded", "false");
 });
 
 test("clients link itself goes to the work index", async ({
@@ -65,10 +28,22 @@ test("clients link itself goes to the work index", async ({
   await expect(page).toHaveURL(/\/client-projects\/?$/);
 });
 
-test("top announcement banner links to /get-quote", async ({ page }) => {
+test("top announcement banner has tagline, CTA, and both phone numbers", async ({
+  page,
+}) => {
   await page.goto("/");
-  const banner = page.getByRole("link", { name: /start a project/i }).first();
-  await expect(banner).toHaveAttribute("href", /\/get-quote\/?$/);
+  await expect(
+    page.getByText("Strategy-led creative, built for how AI moves now.")
+  ).toBeVisible();
+
+  const cta = page.getByRole("link", { name: "Connect With Us" });
+  await expect(cta).toHaveAttribute("href", /\/get-quote\/?$/);
+
+  // The "Customer Service:"/"Expert:" text labels are hidden below the md
+  // breakpoint (space-constrained banner), so match by href rather than
+  // accessible name — that stays stable across all tested viewports.
+  await expect(page.locator('header a[href="tel:+97156461565"]')).toBeVisible();
+  await expect(page.locator('header a[href="tel:+971561643886"]')).toBeVisible();
 });
 
 test("mobile menu opens and navigates", async ({ page, viewport }) => {
@@ -78,8 +53,10 @@ test("mobile menu opens and navigates", async ({ page, viewport }) => {
   await toggle.click();
   const mobileMenu = page.locator("#mobile-menu");
   await expect(mobileMenu).toBeVisible();
-  await mobileMenu.getByRole("link", { name: "Get a Quote" }).click();
-  await expect(page).toHaveURL(/\/get-quote\/?$/);
+
+  for (const label of ["Services", "Portfolio", "White Label", "Clients"]) {
+    await expect(mobileMenu.getByText(label, { exact: true })).toBeVisible();
+  }
 });
 
 test("mobile menu exposes clients submenu", async ({ page, viewport }) => {

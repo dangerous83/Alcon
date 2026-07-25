@@ -4,9 +4,23 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { Phone } from "lucide-react";
 import { navigation, topBanner } from "@/lib/content/site";
 import { clsx } from "@/lib/clsx";
 import { assetPath } from "@/lib/asset-path";
+import {
+  MegaMenuWrapper,
+  ServicesStyleMegaMenu,
+  ClientsMegaMenu,
+} from "@/components/layout/MegaMenu";
+import {
+  servicesMegaMenu,
+  servicesMegaMenuStats,
+  portfolioMegaMenu,
+  portfolioMegaMenuStats,
+  clientPlatformLinks,
+  clientWebsiteLinks,
+} from "@/lib/content/mega-menu";
 
 const linkBase =
   "relative rounded-[7px] px-3.5 py-2 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent";
@@ -17,6 +31,10 @@ function hasChildren(
   item: NavItem
 ): item is Extract<NavItem, { children: readonly unknown[] }> {
   return "children" in item;
+}
+
+function hasMega(item: NavItem): item is Extract<NavItem, { mega: string }> {
+  return "mega" in item;
 }
 
 export function SiteHeader() {
@@ -60,10 +78,14 @@ export function SiteHeader() {
   // from the trigger down into it.
   function scheduleClose() {
     if (closeTimer.current) clearTimeout(closeTimer.current);
-    closeTimer.current = setTimeout(() => setOpenMenu(null), 120);
+    closeTimer.current = setTimeout(() => setOpenMenu(null), 150);
   }
   function cancelClose() {
     if (closeTimer.current) clearTimeout(closeTimer.current);
+  }
+  function openNow(key: string) {
+    cancelClose();
+    setOpenMenu(key);
   }
 
   const centreLinks = navigation.filter((item) => !item.cta);
@@ -71,21 +93,41 @@ export function SiteHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      {/* Announcement bar */}
+      {/* Announcement bar: tagline / CTA / contact numbers */}
       <div className="relative border-b border-white/10 bg-surface-elevated/95 backdrop-blur">
         <div
           aria-hidden
           className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)]"
         />
-        <p className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-2 gap-y-1 px-4 py-2 text-center text-xs text-text-secondary sm:px-6 lg:px-8">
-          <span>{topBanner.text}</span>
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-1.5 px-4 py-2 sm:px-6 lg:px-8">
+          <p className="order-1 text-xs text-text-secondary">
+            {topBanner.tagline}
+          </p>
+
           <Link
-            href={topBanner.href}
-            className="rounded font-medium text-text-primary underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+            href={topBanner.cta.href}
+            className="order-3 inline-flex items-center rounded-[7px] bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)] px-3 py-1 text-xs font-semibold text-text-primary transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent sm:order-2 sm:mx-auto"
           >
-            {topBanner.linkLabel}
+            {topBanner.cta.label}
           </Link>
-        </p>
+
+          <ul className="order-2 flex flex-wrap items-center gap-x-4 gap-y-1 sm:order-3">
+            {topBanner.phones.map((phone) => (
+              <li key={phone.number}>
+                <a
+                  href={`tel:${phone.number.replace(/\s+/g, "")}`}
+                  className="inline-flex items-center gap-1.5 rounded text-xs text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+                >
+                  <Phone size={12} strokeWidth={2} aria-hidden />
+                  <span className="hidden text-text-secondary/70 md:inline">
+                    {phone.label}:
+                  </span>
+                  {phone.number}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       <div className="relative">
@@ -121,8 +163,9 @@ export function SiteHeader() {
             {centreLinks.map((item) => {
               const active = pathname.startsWith(item.href);
               const menuOpen = openMenu === item.href;
+              const mega = hasMega(item) ? item.mega : null;
 
-              if (!hasChildren(item)) {
+              if (!mega && !hasChildren(item)) {
                 return (
                   <li key={item.href}>
                     <Link
@@ -151,10 +194,7 @@ export function SiteHeader() {
                 <li
                   key={item.href}
                   className="relative"
-                  onMouseEnter={() => {
-                    cancelClose();
-                    setOpenMenu(item.href);
-                  }}
+                  onMouseEnter={() => openNow(item.href)}
                   onMouseLeave={scheduleClose}
                 >
                   {/* A link, not a toggle button: hover already opens the
@@ -166,10 +206,7 @@ export function SiteHeader() {
                     aria-expanded={menuOpen}
                     aria-haspopup="true"
                     aria-current={active ? "page" : undefined}
-                    onFocus={() => {
-                      cancelClose();
-                      setOpenMenu(item.href);
-                    }}
+                    onFocus={() => openNow(item.href)}
                     className={clsx(
                       linkBase,
                       "inline-flex items-center gap-1.5",
@@ -196,28 +233,51 @@ export function SiteHeader() {
                     )}
                   </Link>
 
-                  <div
-                    className={clsx(
-                      "absolute left-1/2 top-full w-56 -translate-x-1/2 pt-3 transition-all duration-200",
-                      menuOpen
-                        ? "pointer-events-auto translate-y-0 opacity-100"
-                        : "pointer-events-none -translate-y-1 opacity-0"
-                    )}
-                  >
-                    <ul className="overflow-hidden rounded-[7px] border border-border bg-surface-elevated/95 p-2 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.9)] backdrop-blur">
-                      {item.children.map((child) => (
-                        <li key={child.href}>
-                          <Link
-                            href={child.href}
-                            onClick={() => setOpenMenu(null)}
-                            className="block rounded-[7px] px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-white/[0.06] hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
-                          >
-                            {child.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  {/* Only mounted while open — not just visually hidden.
+                      Every item's panel used to render unconditionally
+                      (CSS-only open/close), which left off-screen menus'
+                      links sitting in the tab order and the a11y tree at
+                      all times: a keyboard user tabbing through the nav
+                      would land on invisible items, and role-based queries
+                      would resolve duplicates across menus. `inert` was
+                      tried first to suppress that without unmounting, but
+                      isn't honoured for accessibility-tree exclusion by
+                      every engine this needs to run on — actually removing
+                      the closed panels is the reliable fix. */}
+                  {menuOpen && (
+                    <MegaMenuWrapper
+                      open={menuOpen}
+                      onMouseEnter={() => openNow(item.href)}
+                      onMouseLeave={scheduleClose}
+                    >
+                      {mega === "services" && (
+                        <ServicesStyleMegaMenu
+                          testId="services-mega-menu"
+                          columns={servicesMegaMenu}
+                          stats={servicesMegaMenuStats}
+                          ctaLabel="All Services"
+                          ctaHref="/services"
+                          onNavigate={() => setOpenMenu(null)}
+                        />
+                      )}
+                      {mega === "portfolio" && (
+                        <ServicesStyleMegaMenu
+                          testId="portfolio-mega-menu"
+                          columns={portfolioMegaMenu}
+                          stats={portfolioMegaMenuStats}
+                          ctaLabel="View All Work"
+                          ctaHref="/client-projects"
+                          onNavigate={() => setOpenMenu(null)}
+                        />
+                      )}
+                      {mega === "clients" && (
+                        <ClientsMegaMenu
+                          platform={clientPlatformLinks}
+                          website={clientWebsiteLinks}
+                        />
+                      )}
+                    </MegaMenuWrapper>
+                  )}
                 </li>
               );
             })}
@@ -262,76 +322,76 @@ export function SiteHeader() {
         id="mobile-menu"
         className={clsx(
           "lg:hidden overflow-hidden border-b border-border bg-background/95 backdrop-blur transition-[max-height] duration-300",
-          open ? "max-h-[36rem]" : "max-h-0"
+          open ? "max-h-[36rem] overflow-y-auto" : "max-h-0"
         )}
       >
         <ul className="flex flex-col gap-1 px-4 pb-4">
-          {centreLinks.map((item) => (
-            <li key={item.href}>
-              <div className="flex items-center">
-                <Link
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className="min-h-11 flex-1 rounded-[7px] px-3 py-3 text-base font-medium text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
-                >
-                  {item.label}
-                </Link>
-                {hasChildren(item) && (
-                  <button
-                    type="button"
-                    aria-expanded={mobileSubmenu === item.href}
-                    aria-label={
-                      mobileSubmenu === item.href
-                        ? `Collapse ${item.label} list`
-                        : `Expand ${item.label} list`
-                    }
-                    onClick={() =>
-                      setMobileSubmenu((current) =>
-                        current === item.href ? null : item.href
-                      )
-                    }
-                    className="flex h-11 w-11 items-center justify-center rounded-[7px] text-text-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+          {centreLinks.map((item) => {
+            const submenuItems = hasChildren(item)
+              ? item.children
+              : hasMega(item) && item.mega === "services"
+                ? servicesMegaMenu.flatMap((c) => c.items)
+                : hasMega(item) && item.mega === "portfolio"
+                  ? portfolioMegaMenu.flatMap((c) => c.items)
+                  : null;
+            const expandable = Boolean(submenuItems);
+
+            return (
+              <li key={item.href}>
+                <div className="flex items-center">
+                  <Link
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className="min-h-11 flex-1 rounded-[7px] px-3 py-3 text-base font-medium text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
                   >
-                    <span
-                      aria-hidden
-                      className={clsx(
-                        "text-xs transition-transform duration-200",
-                        mobileSubmenu === item.href && "rotate-180"
-                      )}
+                    {item.label}
+                  </Link>
+                  {expandable && (
+                    <button
+                      type="button"
+                      aria-expanded={mobileSubmenu === item.href}
+                      aria-label={
+                        mobileSubmenu === item.href
+                          ? `Collapse ${item.label} list`
+                          : `Expand ${item.label} list`
+                      }
+                      onClick={() =>
+                        setMobileSubmenu((current) =>
+                          current === item.href ? null : item.href
+                        )
+                      }
+                      className="flex h-11 w-11 items-center justify-center rounded-[7px] text-text-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
                     >
-                      ▾
-                    </span>
-                  </button>
-                )}
-              </div>
-              {hasChildren(item) && mobileSubmenu === item.href && (
-                <ul className="mb-1 ml-3 border-l border-border pl-3">
-                  {item.children.map((child) => (
-                    <li key={child.href}>
-                      <Link
-                        href={child.href}
-                        onClick={() => setOpen(false)}
-                        className="block min-h-11 rounded-[7px] px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+                      <span
+                        aria-hidden
+                        className={clsx(
+                          "text-xs transition-transform duration-200",
+                          mobileSubmenu === item.href && "rotate-180"
+                        )}
                       >
-                        {child.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
-          {ctaLink && (
-            <li>
-              <Link
-                href={ctaLink.href}
-                onClick={() => setOpen(false)}
-                className="mt-2 block min-h-11 rounded-[7px] bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)] px-3 py-3 text-center text-base font-medium text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
-              >
-                {ctaLink.label}
-              </Link>
-            </li>
-          )}
+                        ▾
+                      </span>
+                    </button>
+                  )}
+                </div>
+                {expandable && mobileSubmenu === item.href && submenuItems && (
+                  <ul className="mb-1 ml-3 border-l border-border pl-3">
+                    {submenuItems.map((child) => (
+                      <li key={child.href}>
+                        <Link
+                          href={child.href}
+                          onClick={() => setOpen(false)}
+                          className="block min-h-11 rounded-[7px] px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+                        >
+                          {child.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </div>
     </header>

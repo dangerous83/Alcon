@@ -8,7 +8,7 @@ const routes = [
   "/services/editing",
   "/services/social",
   "/services/tutorials",
-  "/solutions",
+  "/portfolio",
   "/white-label",
   "/client-projects",
   "/client-projects/platform",

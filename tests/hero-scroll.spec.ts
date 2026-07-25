@@ -66,7 +66,7 @@ test.describe("scroll-scrubbed hero", () => {
     expect(after).toBeLessThan(mid);
   });
 
-  test("heading is bold with a gradient accent word, not italic", async ({
+  test("heading is bold with a calligraphy gradient accent word", async ({
     page,
   }) => {
     await page.goto("/");
@@ -78,7 +78,7 @@ test.describe("scroll-scrubbed hero", () => {
       const own = getComputedStyle(el);
       const heading = el.closest("p, h1") as HTMLElement;
       return {
-        accentStyle: own.fontStyle,
+        accentFamily: own.fontFamily,
         // Gradient text works by clipping the background to the glyphs, so
         // the colour itself must be fully transparent.
         accentColor: own.color,
@@ -86,9 +86,11 @@ test.describe("scroll-scrubbed hero", () => {
       };
     });
 
-    // An italic serif accent was tried and rejected as "so odd, not good" —
-    // the accent word must stay in the heading's own upright sans.
-    expect(styles.accentStyle).toBe("normal");
+    // A plain-upright-sans accent, then an italic serif accent, were both
+    // tried in earlier passes and replaced at the client's request — the
+    // accent word is now a calligraphy script (Allura), not either of
+    // those.
+    expect(styles.accentFamily).toContain("Allura");
     expect(styles.accentColor).toBe("rgba(0, 0, 0, 0)");
     expect(Number(styles.headingWeight)).toBeGreaterThanOrEqual(700);
   });

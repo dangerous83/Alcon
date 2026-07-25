@@ -36,6 +36,7 @@ one requires a rebuild.
 | `NEXT_PUBLIC_FORM_ENDPOINT` | No | URL that accepts a JSON POST from the quote form — Formspree, Web3Forms, Getform, Basin, or your own endpoint. If unset, the form does **not** fake a send: it offers a pre-filled email instead. See "Form configuration". |
 | `NEXT_PUBLIC_BASE_PATH` | No | Subpath the site is served from, e.g. `/Alcon` for GitHub Pages. Leave unset for a domain root. Set automatically by the Pages workflow. |
 | `NEXT_PUBLIC_SITE_URL` | No | Canonical/OG/sitemap base URL. Defaults to `https://www.alcon-online.site`. |
+| `NEXT_PUBLIC_AI_AGENT_ENDPOINT` | No | POST endpoint (`{ message } -> { reply }`) for the floating "Alcon AI Assistant" widget. Unset by default — see "AI assistant widget" below. |
 
 These are all `NEXT_PUBLIC_*` (visible in the client bundle) by design —
 none is a secret. Don't put API keys here; a static site has no server to
@@ -61,6 +62,23 @@ delivery — see `docs/site-audit.md` "Video source audit" and
 - `public/video/hero-scroll-mobile.mp4` / `.webm` — mobile (<768px)
 - `public/images/hero-poster.jpg` / `.webp` (+ mobile variants) — poster /
   reduced-motion fallback frame
+
+## AI assistant widget
+
+The bottom-right "brain" icon (`src/components/layout/FloatingWidgets.tsx`)
+opens a chat panel. **It is a UI shell, not a working assistant** — a
+static export has no server to run an Alcon-aware AI on, and no such
+backend was configured. Without `NEXT_PUBLIC_AI_AGENT_ENDPOINT` set, it
+says so plainly and points visitors to WhatsApp/email instead of
+fabricating an answer.
+
+To make it real: stand up an endpoint that accepts
+`POST { message: string }` and returns `{ reply: string }` — a hosted LLM
+call, a RAG service over Alcon's own content, whatever you choose — and
+set `NEXT_PUBLIC_AI_AGENT_ENDPOINT` to it.
+
+The WhatsApp button next to it is fully live: it opens
+`https://wa.me/971561643886`.
 
 ## Form configuration
 

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Inter } from "next/font/google";
+import { Space_Grotesk, Inter, Allura } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { FloatingWidgets } from "@/components/layout/FloatingWidgets";
 import { siteConfig } from "@/lib/content/site";
 import { organizationJsonLd } from "@/lib/seo/jsonld";
 
@@ -16,6 +17,15 @@ const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+});
+
+// Used only for the single emphasised word in a hero heading. A calligraphy
+// script reads as a deliberate signature flourish precisely because it's
+// used sparingly — everywhere else stays in the geometric sans.
+const allura = Allura({
+  variable: "--font-allura",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -49,7 +59,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${inter.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} ${inter.variable} ${allura.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-text-primary">
         <script
@@ -64,6 +74,7 @@ export default function RootLayout({
           {children}
         </main>
         <SiteFooter />
+        <FloatingWidgets />
       </body>
     </html>
   );

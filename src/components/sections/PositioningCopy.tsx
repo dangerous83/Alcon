@@ -41,10 +41,6 @@ export function PositioningCopy({
       <p className={clsx("mt-5 text-lg text-text-secondary", centered && "mx-auto max-w-2xl")}>
         Strategy, design, and AI-accelerated production in one embedded team.
       </p>
-      {/* Deliberately not "Connect With Us" — the announcement banner
-          already uses that label for the same destination, and two links
-          with an identical accessible name on one page is ambiguous for
-          screen readers and for anything querying by name. */}
       <div className={clsx("mt-7 flex", centered && "justify-center")}>
         <Button href="/get-quote">Get in Touch</Button>
       </div>

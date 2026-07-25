@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 
 test("whatsapp widget links to the real number", async ({ page }) => {
   await page.goto("/");

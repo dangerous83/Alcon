@@ -1,4 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect } from "./fixtures";
+import type { Page } from "@playwright/test";
 
 // Scrolls to a fraction of the hero's own pin range. 1.0 is the last frame of
 // the scrub (the Dubai reveal); the HUD eases in from ~0.71, where the scrub

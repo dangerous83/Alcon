@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 
 test("quote form shows validation errors on empty submit", async ({ page }) => {
   await page.goto("/get-quote");

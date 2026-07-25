@@ -37,8 +37,9 @@ export const siteConfig = {
   social: {
     // TODO(content-swap): confirm handles against the live site footer
     instagram: "https://instagram.com/alcon",
-    linkedin: "https://linkedin.com/company/alcon",
-    behance: "https://behance.net/alcon",
+    facebook: "https://facebook.com/alcon",
+    tiktok: "https://tiktok.com/@alcon",
+    twitter: "https://x.com/alcon",
   },
 } as const;
 
@@ -67,19 +68,17 @@ export const navigation = [
 ] as const;
 
 /**
- * Top announcement bar: tagline (left), a CTA (centre), and two phone
- * numbers (right). Phone numbers are as supplied by the client — not
- * validated or reformatted, only stripped of spaces for the tel: link.
+ * Top announcement bar: tagline (left), site search (centre), and a phone
+ * number (right). The bar previously also carried a "Customer Service"
+ * number and a "Connect With Us" CTA; both were dropped at the client's
+ * request in favour of the search bar, leaving just the one contact number
+ * that's already the primary "Expert" line used elsewhere on the site.
  */
 export const topBanner = {
   // A few tagline options were suggested; this is the recommended one —
   // swap freely, it's a one-line content edit.
   tagline: "Strategy-led creative, built for how AI moves now.",
-  cta: { label: "Connect With Us", href: "/get-quote" },
-  phones: [
-    { label: "Customer Service", number: "+97156461565" },
-    { label: "Expert", number: "+971561643886" },
-  ],
+  phone: { label: "Expert", number: "+971561643886" },
 } as const;
 
 export const footerLinks = {
@@ -90,11 +89,9 @@ export const footerLinks = {
     { label: "Social Media", href: "/services/social" },
     { label: "Weekend Tutorials", href: "/services/tutorials" },
   ],
-  company: [
-    { label: "Portfolio", href: "/portfolio" },
-    { label: "White Label", href: "/white-label" },
-    { label: "Clients", href: "/client-projects" },
-    { label: "Journal", href: "/blog" },
-    { label: "Get a Quote", href: "/get-quote" },
-  ],
+  // Deliberately NOT hand-duplicated: the footer's nav column is built from
+  // `navigation` directly in SiteFooter, so it can't drift out of sync with
+  // the header again. Journal isn't in the primary nav (see the comment on
+  // `navigation` above) but stays linked here so it isn't orphaned.
+  companyExtra: [{ label: "Journal", href: "/blog" }],
 } as const;

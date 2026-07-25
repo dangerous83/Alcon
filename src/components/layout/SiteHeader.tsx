@@ -8,6 +8,7 @@ import { Phone } from "lucide-react";
 import { navigation, topBanner } from "@/lib/content/site";
 import { clsx } from "@/lib/clsx";
 import { assetPath } from "@/lib/asset-path";
+import { SiteSearch } from "@/components/layout/SiteSearch";
 import {
   MegaMenuWrapper,
   ServicesStyleMegaMenu,
@@ -93,8 +94,11 @@ export function SiteHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      {/* Announcement bar: tagline / CTA / contact numbers */}
-      <div className="relative border-b border-white/10 bg-surface-elevated/95 backdrop-blur">
+      {/* Announcement bar: tagline / search / contact number.
+          z-20 against the nav row's z-10 below: both are stacking contexts
+          at the same level, so without this the nav paints over the search
+          dropdown that hangs down into it and swallows its clicks. */}
+      <div className="relative z-20 border-b border-white/10 bg-surface-elevated/95 backdrop-blur">
         <div
           aria-hidden
           className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)]"
@@ -104,33 +108,22 @@ export function SiteHeader() {
             {topBanner.tagline}
           </p>
 
-          <Link
-            href={topBanner.cta.href}
-            className="order-3 inline-flex items-center rounded-[7px] bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)] px-3 py-1 text-xs font-semibold text-text-primary transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent sm:order-2 sm:mx-auto"
-          >
-            {topBanner.cta.label}
-          </Link>
+          <SiteSearch />
 
-          <ul className="order-2 flex flex-wrap items-center gap-x-4 gap-y-1 sm:order-3">
-            {topBanner.phones.map((phone) => (
-              <li key={phone.number}>
-                <a
-                  href={`tel:${phone.number.replace(/\s+/g, "")}`}
-                  className="inline-flex items-center gap-1.5 rounded text-xs text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
-                >
-                  <Phone size={12} strokeWidth={2} aria-hidden />
-                  <span className="hidden text-text-secondary/70 md:inline">
-                    {phone.label}:
-                  </span>
-                  {phone.number}
-                </a>
-              </li>
-            ))}
-          </ul>
+          <a
+            href={`tel:${topBanner.phone.number.replace(/\s+/g, "")}`}
+            className="order-3 inline-flex items-center gap-1.5 rounded text-xs text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+          >
+            <Phone size={12} strokeWidth={2} aria-hidden />
+            <span className="hidden text-text-secondary/70 md:inline">
+              {topBanner.phone.label}:
+            </span>
+            {topBanner.phone.number}
+          </a>
         </div>
       </div>
 
-      <div className="relative">
+      <div className="relative z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-background/85 to-transparent pointer-events-none" />
         <nav
           aria-label="Primary"

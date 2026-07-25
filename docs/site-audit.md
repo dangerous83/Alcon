@@ -139,15 +139,19 @@ statement sits, matching the client's reference composition.
 
 Two details are load-bearing:
 
-- **The video stays full-bleed.** An earlier pass scaled it back during
-  clip 3 (`lg:scale-[0.66]`) to clear room for the copy, but scaling a 16:9
-  video inside a wider viewport letterboxes it — black bands top and bottom,
-  which the client rejected. Instead the statement is kept short enough to
-  sit in the space beside the brain, with a narrow right-edge gradient scrim
-  behind it (the mirror of the one the chapter copy uses on the left). Below
-  ~16:9 `object-cover` crops the sides and the brain reaches ~75% of the
-  width, so some overlap is unavoidable; the scrim shades only that corner
-  rather than dimming the whole frame.
+- **Clip 3 turns the video into a panel on the left**
+  (`lg:w-[64%] lg:object-contain lg:[object-position:left_center]`), rather
+  than a full-bleed background. Two earlier attempts failed: scaling the
+  full-width element letterboxed it across the entire viewport, which read
+  as broken black bars; leaving it full-bleed meant the brain filled ~75% of
+  the width and ran under the copy. Narrowing the element and switching to
+  `object-contain` shrinks the frame and anchors it left, leaving the right
+  side genuinely free — no scrim needed behind the copy, because it no
+  longer sits over artwork.
+- **Heading and paragraph share a column width.** `text-balance` is applied
+  only in the centred variant: left-aligned it shortened the heading's lines
+  while the paragraph filled the column, so their right edges disagreed and
+  the block read as misaligned.
 - **The accent word is the same calligraphy as the hero headlines**
   (`.heading-accent` — Allura, gradient-clipped), and the copy carries a
   `Connect With Us` CTA to `/get-quote`, the site's contact route.

@@ -203,12 +203,22 @@ export function ScrollVideoHero() {
         {!videoFailed ? (
           <video
             ref={videoRef}
-            // Full-bleed at every phase. An earlier pass scaled the frame down
-            // during clip 3 to clear room for the statement, but scaling a
-            // 16:9 video inside a wider viewport letterboxes it — black bands
-            // top and bottom. The copy is kept short enough to sit in the
-            // space beside the brain instead.
-            className="absolute inset-0 h-full w-full object-cover [object-position:65%_center] sm:[object-position:center]"
+            className={clsx(
+              "absolute inset-0 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]",
+              // Clips 1-2 fill the frame.
+              "h-full w-full object-cover [object-position:65%_center] sm:[object-position:center]",
+              // Clip 3 becomes a panel on the left rather than a full-bleed
+              // background: narrower box + object-contain, so the whole frame
+              // is visible at a smaller size with the brain anchored left and
+              // the right side free for the statement. Scaling the full-width
+              // element instead (an earlier attempt) letterboxed it across the
+              // entire viewport, which read as broken black bars.
+              // Widths are paired with the copy column below (lg:w-[38%],
+              // xl:w-1/3) and must not sum past 100%, or the panel runs under
+              // the text — which is exactly what 64% + 38% did at lg.
+              phaseC &&
+                "lg:w-[60%] lg:object-contain lg:[object-position:left_center] xl:w-[64%]"
+            )}
             muted
             playsInline
             preload="auto"
@@ -364,22 +374,8 @@ export function ScrollVideoHero() {
             phaseC ? "opacity-100" : "opacity-0"
           )}
         >
-          {/* Legibility scrim behind the copy only — a narrow gradient off
-              the right edge, the mirror of the one the chapter copy uses on
-              the left. Needed because the video is full-bleed: below ~16:9
-              object-cover crops the sides and the brain reaches ~75% of the
-              width, so the copy unavoidably overlaps its edge. A full-frame
-              wash would dim the whole brain; this only shades the corner the
-              text sits in. */}
-          <div
-            aria-hidden
-            className="absolute inset-y-0 right-0 w-full bg-gradient-to-l from-background/95 via-background/60 to-transparent lg:w-[55%]"
-          />
-
-          {/* Anchored to the right edge and capped, because the video is
-              full-bleed: the brain fills roughly the left three-quarters of
-              the frame, so this lives in the remainder rather than in a
-              nominal "right half" that would sit well inside the artwork. */}
+          {/* No scrim needed: clip 3 pulls the video into a panel on the left,
+              so the copy sits on plain background rather than over artwork. */}
           <div className="relative ml-auto w-full px-6 sm:px-10 lg:w-[38%] lg:pl-0 lg:pr-12 xl:w-1/3">
             <PositioningCopy className="ml-auto max-w-sm xl:max-w-md" />
           </div>

@@ -27,7 +27,12 @@ export function PositioningCopy({
   const centered = align === "center";
   return (
     <div className={clsx(centered ? "text-center" : "text-left", className)}>
-      <Heading as="h2" size="lg" className="text-balance">
+      {/* text-balance only when centred. Left-aligned, it shortens the
+          heading's lines while the paragraph still fills the column, so the
+          two blocks' right edges disagree and the whole thing reads
+          misaligned. Letting both wrap to the same column width lines them
+          up. */}
+      <Heading as="h2" size="lg" className={clsx(centered && "text-balance")}>
         Dubai-based creative, built for{" "}
         {/* Same calligraphy accent as the hero headlines — see
             .heading-accent in globals.css. */}

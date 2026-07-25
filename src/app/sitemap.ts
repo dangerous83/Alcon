@@ -11,7 +11,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
     "",
     "/services",
+    "/solutions",
+    "/white-label",
     "/client-projects",
+    "/client-projects/platform",
+    "/client-projects/website",
     "/blog",
     "/get-quote",
   ];

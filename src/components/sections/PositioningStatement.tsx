@@ -1,18 +1,17 @@
-import { Heading } from "@/components/ui/Heading";
+import { PositioningCopy } from "@/components/sections/PositioningCopy";
 
+/**
+ * Standalone centred version of the positioning statement.
+ *
+ * The motion build shows this copy overlaid on the hero's third clip
+ * instead, so this section is rendered only on the reduced-motion path —
+ * see StaticHero in ScrollVideoHero.tsx. Keeping it out of the normal page
+ * flow avoids showing the same sentence twice in a row.
+ */
 export function PositioningStatement() {
   return (
     <section className="mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 sm:py-32 lg:px-8">
-      <Heading as="h2" size="lg" className="text-balance">
-        Alcon is a Dubai-based creative agency for brands that need to move
-        fast without losing their{" "}
-        <span className="text-gradient">point of view</span>.
-      </Heading>
-      <p className="mx-auto mt-6 max-w-2xl text-lg text-text-secondary">
-        We work as an embedded creative partner — combining strategy,
-        design, and AI-accelerated production to take a brand from a clear
-        idea to a finished, high-performing experience.
-      </p>
+      <PositioningCopy />
     </section>
   );
 }

@@ -110,14 +110,25 @@ stripped, joined with an ffmpeg `concat` filter. Verified all 657 frames of
 the ~27.38s result are keyframes, and the seam at 21.08s is visually
 continuous.
 
-This clip is deliberately *not* reachable by scrolling. The gate holds the
-page at the clip2/clip3 boundary (~21.08s, progress ~0.77 of the pin
-range), which is where the HUD sits; clip 3 scrubs only after Continue
-Journey is clicked, so the button delivers the payoff instead of merely
-skipping to the next section. `ScrollVideoHero` derives that gate position
-from the live video duration rather than a hard-coded fraction, so
-appending a fourth clip only means updating `CLIP2_END` and the wrapper
-height.
+All three clips scrub continuously from scroll alone. An earlier revision
+gated the third clip behind a "Continue Journey" button that also locked
+the page (clamping scroll position, cancelling wheel/touch/key input) until
+it was clicked; that was removed at the client's request — holding a
+visitor's scroll hostage is hostile, and the payoff reads fine as part of
+one uninterrupted scrub.
+
+Two things follow from that removal, both deliberate:
+
+- **Scroll length is no longer proportional to video length.** Keeping the
+  original ~18.6vh-per-second ratio would have meant 620vh of travel by the
+  third clip. The wrapper is back to the original `h-[280vh] lg:h-[340vh]`,
+  so the scrub simply advances faster per pixel.
+- **The HUD readout stays up from the front-brain moment (~1.6s before the
+  clip2/clip3 boundary) through to the last frame**, rather than hiding on
+  release. Its node plates sit over the brightest part of the brain during
+  clip 3, so their backing is near-opaque (`bg-black/70`–`/85` plus a
+  backdrop blur) and the active state is carried by border and glow rather
+  than fill — a translucent panel washed the labels out completely.
 
 `public/video/hero-scroll*.{mp4,webm}` now contain the merged, ~27.38s
 timeline — see `docs/asset-inventory.json` for exact file sizes.

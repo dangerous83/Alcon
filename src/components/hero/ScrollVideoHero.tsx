@@ -16,10 +16,9 @@ import { assetPath } from "@/lib/asset-path";
 //   21.08s ..... 27.38s   the brain wires up and Dubai appears inside it
 //
 // CLIP1_END is where the chapter copy fades out ("phase B"). CLIP2_END is
-// where the scrub settles on the centred front-view brain — that frame is
-// the gate: the HUD sits on it and the page holds there. The third clip is
-// the payoff *behind* Continue Journey, so the button earns its name rather
-// than just jumping to the next section.
+// where the scrub settles on the centred front-view brain, which is where
+// the HUD readout eases in. Scrolling runs straight through all three clips
+// — nothing interrupts or holds the page.
 const CLIP1_END = 15.041667;
 const CLIP2_END = 21.083333;
 const VIDEO_DURATION_FALLBACK = 27.375;
@@ -32,26 +31,16 @@ const SEEK_EPSILON = 0.01;
 // How much video before the gate the HUD starts easing in, so it is fully
 // up by the time the scrub settles rather than popping in on arrival.
 const REVEAL_LEAD_SECONDS = 1.6;
-const FORWARD_KEYS = new Set(["ArrowDown", "PageDown", " ", "Spacebar", "End"]);
 
 export function ScrollVideoHero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressFillRef = useRef<HTMLDivElement>(null);
-  // Mirrors `confirmed` for the scroll clamp, which needs the released state
-  // synchronously rather than on the next render.
-  const confirmedRef = useRef(false);
-  // Fraction of the pin range the gate holds at — the CLIP2_END frame rather
-  // than the end of the scrub, since clip 3 plays only after Continue
-  // Journey. Derived from the real duration once metadata lands; seeded from
-  // the fallback so the clamp is never wrong-but-active on first paint.
-  const gateProgressRef = useRef(CLIP2_END / VIDEO_DURATION_FALLBACK);
 
   const [activeChapter, setActiveChapter] = useState(0);
   const [started, setStarted] = useState(false);
   const [phaseB, setPhaseB] = useState(false);
   const [revealed, setRevealed] = useState(false);
-  const [confirmed, setConfirmed] = useState(false);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
 
@@ -94,9 +83,6 @@ export function ScrollVideoHero() {
           ? video!.duration
           : VIDEO_DURATION_FALLBACK;
 
-      // Derived from the real duration so the gate lands on the right frame
-      // even if the encode's length shifts by a frame or two.
-      gateProgressRef.current = Math.min(1, CLIP2_END / duration);
       const revealAt = Math.max(
         0,
         (CLIP2_END - REVEAL_LEAD_SECONDS) / duration
@@ -177,99 +163,6 @@ export function ScrollVideoHero() {
     };
   }, [reducedMotion, videoFailed]);
 
-  // The hard stop. Clamping the scroll position itself — rather than only
-  // cancelling input events — is what actually guarantees the gate: a
-  // scrollbar drag, a Tab that pulls an off-screen element into view, iOS
-  // momentum, or a flick fast enough to jump the whole pin in one frame all
-  // move the page without ever producing a cancellable wheel/touch/key
-  // event. This runs from the start (not just once the HUD is up) so a fast
-  // scroller can't clear the hero before `revealed` has flipped.
-  useEffect(() => {
-    if (reducedMotion !== false || confirmed) return;
-
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-
-    // The gate frame's scroll position — where the scrub settles on the
-    // centred brain, not the end of the pin. Everything past it is clip 3,
-    // which is reserved for after Continue Journey. Recomputed per call so
-    // viewport resizes don't strand the limit at a stale value.
-    const gateMax = () =>
-      wrapper.offsetTop +
-      (wrapper.offsetHeight - window.innerHeight) * gateProgressRef.current;
-
-    function clamp() {
-      if (confirmedRef.current) return;
-      const max = gateMax();
-      if (window.scrollY > max) {
-        window.scrollTo({ top: max, behavior: "instant" });
-      }
-    }
-
-    window.addEventListener("scroll", clamp, { passive: true });
-    window.addEventListener("resize", clamp);
-    clamp(); // catch a restored scroll position on reload
-    return () => {
-      window.removeEventListener("scroll", clamp);
-      window.removeEventListener("resize", clamp);
-    };
-  }, [reducedMotion, confirmed]);
-
-  // Input-level blocking on top of the clamp. This is purely about feel:
-  // once the HUD is up, forward gestures stop dead at the wall instead of
-  // travelling and being snapped back. Scrolling back up stays free.
-  useEffect(() => {
-    if (reducedMotion !== false) return;
-    if (!revealed || confirmed) return;
-
-    let touchY: number | null = null;
-
-    function onWheel(e: WheelEvent) {
-      if (e.deltaY > 0) e.preventDefault();
-    }
-    function onTouchStart(e: TouchEvent) {
-      touchY = e.touches[0]?.clientY ?? null;
-    }
-    function onTouchMove(e: TouchEvent) {
-      if (touchY == null) return;
-      const currentY = e.touches[0]?.clientY ?? touchY;
-      if (touchY - currentY > 0) e.preventDefault(); // finger up = scrolling down
-    }
-    function onKeyDown(e: KeyboardEvent) {
-      if (FORWARD_KEYS.has(e.key)) e.preventDefault();
-    }
-
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [reducedMotion, revealed, confirmed]);
-
-  function handleContinue() {
-    // Released via the ref first: the clamp listener reads the ref, so this
-    // has to be true before the scroll below starts, not a state update
-    // later. Otherwise the clamp fights its own release animation.
-    confirmedRef.current = true;
-    setConfirmed(true);
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-    // Scroll to the end of the pin, not past it: that span is clip 3, so
-    // this scrubs the Dubai reveal as the payoff for clicking. The user is
-    // left on the last frame and scrolls onward themselves.
-    requestAnimationFrame(() => {
-      window.scrollTo({
-        top: wrapper.offsetTop + wrapper.offsetHeight - window.innerHeight,
-        behavior: "smooth",
-      });
-    });
-  }
-
   if (reducedMotion === null) {
     // Avoid a flash of the wrong variant before we know the user's preference.
     return <div className="h-[100svh] bg-background" aria-hidden />;
@@ -282,10 +175,10 @@ export function ScrollVideoHero() {
   return (
     <section
       ref={wrapperRef}
-      /* Height stays proportional to the scrub's length (~18.6vh per second
-         of video, ~22.6vh at lg) so scroll speed feels unchanged as clips
-         are appended. */
-      className="relative h-[510vh] lg:h-[620vh]"
+      /* Back to the original scroll length. Keeping it proportional to the
+         video (~18.6vh/s) meant 620vh of scrolling by the third clip, which
+         was far too much travel; the scrub simply runs faster per pixel. */
+      className="relative h-[280vh] lg:h-[340vh]"
       aria-label="Alcon — Creative Intelligence"
     >
       <h1 className="sr-only">{heroSummary}</h1>
@@ -435,9 +328,9 @@ export function ScrollVideoHero() {
             their own translucent black backing plus a backdrop blur, so they
             stay legible on their own — a full-frame wash on top of that only
             dimmed the brain, which is the thing worth looking at here. */}
-        {/* Hidden again once confirmed, so clip 3's Dubai reveal plays with
-            a clear frame instead of under the readout. */}
-        <HeroReveal visible={revealed && !confirmed} onContinue={handleContinue} />
+        {/* Stays up from the front-brain moment through the Dubai reveal, so
+            the readout is on screen for the whole back half of the scrub. */}
+        <HeroReveal visible={revealed} />
       </div>
     </section>
   );
@@ -492,7 +385,7 @@ function StaticHero() {
         section with no entrance animation and no scroll gate — a user who
         asked for less motion shouldn't have their scroll held hostage. */}
     <section className="relative w-full bg-background px-4 py-20 sm:px-6 lg:px-8">
-      <HeroReveal visible onContinue={() => {}} variant="static" />
+      <HeroReveal visible variant="static" />
     </section>
     </>
   );

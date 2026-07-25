@@ -155,8 +155,7 @@ test.describe("scroll-scrubbed hero", () => {
       .poll(() => column.evaluate((el) => getComputedStyle(el).opacity))
       .toBe("1");
 
-    // Past the clip1/clip2 seam (~15.04s of ~27.38s -> ~0.55) but short of
-    // the gate at ~0.77, so the clamp doesn't move us before we measure.
+    // Past the clip1/clip2 seam (~15.04s of the ~27.38s timeline -> ~0.55).
     await scrollToFraction(page, 0.70);
     await page.waitForTimeout(700);
 

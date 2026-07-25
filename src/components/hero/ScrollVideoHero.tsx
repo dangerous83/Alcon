@@ -368,8 +368,14 @@ export function ScrollVideoHero() {
             phaseC ? "opacity-100" : "opacity-0"
           )}
         >
-          <div className="ml-auto w-full px-6 text-center sm:px-10 lg:w-1/2 lg:pr-16">
-            <PositioningCopy />
+          {/* Capped width, not just a half-width column: at ~1900px a
+              half-width column is still ~900px, so the heading sprawled
+              almost to the right edge. max-w-xl keeps it a contained block
+              of copy at any viewport, and mr-auto anchors it to the left of
+              the right half so it stays put as the window widens rather
+              than drifting further out. */}
+          <div className="ml-auto w-full px-6 sm:px-10 lg:w-1/2 lg:pl-4 lg:pr-10">
+            <PositioningCopy className="mr-auto max-w-xl" />
           </div>
         </div>
       </div>

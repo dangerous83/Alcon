@@ -375,9 +375,16 @@ export function ScrollVideoHero() {
           )}
         >
           {/* No scrim needed: clip 3 pulls the video into a panel on the left,
-              so the copy sits on plain background rather than over artwork. */}
-          <div className="relative ml-auto w-full px-6 sm:px-10 lg:w-[38%] lg:pl-0 lg:pr-12 xl:w-1/3">
-            <PositioningCopy className="ml-auto max-w-sm xl:max-w-md" />
+              so the copy sits on plain background rather than over artwork.
+
+              Anchored left *within* a right-hand column, not right. Doing
+              both — column pushed right and copy pushed right inside it —
+              stacked two right-alignments and pinned the text to the edge,
+              leaving a dead gap between it and the artwork. Starting the copy
+              at the column's left edge closes that gap and leaves the slack
+              on the right, where it belongs. */}
+          <div className="relative ml-auto w-full px-6 sm:px-10 lg:w-1/2 lg:pl-0 lg:pr-10 xl:w-[46%]">
+            <PositioningCopy className="mr-auto max-w-sm xl:max-w-md" />
           </div>
         </div>
       </div>

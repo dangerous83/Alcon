@@ -172,13 +172,21 @@ test.describe("hero reveal HUD over the scrub", () => {
         .getBoundingClientRect();
       return { vLeft: Math.round(v.left), vRight: Math.round(v.right), hLeft: Math.round(h.left) };
     });
+    const width = viewport!.width;
 
     // Anchored to the left edge, and not spanning the full width.
     expect(geom.vLeft).toBe(0);
-    expect(geom.vRight).toBeLessThan(viewport!.width);
+    expect(geom.vRight).toBeLessThan(width);
 
-    // And it stops before the copy starts, so nothing overlaps.
-    expect(geom.vRight).toBeLessThanOrEqual(geom.hLeft);
+    // The copy starts around the middle: far enough right to clear the
+    // artwork, but not shoved against the edge. Note this is deliberately a
+    // band and not "past the video element" — object-contain letterboxes the
+    // frame inside that element, so its right portion is the clip's own
+    // black background and the copy may sit over it without covering
+    // anything. Pinning the copy past the element's edge is what left a dead
+    // gap between the artwork and the text.
+    expect(geom.hLeft).toBeGreaterThan(width * 0.45);
+    expect(geom.hLeft).toBeLessThan(width * 0.62);
   });
 
   test("the copy's heading and paragraph share a right edge", async ({

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { assetPath } from "@/lib/asset-path";
 import { clsx } from "@/lib/clsx";
@@ -10,16 +10,35 @@ import { clsx } from "@/lib/clsx";
 // welcoming. Shown once per tab until it's closed.
 const SESSION_KEY = "alcon-intro-seen";
 
+// The clip is ~5s. If `ended` never arrives (a stalled buffer, a browser that
+// silently refuses to play), this releases the visitor anyway rather than
+// trapping them behind a frozen overlay.
+const PLAYBACK_TIMEOUT_MS = 12_000;
+
+// Matches the fade duration on the overlay below.
+const FADE_MS = 700;
+
+type Phase = "idle" | "playing" | "dismissing";
+
 /**
  * Full-screen video intro shown once per session ahead of the homepage.
+ *
+ * The clip does not autoplay: it holds on its first frame until the visitor
+ * presses "Begin Your Journey", then runs through to the end and rests on its
+ * final frame. That final frame is the homepage hero's opening frame, so the
+ * cross-fade into the page reads as one continuous shot.
+ *
  * Skipped entirely for prefers-reduced-motion, same convention as the hero.
  */
 export function IntroGate({ children }: { children: React.ReactNode }) {
   // null = not yet decided (avoids a flash of the wrong state before the
   // reduced-motion query and sessionStorage are read on mount).
   const [entered, setEntered] = useState<boolean | null>(null);
-  const [dismissing, setDismissing] = useState(false);
+  const [phase, setPhase] = useState<Phase>("idle");
   const [videoFailed, setVideoFailed] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  // Guards against `ended` and the timeout both firing.
+  const finishedRef = useRef(false);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia(
@@ -40,11 +59,30 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
     };
   }, [entered]);
 
+  const finish = useCallback(() => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    setPhase("dismissing");
+    // Unmounts only once the overlay is fully invisible.
+    window.setTimeout(() => setEntered(true), FADE_MS);
+  }, []);
+
   function handleEnter() {
     sessionStorage.setItem(SESSION_KEY, "1");
-    setDismissing(true);
-    // Matches the fade duration below — unmounts only once it's invisible.
-    window.setTimeout(() => setEntered(true), 700);
+
+    const video = videoRef.current;
+    if (videoFailed || !video) {
+      finish();
+      return;
+    }
+
+    setPhase("playing");
+    window.setTimeout(finish, PLAYBACK_TIMEOUT_MS);
+
+    // play() rejects when the browser blocks or can't decode the source —
+    // no reason to strand the visitor on a still frame in that case.
+    const played = video.play();
+    if (played) played.catch(() => finish());
   }
 
   return (
@@ -65,17 +103,21 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
           aria-label="Alcon intro"
           className={clsx(
             "fixed inset-0 z-[100] overflow-hidden bg-background transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
-            dismissing ? "opacity-0" : "opacity-100"
+            phase === "dismissing" ? "opacity-0" : "opacity-100"
           )}
         >
           {!videoFailed ? (
             <video
+              ref={videoRef}
               className="absolute inset-0 h-full w-full object-cover"
-              autoPlay
+              // No autoPlay and no loop, deliberately: the clip waits on its
+              // first frame for the button, plays once, and rests on its last
+              // frame — which is where the homepage hero picks up.
               muted
-              loop
               playsInline
+              preload="auto"
               poster={assetPath("/images/intro-poster.jpg")}
+              onEnded={finish}
               // Only a failure of the <video> itself counts. React's
               // synthetic onError also fires for each child <source> that
               // can't load, so a browser lacking H.264 would trip this on
@@ -121,14 +163,25 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
             />
           )}
 
-          {/* No scrim: the button sits in the clear space at the bottom of
-              the frame instead of a black wash dimming the video to make
-              it legible. */}
-          <div className="absolute inset-x-0 bottom-10 z-10 flex justify-center px-4 sm:bottom-14">
+          {/* No scrim over the video. The button is centred in the frame and
+              fades out the moment playback starts, so nothing sits on top of
+              the clip while it runs. */}
+          <div
+            className={clsx(
+              "absolute inset-0 z-10 flex items-center justify-center px-4",
+              "transition-opacity duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+              phase === "idle"
+                ? "opacity-100"
+                : "pointer-events-none opacity-0"
+            )}
+          >
             <button
               type="button"
               onClick={handleEnter}
-              className="group inline-flex items-center gap-2 rounded-[7px] border border-white/40 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-md transition hover:border-white/70 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+              tabIndex={phase === "idle" ? undefined : -1}
+              // Same gradient as the site's primary Button — the intro is the
+              // first thing a visitor sees, so it should already look Alcon.
+              className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-[7px] bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)] px-8 py-4 font-heading text-base font-medium text-text-primary shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_0_40px_-8px_rgba(113,56,255,0.55)] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-[0_0_40px_-4px_rgba(113,56,255,0.75)] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent active:brightness-95"
             >
               Begin Your Journey
               <ArrowRight

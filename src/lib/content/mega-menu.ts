@@ -29,13 +29,17 @@ export type MegaMenuColumn = {
 };
 
 /**
- * Services mega menu — labels/descriptions/grouping match the reference
- * screenshot exactly. The site's content model only has 5 built-out
- * service pages (branding, motion, editing, social, tutorials — see
- * src/lib/content/services.ts), so items map onto the closest existing
- * page rather than 404ing; this is a real routing constraint of a static
- * export, not a content decision. Swap individual hrefs once dedicated
- * pages exist for e.g. Photography or AI Video.
+ * Services mega menu — labels and grouping are locked (tests assert them),
+ * but every description is written from Alcon's advertising / marketing /
+ * AI-specialist positioning. Descriptions read as a short benefit line for
+ * the buyer scanning the menu, not as an internal taxonomy note.
+ *
+ * The site's content model only has 5 built-out service pages (branding,
+ * motion, editing, social, tutorials — see src/lib/content/services.ts),
+ * so items map onto the closest existing page rather than 404ing; this is
+ * a real routing constraint of a static export, not a content decision.
+ * Swap individual hrefs once dedicated pages exist for e.g. Photography
+ * or AI Video.
  */
 export const servicesMegaMenu: MegaMenuColumn[] = [
   {
@@ -43,25 +47,25 @@ export const servicesMegaMenu: MegaMenuColumn[] = [
     items: [
       {
         label: "Brand Identity",
-        description: "Logo, identity & brand systems",
+        description: "AI-accelerated identity systems for advertising",
         icon: Palette,
         href: "/services/branding",
       },
       {
         label: "Web UI/UX Design",
-        description: "Web & mobile interfaces",
+        description: "Conversion-led web and product interfaces",
         icon: LayoutGrid,
         href: "/services/branding",
       },
       {
         label: "Graphic Design",
-        description: "Print & digital marketing",
+        description: "Campaign creative for digital and print",
         icon: ImageIcon,
         href: "/services/branding",
       },
       {
         label: "White Label",
-        description: "Ready-made rebrandable websites",
+        description: "Rebrandable websites for agencies to resell",
         icon: Layers,
         href: "/white-label",
       },
@@ -72,25 +76,25 @@ export const servicesMegaMenu: MegaMenuColumn[] = [
     items: [
       {
         label: "Motion Design",
-        description: "Motion graphics & effects",
+        description: "Ad-ready motion identities and stings",
         icon: Sparkles,
         href: "/services/motion",
       },
       {
         label: "2D Animation",
-        description: "Explainer & educational",
+        description: "Explainer film and product storytelling",
         icon: Boxes,
         href: "/services/motion",
       },
       {
         label: "3D Animation",
-        description: "Architectural & product",
+        description: "Architectural, product and campaign 3D",
         icon: Box,
         href: "/services/motion",
       },
       {
         label: "AI Video",
-        description: "AI-powered video creation",
+        description: "Generative video ads built for paid social",
         icon: Wand2,
         href: "/services/motion",
       },
@@ -101,31 +105,31 @@ export const servicesMegaMenu: MegaMenuColumn[] = [
     items: [
       {
         label: "Social Media",
-        description: "Content & strategy",
+        description: "AI-powered content and paid social marketing",
         icon: Share2,
         href: "/services/social",
       },
       {
         label: "Videography",
-        description: "Cinematic video production",
+        description: "Cinematic production for brand and campaign",
         icon: Video,
         href: "/services/editing",
       },
       {
         label: "Photography",
-        description: "Professional photo shoots",
+        description: "Product, brand and campaign shoots in Dubai",
         icon: Camera,
         href: "/services/editing",
       },
       {
         label: "Video Editing",
-        description: "Post-production & editing",
+        description: "AI-assisted post for ads and long-form",
         icon: Film,
         href: "/services/editing",
       },
       {
         label: "Weekend Tutorials",
-        description: "Live creative workshops",
+        description: "Hands-on AI creative workshops",
         icon: GraduationCap,
         href: "/services/tutorials",
         badge: "NEW",
@@ -141,8 +145,10 @@ export const servicesMegaMenuStats = [
 ] as const;
 
 /**
- * Portfolio mega menu (the nav item formerly labelled "Solutions").
- * Same items/grouping as the reference screenshot's "Portfolio" dropdown.
+ * Portfolio mega menu — filters into the portfolio by discipline. Labels
+ * are locked by tests; descriptions read as short work categories a
+ * visitor can pick between, not as service explanations (those live in
+ * the Services mega menu).
  */
 export const portfolioMegaMenu: MegaMenuColumn[] = [
   {
@@ -150,25 +156,25 @@ export const portfolioMegaMenu: MegaMenuColumn[] = [
     items: [
       {
         label: "Branding",
-        description: "Logo & Identity Design",
+        description: "Identity systems & brand launches",
         icon: Palette,
         href: "/services/branding",
       },
       {
         label: "3D Animation",
-        description: "Architectural & Product",
+        description: "Architectural, product & campaign 3D",
         icon: Box,
         href: "/services/motion",
       },
       {
         label: "Motion Design",
-        description: "Motion Graphics & Effects",
+        description: "Ad-ready motion & brand stings",
         icon: Sparkles,
         href: "/services/motion",
       },
       {
         label: "Social Media",
-        description: "Content & Campaigns",
+        description: "Paid social & content campaigns",
         icon: Share2,
         href: "/services/social",
       },
@@ -179,25 +185,25 @@ export const portfolioMegaMenu: MegaMenuColumn[] = [
     items: [
       {
         label: "UI/UX Design",
-        description: "Web & App Platforms",
+        description: "Web platforms & product interfaces",
         icon: LayoutGrid,
         href: "/services/branding",
       },
       {
         label: "2D Animation",
-        description: "Explainer & Educational",
+        description: "Explainer film & product storytelling",
         icon: Boxes,
         href: "/services/motion",
       },
       {
         label: "Videography",
-        description: "Cinematic Production",
+        description: "Cinematic brand & campaign shoots",
         icon: Video,
         href: "/services/editing",
       },
       {
         label: "Photography",
-        description: "Professional Shoots",
+        description: "Product, brand & campaign photography",
         icon: Camera,
         href: "/services/editing",
       },

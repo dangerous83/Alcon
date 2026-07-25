@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Heading } from "@/components/ui/Heading";
 import { Button } from "@/components/ui/Button";
+import { WhiteLabelGallery } from "@/components/white-label/WhiteLabelGallery";
 import { siteConfig } from "@/lib/content/site";
 import { whiteLabelSamples } from "@/lib/content/white-label";
-import { assetPath } from "@/lib/asset-path";
 
 const title = "White Label";
 const summary =
@@ -85,38 +84,7 @@ export default function WhiteLabelPage() {
           </p>
         </div>
 
-        <ul className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {whiteLabelSamples.map((sample, index) => (
-            <li
-              key={sample.image}
-              className="group overflow-hidden rounded-[7px] border border-border bg-surface transition-colors hover:border-white/25"
-            >
-              <div className="relative aspect-[16/9] overflow-hidden bg-background">
-                <Image
-                  src={assetPath(`/images/white-label/${sample.image}.webp`)}
-                  alt={`${sample.title} — ${sample.sector} white-label website design`}
-                  fill
-                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                  className="object-cover object-top transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-                  // The first row is above the fold on most desktop viewports;
-                  // the rest stay lazy so 20 screenshots don't all load at once.
-                  priority={index < 3}
-                />
-              </div>
-              <div className="p-5">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-magenta">
-                  {sample.sector}
-                </p>
-                <h3 className="mt-1.5 font-heading text-base font-semibold text-text-primary">
-                  {sample.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                  {sample.description}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <WhiteLabelGallery samples={whiteLabelSamples} />
       </div>
 
       <div className="mt-20 rounded-[7px] border border-border bg-surface-elevated/60 p-8 sm:p-10">

@@ -135,13 +135,33 @@ test.describe("hero reveal HUD over the scrub", () => {
     await page.goto("/");
     await scrollHeroTo(page, 1.0);
 
-    const box = await page
+    const heading = page
       .getByTestId("hero-positioning")
-      .getByRole("heading", { name: /Dubai-based creative agency/i })
-      .boundingBox();
+      .getByRole("heading", { name: /Dubai-based creative agency/i });
+    const box = await heading.boundingBox();
     const width = viewport!.width;
     expect(box).not.toBeNull();
     expect(box!.x).toBeGreaterThan(width * 0.45);
+
+    // Left-aligned, not centred — the copy reads as a column beside the
+    // artwork rather than a floating block.
+    expect(
+      await heading.evaluate((el) => getComputedStyle(el).textAlign)
+    ).toBe("left");
+
+    // The real invariant: a hard width cap, so the column stays contained
+    // however wide the window gets. A half-width column *alone* is ~900px at
+    // ~1900px, which ran the heading almost into the right edge — the cap is
+    // what stops that, not the half-width.
+    expect(box!.width).toBeLessThanOrEqual(600);
+
+    // Which in turn means a widening window grows the right-hand gap rather
+    // than the text. Only meaningful once the viewport exceeds the cap plus
+    // the column offset; at 1024 the half-column is itself under the cap and
+    // the gap is just its padding.
+    if (width >= 1440) {
+      expect(width - (box!.x + box!.width)).toBeGreaterThan(100);
+    }
   });
 
   test("clip 3 scrubs from scrolling alone — no click required", async ({

@@ -10,8 +10,8 @@ import { PositioningCopy } from "@/components/sections/PositioningCopy";
  */
 export function PositioningStatement() {
   return (
-    <section className="mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 sm:py-32 lg:px-8">
-      <PositioningCopy />
+    <section className="mx-auto max-w-5xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+      <PositioningCopy align="center" />
     </section>
   );
 }

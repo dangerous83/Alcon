@@ -94,8 +94,38 @@ npm run start
 
 ## Deployment
 
-Any Next.js-compatible host (Vercel, etc.) works out of the box. Before
-deploying to production:
+This is a real Next.js app with a server-rendered API route
+(`/api/quote`), so it needs something that runs `node`/`npm run start` —
+**not** static hosting (GitHub Pages, S3, etc. can't run it as-is; see
+`docs/site-audit.md` if you're wondering why the repo's GitHub Pages link
+didn't work).
+
+### Docker (self-hosted / any VPS)
+
+A `Dockerfile` is included, using Next.js's `output: "standalone"` mode
+(set in `next.config.ts`) for a minimal production image — no
+`node_modules` copy, just the traced runtime files.
+
+```bash
+docker build -t alcon-web .
+docker run -p 3000:3000 --env NOTIFY_WEBHOOK_URL=... alcon-web
+```
+
+> This Dockerfile could not be build-tested in the environment that
+> produced it — its own network policy blocked pulling the `node:22-alpine`
+> base image from Docker Hub. It follows Next.js's own documented
+> `output: standalone` multi-stage pattern exactly, but run `docker build`
+> yourself before trusting it in production.
+
+Point any reverse proxy (nginx, Caddy, Traefik) or platform (Coolify,
+Dokku, a plain VPS + systemd) at the container's port 3000.
+
+### Node PaaS (Railway, Render, Fly.io, Vercel, etc.)
+
+These auto-detect Next.js and run `npm run build` / `npm run start` for
+you — no Dockerfile needed, just connect the repo.
+
+### Before going live either way
 
 1. Finish the content swap (`docs/content-map.md`).
 2. Decide on self-hosting the Higgsfield images vs. keeping the CDN

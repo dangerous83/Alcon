@@ -1,0 +1,109 @@
+import { test, expect, type Page } from "@playwright/test";
+
+// Scrolls to a fraction of the hero wrapper's own pin range, not the whole
+// page — the page is much taller than the hero, so a fraction of
+// document.scrollHeight would overshoot the hero almost immediately.
+async function scrollToFraction(page: Page, fraction: number) {
+  await page.evaluate((f) => {
+    const section = document.querySelector("main > section") as HTMLElement | null;
+    if (!section) return;
+    const top = section.offsetTop;
+    const range = section.offsetHeight - window.innerHeight;
+    window.scrollTo({ top: top + Math.max(0, range * f), behavior: "instant" });
+  }, fraction);
+}
+
+async function waitForVideoReady(page: Page) {
+  await page.waitForFunction(() => {
+    const v = document.querySelector("video");
+    return v && v.readyState >= 1;
+  });
+}
+
+test.describe("scroll-scrubbed hero", () => {
+  test("video element loads with expected source and attributes", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const video = page.locator("video").first();
+    await expect(video).toBeAttached();
+    // React sets `muted` as a DOM property (not a reflected HTML attribute)
+    // to avoid an SSR/autoplay hydration quirk, so check the property.
+    await expect
+      .poll(() => video.evaluate((el: HTMLVideoElement) => el.muted))
+      .toBe(true);
+    await expect(video).toHaveAttribute("playsinline", "");
+    await expect(video).toHaveAttribute("poster", /hero-poster/);
+  });
+
+  test("scrolling forward increases video currentTime", async ({ page }) => {
+    await page.goto("/");
+    const video = page.locator("video").first();
+    await waitForVideoReady(page);
+
+    const before = await video.evaluate((el: HTMLVideoElement) => el.currentTime);
+
+    await scrollToFraction(page, 0.5);
+    await page.waitForTimeout(700); // allow rAF smoothing to catch up
+
+    const after = await video.evaluate((el: HTMLVideoElement) => el.currentTime);
+    expect(after).toBeGreaterThan(before);
+  });
+
+  test("scrolling backward decreases video currentTime", async ({ page }) => {
+    await page.goto("/");
+    await waitForVideoReady(page);
+    const video = page.locator("video").first();
+
+    await scrollToFraction(page, 0.8);
+    await page.waitForTimeout(700);
+    const mid = await video.evaluate((el: HTMLVideoElement) => el.currentTime);
+
+    await scrollToFraction(page, 0.3);
+    await page.waitForTimeout(700);
+    const after = await video.evaluate((el: HTMLVideoElement) => el.currentTime);
+
+    expect(after).toBeLessThan(mid);
+  });
+
+  test("chapter indicator reflects scroll position (01 -> 02 -> 03)", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await waitForVideoReady(page);
+
+    await expect(page.getByText("01 / 03")).toBeVisible();
+
+    await scrollToFraction(page, 0.5); // ~7.5s into a 15s timeline -> chapter 2
+    await page.waitForTimeout(700);
+    await expect(page.getByText("02 / 03")).toBeVisible();
+
+    await scrollToFraction(page, 0.95); // near the end -> chapter 3
+    await page.waitForTimeout(700);
+    await expect(page.getByText("03 / 03")).toBeVisible();
+  });
+});
+
+test.describe("reduced motion", () => {
+  test("static hero renders instead of the pinned scroll section", async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    await expect(
+      page.getByRole("heading", { name: "Ideas engineered to move people." })
+    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("link", { name: "Start a Project" }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Explore Our Work" }).first()).toBeVisible();
+
+    const { wrapperHeight, viewportHeight } = await page.evaluate(() => {
+      const section = document.querySelector("main > section");
+      return {
+        wrapperHeight: section?.getBoundingClientRect().height ?? 0,
+        viewportHeight: window.innerHeight,
+      };
+    });
+    // static hero should be roughly one viewport tall, not several
+    expect(wrapperHeight).toBeLessThan(viewportHeight * 1.5);
+  });
+});

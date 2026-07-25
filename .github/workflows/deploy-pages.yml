@@ -11,14 +11,24 @@ permissions:
   pages: write
   id-token: write
 
-# Let a running deploy finish rather than cancelling it mid-publish.
+# Newest commit on main wins. This was `cancel-in-progress: false` (the value
+# in GitHub's starter workflow, meant to avoid interrupting a publish), but
+# that starves the queue: when one run sat in `queued` for 19 minutes waiting
+# on a runner, three merges behind it never deployed at all — the site simply
+# stopped updating. An older run is obsolete the moment a newer commit lands,
+# so superseding it is both safe and what we actually want; if a publish is
+# ever cut short, the newer run republishes seconds later.
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # The build normally finishes in under a minute. Without a bound, a hung
+    # step would hold the `pages` concurrency group for GitHub's 6-hour
+    # default and block every later deploy behind it.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -60,6 +70,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

@@ -2,7 +2,6 @@ import {
   Palette,
   LayoutGrid,
   Image as ImageIcon,
-  Layers,
   Sparkles,
   Box,
   Boxes,
@@ -79,12 +78,6 @@ export const servicesMegaMenu: MegaMenuColumn[] = [
         icon: ImageIcon,
         href: "/services/branding",
       },
-      {
-        label: "White Label",
-        description: "Rebrandable websites for agencies to resell",
-        icon: Layers,
-        href: "/white-label",
-      },
     ],
   },
   {
@@ -153,6 +146,28 @@ export const servicesMegaMenu: MegaMenuColumn[] = [
     ],
   },
 ];
+
+/**
+ * Right-hand promo panel for the Services mega menu — an image thumbnail
+ * with a short headline and blurb so the panel reads as a full mega menu
+ * rather than a bare link list.
+ */
+export type MegaMenuPromo = {
+  image: string;
+  eyebrow: string;
+  heading: string;
+  description: string;
+  href: string;
+};
+
+export const servicesMegaMenuPromo: MegaMenuPromo = {
+  image: "/images/services-thumbnail.webp",
+  eyebrow: "Creative Intelligence",
+  heading: "AI-accelerated, human-finished",
+  description:
+    "Every service runs on an AI-accelerated workflow — faster concepts and sharper craft, always reviewed and finished by our creative team.",
+  href: "/services",
+};
 
 export const servicesMegaMenuStats = [
   { value: "13", label: "Services" },

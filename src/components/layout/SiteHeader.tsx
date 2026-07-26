@@ -25,6 +25,7 @@ import {
 import {
   servicesMegaMenu,
   servicesMegaMenuStats,
+  servicesMegaMenuPromo,
   portfolioMegaMenu,
   portfolioMegaMenuStats,
   clientPlatformLinks,
@@ -274,6 +275,7 @@ export function SiteHeader() {
                           testId="services-mega-menu"
                           columns={servicesMegaMenu}
                           stats={servicesMegaMenuStats}
+                          promo={servicesMegaMenuPromo}
                           ctaLabel="All Services"
                           ctaHref="/services"
                           onNavigate={() => setOpenMenu(null)}

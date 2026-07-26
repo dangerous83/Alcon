@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, FileText, ExternalLink } from "lucide-react";
+import { ArrowRight, FileText } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import type { MegaMenuColumn, ExternalLinkItem } from "@/lib/content/mega-menu";
 
@@ -145,26 +145,31 @@ export function ClientsMegaMenu({
               </Link>
             </div>
             {/* Two sub-columns so every link is visible at once — no
-                internal scroll — even at 9-10 items per section. */}
+                internal scroll — even at 9-10 items per section. Each item
+                carries a leading boxed icon so the Clients panel matches the
+                Services / Portfolio mega-menu language. */}
             <ul className="grid grid-cols-2 gap-x-3 gap-y-0.5">
-              {column.items.map((item) => (
-                <li key={item.label}>
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex items-center justify-between gap-1.5 rounded-[7px] px-2 py-2 text-sm text-text-secondary transition-colors hover:bg-white/[0.06] hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
-                  >
-                    <span className="truncate">{item.label}</span>
-                    <ExternalLink
-                      size={12}
-                      strokeWidth={1.75}
-                      aria-hidden
-                      className="shrink-0 text-text-secondary/50 transition-colors group-hover:text-cyan-accent"
-                    />
-                  </a>
-                </li>
-              ))}
+              {column.items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <li key={item.label}>
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center gap-2.5 rounded-[7px] px-2 py-2 text-sm text-text-secondary transition-colors hover:bg-white/[0.06] hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+                    >
+                      <span
+                        aria-hidden
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[7px] border border-border bg-surface text-text-secondary transition-colors group-hover:border-cyan-accent/40 group-hover:text-cyan-accent"
+                      >
+                        <Icon size={15} strokeWidth={1.75} />
+                      </span>
+                      <span className="truncate">{item.label}</span>
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}

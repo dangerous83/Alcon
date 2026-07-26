@@ -12,6 +12,22 @@ import {
   Camera,
   Film,
   GraduationCap,
+  Grape,
+  Newspaper,
+  Bot,
+  Workflow,
+  Wheat,
+  Bitcoin,
+  ShieldCheck,
+  Plane,
+  Globe,
+  UserRound,
+  Clapperboard,
+  Droplets,
+  Truck,
+  TrendingUp,
+  Building2,
+  BadgeCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -217,34 +233,35 @@ export const portfolioMegaMenuStats = [
   { value: "12+", label: "Years" },
 ] as const;
 
-export type ExternalLinkItem = { label: string; url: string };
+export type ExternalLinkItem = { label: string; url: string; icon: LucideIcon };
 
 /**
  * Client work — real external links the client supplied directly (not
  * placeholder). These point off-site, so no internal page/route is
- * needed for them, unlike the rest of the nav.
+ * needed for them, unlike the rest of the nav. Each carries a leading
+ * icon so the Clients dropdown reads as a proper mega menu.
  */
 export const clientPlatformLinks: ExternalLinkItem[] = [
-  { label: "Ui Forge", url: "https://www.uiforge.site/" },
-  { label: "Vineyard", url: "https://www.vineyardchrist.com/" },
-  { label: "Pixela", url: "https://www.pixela-ai.com/" },
-  { label: "Forge Suite", url: "https://www.forgesuite.online/" },
-  { label: "Media HQ", url: "https://marketing.securevisanow.com/" },
-  { label: "AlvinAI", url: "https://www.alvinai-dev.com/" },
-  { label: "Build Flow", url: "https://www.buildflow-tech.com" },
-  { label: "Global Harvest", url: "https://www.globalharvest.online/" },
-  { label: "Forge Crypto", url: "https://forge-crypto-omega.vercel.app/" },
+  { label: "Ui Forge", url: "https://www.uiforge.site/", icon: LayoutGrid },
+  { label: "Vineyard", url: "https://www.vineyardchrist.com/", icon: Grape },
+  { label: "Pixela", url: "https://www.pixela-ai.com/", icon: Sparkles },
+  { label: "Forge Suite", url: "https://www.forgesuite.online/", icon: Boxes },
+  { label: "Media HQ", url: "https://marketing.securevisanow.com/", icon: Newspaper },
+  { label: "AlvinAI", url: "https://www.alvinai-dev.com/", icon: Bot },
+  { label: "Build Flow", url: "https://www.buildflow-tech.com", icon: Workflow },
+  { label: "Global Harvest", url: "https://www.globalharvest.online/", icon: Wheat },
+  { label: "Forge Crypto", url: "https://forge-crypto-omega.vercel.app/", icon: Bitcoin },
 ];
 
 export const clientWebsiteLinks: ExternalLinkItem[] = [
-  { label: "ITSEC", url: "https://itsecnow.com/" },
-  { label: "SecureVisa", url: "https://www.securevisanow.com" },
-  { label: "Koll", url: "https://www.koll.ae" },
-  { label: "Tina Portfolio", url: "https://www.tinaramos.online/" },
-  { label: "Alcon Media", url: "https://www.alcon-online.site/" },
-  { label: "Kangen", url: "https://kangenwateralife4u.com/" },
-  { label: "Logistic", url: "https://www.ilsmtc.com/" },
-  { label: "Malath", url: "https://malathinvestment.com/" },
-  { label: "UHUD", url: "https://www.uhud.online/" },
-  { label: "VerifiX", url: "https://overview.verifix.itsecnow.com/" },
+  { label: "ITSEC", url: "https://itsecnow.com/", icon: ShieldCheck },
+  { label: "SecureVisa", url: "https://www.securevisanow.com", icon: Plane },
+  { label: "Koll", url: "https://www.koll.ae", icon: Globe },
+  { label: "Tina Portfolio", url: "https://www.tinaramos.online/", icon: UserRound },
+  { label: "Alcon Media", url: "https://www.alcon-online.site/", icon: Clapperboard },
+  { label: "Kangen", url: "https://kangenwateralife4u.com/", icon: Droplets },
+  { label: "Logistic", url: "https://www.ilsmtc.com/", icon: Truck },
+  { label: "Malath", url: "https://malathinvestment.com/", icon: TrendingUp },
+  { label: "UHUD", url: "https://www.uhud.online/", icon: Building2 },
+  { label: "VerifiX", url: "https://overview.verifix.itsecnow.com/", icon: BadgeCheck },
 ];

@@ -9,6 +9,52 @@ import type {
   ExternalLinkItem,
 } from "@/lib/content/mega-menu";
 
+/**
+ * Right-hand promo panel shared by every mega menu (services, portfolio,
+ * clients): a thumbnail image with an eyebrow, heading, and short blurb, so
+ * each dropdown reads as a full mega menu rather than a bare link list.
+ */
+function PromoPanel({
+  promo,
+  onNavigate,
+}: {
+  promo: MegaMenuPromo;
+  onNavigate?: () => void;
+}) {
+  return (
+    <Link
+      href={promo.href}
+      onClick={onNavigate}
+      className="group block shrink-0 border-t border-border p-6 sm:p-8 lg:w-64 lg:border-l lg:border-t-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+    >
+      <span className="relative block aspect-[4/3] w-full overflow-hidden rounded-[9px] border border-border">
+        <Image
+          src={assetPath(promo.image)}
+          alt=""
+          fill
+          sizes="256px"
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      </span>
+      <span className="mt-4 block text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-accent">
+        {promo.eyebrow}
+      </span>
+      <span className="mt-1.5 flex items-center gap-1.5 font-heading text-sm font-semibold text-text-primary">
+        {promo.heading}
+        <ArrowRight
+          size={14}
+          strokeWidth={2}
+          aria-hidden
+          className="shrink-0 -translate-x-0.5 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100"
+        />
+      </span>
+      <span className="mt-2 block text-xs leading-relaxed text-text-secondary">
+        {promo.description}
+      </span>
+    </Link>
+  );
+}
+
 export function ServicesStyleMegaMenu({
   columns,
   stats,
@@ -91,38 +137,7 @@ export function ServicesStyleMegaMenu({
         ))}
       </div>
 
-        {promo && (
-          <Link
-            href={promo.href}
-            onClick={onNavigate}
-            className="group block shrink-0 border-t border-border p-6 sm:p-8 lg:w-64 lg:border-l lg:border-t-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
-          >
-            <span className="relative block aspect-[4/3] w-full overflow-hidden rounded-[9px] border border-border">
-              <Image
-                src={assetPath(promo.image)}
-                alt=""
-                fill
-                sizes="256px"
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-            </span>
-            <span className="mt-4 block text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-accent">
-              {promo.eyebrow}
-            </span>
-            <span className="mt-1.5 flex items-center gap-1.5 font-heading text-sm font-semibold text-text-primary">
-              {promo.heading}
-              <ArrowRight
-                size={14}
-                strokeWidth={2}
-                aria-hidden
-                className="shrink-0 -translate-x-0.5 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100"
-              />
-            </span>
-            <span className="mt-2 block text-xs leading-relaxed text-text-secondary">
-              {promo.description}
-            </span>
-          </Link>
-        )}
+        {promo && <PromoPanel promo={promo} onNavigate={onNavigate} />}
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border bg-surface/60 px-6 py-4 sm:px-8">
@@ -162,9 +177,13 @@ export function ServicesStyleMegaMenu({
 export function ClientsMegaMenu({
   platform,
   website,
+  promo,
+  onNavigate,
 }: {
   platform: ExternalLinkItem[];
   website: ExternalLinkItem[];
+  promo?: MegaMenuPromo;
+  onNavigate?: () => void;
 }) {
   const columns: { heading: string; href: string; items: ExternalLinkItem[] }[] = [
     { heading: "Platform", href: "/client-projects/platform", items: platform },
@@ -174,9 +193,16 @@ export function ClientsMegaMenu({
   return (
     <div
       data-testid="clients-mega-menu"
-      className="w-[min(52rem,calc(100vw-2rem))] overflow-hidden rounded-[7px] border border-border bg-surface-elevated/98 shadow-[0_30px_70px_-25px_rgba(0,0,0,0.9)] backdrop-blur"
+      className={clsx(
+        "overflow-hidden rounded-[7px] border border-border bg-surface-elevated/98 shadow-[0_30px_70px_-25px_rgba(0,0,0,0.9)] backdrop-blur",
+        promo
+          ? "w-[min(68rem,calc(100vw-2rem))]"
+          : "w-[min(52rem,calc(100vw-2rem))]"
+      )}
     >
-      <div className="grid gap-8 p-6 sm:grid-cols-2 sm:gap-8 sm:p-8">
+      {/* Link columns on the left, promo panel (when supplied) on the right. */}
+      <div className="flex flex-col lg:flex-row">
+      <div className="grid flex-1 gap-8 p-6 sm:grid-cols-2 sm:gap-8 sm:p-8">
         {columns.map((column) => (
           <div key={column.heading}>
             <div className="mb-4 flex items-center justify-between">
@@ -223,6 +249,9 @@ export function ClientsMegaMenu({
             </ul>
           </div>
         ))}
+      </div>
+
+        {promo && <PromoPanel promo={promo} onNavigate={onNavigate} />}
       </div>
     </div>
   );

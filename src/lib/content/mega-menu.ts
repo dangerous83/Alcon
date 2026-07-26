@@ -289,3 +289,12 @@ export const clientWebsiteLinks: ExternalLinkItem[] = [
   { label: "UHUD", url: "https://www.uhud.online/", icon: Building2 },
   { label: "VerifiX", url: "https://overview.verifix.itsecnow.com/", icon: BadgeCheck },
 ];
+
+export const clientsMegaMenuPromo: MegaMenuPromo = {
+  image: "/images/client-thumbnail.webp",
+  eyebrow: "Trusted Worldwide",
+  heading: "Brands that build with Alcon",
+  description:
+    "Platforms and websites shipped for clients across the globe — live products in the wild, not mockups.",
+  href: "/client-projects",
+};

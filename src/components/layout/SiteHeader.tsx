@@ -28,6 +28,7 @@ import {
   servicesMegaMenuPromo,
   portfolioMegaMenu,
   portfolioMegaMenuStats,
+  portfolioMegaMenuPromo,
   clientPlatformLinks,
   clientWebsiteLinks,
 } from "@/lib/content/mega-menu";
@@ -286,6 +287,7 @@ export function SiteHeader() {
                           testId="portfolio-mega-menu"
                           columns={portfolioMegaMenu}
                           stats={portfolioMegaMenuStats}
+                          promo={portfolioMegaMenuPromo}
                           ctaLabel="View All Work"
                           ctaHref="/client-projects"
                           onNavigate={() => setOpenMenu(null)}

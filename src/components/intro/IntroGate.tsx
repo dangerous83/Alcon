@@ -76,6 +76,12 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
   function handleEnter() {
     sessionStorage.setItem(SESSION_KEY, "1");
 
+    // Go fullscreen on the visitor's click — the "F11" experience the client
+    // asked for. Must be triggered by this user gesture. Best-effort: browsers
+    // that block it, or don't support element fullscreen (iOS Safari), simply
+    // continue into the site rather than erroring.
+    document.documentElement.requestFullscreen?.().catch(() => {});
+
     const video = videoRef.current;
     if (videoFailed || !video) {
       finish();
@@ -237,7 +243,7 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
               />
             </button>
 
-            <p className="mt-10 max-w-2xl text-center font-body text-sm leading-relaxed text-text-secondary sm:text-base">
+            <p className="mt-20 max-w-2xl text-center font-body text-sm leading-relaxed text-text-secondary sm:text-base">
               Alcon pairs sharp <span className="text-text-primary">marketing strategy</span> with in-house{" "}
               <span className="text-text-primary">AI specialists</span> — building intelligent campaigns,
               automations, and creative systems that move the metrics that matter.

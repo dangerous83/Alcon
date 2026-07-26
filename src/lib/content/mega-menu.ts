@@ -137,7 +137,7 @@ export const servicesMegaMenu: MegaMenuColumn[] = [
         href: "/services/editing",
       },
       {
-        label: "Weekend Tutorials",
+        label: "Tutorials",
         description: "Hands-on AI creative workshops",
         icon: GraduationCap,
         href: "/services/tutorials",
@@ -247,6 +247,15 @@ export const portfolioMegaMenuStats = [
   { value: "150+", label: "Clients" },
   { value: "12+", label: "Years" },
 ] as const;
+
+export const portfolioMegaMenuPromo: MegaMenuPromo = {
+  image: "/images/solution-thumbnail.webp",
+  eyebrow: "Selected Work",
+  heading: "A living book of work",
+  description:
+    "700+ real campaigns delivered for 150+ brands across every discipline — finished work, not case-study mockups.",
+  href: "/client-projects",
+};
 
 export type ExternalLinkItem = { label: string; url: string; icon: LucideIcon };
 

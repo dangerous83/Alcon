@@ -32,12 +32,12 @@ test.describe("desktop mega menus", () => {
       "Videography",
       "Photography",
       "Video Editing",
-      "Weekend Tutorials",
+      "Tutorials",
     ]) {
       await expect(panel.getByRole("link", { name: label })).toBeVisible();
     }
 
-    // "NEW" badge on Weekend Tutorials
+    // "NEW" badge on Tutorials
     await expect(panel.getByText("NEW", { exact: true })).toBeVisible();
 
     // Stats + CTA footer

@@ -267,7 +267,20 @@ export function ScrollVideoHero() {
     >
       <h1 className="sr-only">{heroSummary}</h1>
 
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-background">
+      {/* Not a flat #000: in clip 3 the video shrinks to a left panel and its
+          near-black edges would otherwise meet a dead black void on the right,
+          beside the brain's purple glow. A soft violet radial, peaking in the
+          open right-of-centre space and fading to pure black well before the
+          video's edge, gives that space the video's own colour without drawing
+          a hard rectangle around the (darker) video frame. Full-bleed clips 1–2
+          cover it entirely. */}
+      <div
+        className="sticky top-0 h-[100svh] w-full overflow-hidden bg-background"
+        style={{
+          backgroundImage:
+            "radial-gradient(65% 75% at 80% 48%, rgba(83,40,120,0.34) 0%, rgba(40,18,64,0.18) 38%, rgba(0,0,0,0) 68%)",
+        }}
+      >
         {!videoFailed ? (
           <video
             ref={videoRef}

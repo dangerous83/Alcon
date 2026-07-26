@@ -91,6 +91,15 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
     if (played) played.catch(() => finish());
   }
 
+  // Reveal the page as the overlay fades, not after. While dismissing, the
+  // overlay animates to opacity:0 over 700ms; if the sections stayed hidden
+  // until the fade finished, the transparent overlay would show the collapsed
+  // page behind it — an empty <main> with the footer pulled up to the viewport
+  // bottom — for that whole fade. That is the ~0.1s footer flash after the
+  // button is pressed. Showing the sections the moment dismissal starts means
+  // the fade crosses into the hero's opening frame instead.
+  const revealed = entered || phase === "dismissing";
+
   return (
     <>
       {/* Kept in the DOM so crawlers (and JS-disabled clients that never
@@ -98,18 +107,18 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
           interactively suppressed while the intro is up. Without this the
           static HTML flashes every homepage section into place before the
           overlay renders on top on slow connections. */}
-      {/* Publishes `entered` to the tree below. The scroll hero waits on it
-          before creating its ScrollTrigger — measuring the trigger while the
-          wrapper is display:none collapses the scrub range to zero and freezes
-          the hero on frame 0 after the reveal. */}
+      {/* Publishes `entered` (not `revealed`) to the tree below. The scroll
+          hero waits on it before creating its ScrollTrigger: during the fade
+          body overflow is still locked, so measuring the trigger then would
+          collapse its scrub range to zero. It waits for the fade to finish. */}
       <IntroEnteredContext.Provider value={entered}>
         <div
-          aria-hidden={!entered || undefined}
+          aria-hidden={!revealed || undefined}
           // `hidden` (display:none) rather than `invisible`: leaving the sections
           // in the layout let the page scroll behind the intro overlay before
           // hydration set body overflow:hidden. Crawlers read the raw HTML, so
           // display:none does not hurt SEO.
-          className={clsx(!entered && "hidden")}
+          className={clsx(!revealed && "hidden")}
         >
           {children}
         </div>
@@ -182,9 +191,10 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
             />
           )}
 
-          {/* Ambient decor — side circuit lattices and a neural overlay
-              across the brain. All decorative, hidden from AT, and fades out
-              with the CTA the moment the clip starts running. */}
+          {/* Ambient decor — a neural overlay across the brain. Decorative,
+              hidden from AT, and fades out with the CTA the moment the clip
+              starts running. The side circuit lattices were removed at the
+              client's request. */}
           <div
             aria-hidden
             className={clsx(
@@ -193,8 +203,6 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
               phase === "idle" ? "opacity-100" : "opacity-0"
             )}
           >
-            <IntroSideCircuit side="left" />
-            <IntroSideCircuit side="right" />
             <IntroBrainOverlay />
           </div>
 
@@ -229,7 +237,7 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
               />
             </button>
 
-            <p className="mt-6 max-w-md text-center font-body text-sm leading-relaxed text-text-secondary sm:text-base">
+            <p className="mt-10 max-w-2xl text-center font-body text-sm leading-relaxed text-text-secondary sm:text-base">
               Alcon pairs sharp <span className="text-text-primary">marketing strategy</span> with in-house{" "}
               <span className="text-text-primary">AI specialists</span> — building intelligent campaigns,
               automations, and creative systems that move the metrics that matter.
@@ -238,72 +246,6 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
         </div>
       )}
     </>
-  );
-}
-
-/**
- * Vertical circuit lattice on the flanks of the intro — mirrors on the right
- * so nothing on the page feels empty. Coloured with the brand gradient stops
- * (electric blue → violet → magenta → cyan) and animated via CSS keyframes
- * declared in globals.css, so `prefers-reduced-motion` neutralises it too.
- */
-function IntroSideCircuit({ side }: { side: "left" | "right" }) {
-  const isLeft = side === "left";
-  return (
-    <svg
-      className={clsx(
-        "absolute top-1/2 hidden h-[80vh] w-[18vw] max-w-[280px] -translate-y-1/2 md:block",
-        isLeft ? "left-0" : "right-0 -scale-x-100"
-      )}
-      viewBox="0 0 200 800"
-      preserveAspectRatio="xMidYMid meet"
-      fill="none"
-    >
-      <path
-        className="intro-circuit-path"
-        stroke="#2870FF"
-        d="M20 40 L20 180 L90 180 L90 300 L40 300 L40 440 L110 440 L110 560 L60 560 L60 720"
-        style={{ animationDelay: "0s" }}
-      />
-      <path
-        className="intro-circuit-path"
-        stroke="#7138FF"
-        d="M150 20 L150 140 L80 140 L80 260 L160 260 L160 380 L100 380 L100 500 L170 500 L170 620 L120 620 L120 760"
-        style={{ animationDelay: "1s" }}
-      />
-      <path
-        className="intro-circuit-path"
-        stroke="#D12DFF"
-        d="M60 80 L130 80 L130 220 L50 220 L50 360 L140 360 L140 480 L70 480 L70 640 L150 640 L150 780"
-        style={{ animationDelay: "2s" }}
-      />
-      <path
-        className="intro-circuit-path"
-        stroke="#16C7FF"
-        d="M180 100 L180 240 L110 240 L110 340 L170 340 L170 460 L90 460 L90 580 L180 580 L180 700"
-        style={{ animationDelay: "0.5s", strokeWidth: 1 }}
-      />
-
-      {[
-        { cx: 20, cy: 40, color: "#2870FF", delay: "0s" },
-        { cx: 90, cy: 300, color: "#7138FF", delay: "0.4s" },
-        { cx: 150, cy: 20, color: "#D12DFF", delay: "0.8s" },
-        { cx: 160, cy: 380, color: "#16C7FF", delay: "1.2s" },
-        { cx: 60, cy: 640, color: "#2870FF", delay: "1.6s" },
-        { cx: 170, cy: 500, color: "#7138FF", delay: "2s" },
-        { cx: 130, cy: 220, color: "#D12DFF", delay: "2.4s" },
-      ].map((node, i) => (
-        <circle
-          key={i}
-          className="intro-circuit-node"
-          cx={node.cx}
-          cy={node.cy}
-          r={2}
-          fill={node.color}
-          style={{ color: node.color, animationDelay: node.delay }}
-        />
-      ))}
-    </svg>
   );
 }
 

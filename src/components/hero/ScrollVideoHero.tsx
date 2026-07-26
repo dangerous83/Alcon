@@ -267,10 +267,10 @@ export function ScrollVideoHero() {
     >
       <h1 className="sr-only">{heroSummary}</h1>
 
-      {/* Plain black behind the video. In clip 3 the video shrinks to a left
-          panel and this shows on the right; it stays pure #000 so the open
-          space reads as dim black, matching the video's own dark edges. */}
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-background">
+      {/* Behind the video. In clip 3 the video shrinks to a left panel and
+          this shows on the right — kept a hair off pure black (#010103, a
+          near-black requested by the client) rather than #000. */}
+      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#010103]">
         {!videoFailed ? (
           <video
             ref={videoRef}

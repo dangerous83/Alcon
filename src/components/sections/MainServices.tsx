@@ -5,6 +5,10 @@ import { Heading } from "@/components/ui/Heading";
 import { Card } from "@/components/ui/Card";
 
 export function MainServices() {
+  // The full catalogue (including Video Editing) still lives on /services and
+  // powers the routes; this homepage grid intentionally features a subset.
+  const featured = services.filter((service) => service.slug !== "editing");
+
   return (
     <section
       className="mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8"
@@ -13,7 +17,7 @@ export function MainServices() {
       <div className="max-w-2xl">
         <SectionLabel>What we do</SectionLabel>
         <Heading as="h2" id="services-heading" size="lg" className="mt-4">
-          One creative system, five disciplines.
+          One creative system, four disciplines.
         </Heading>
         <p className="mt-4 text-text-secondary">
           Every service is built to plug into the same brand system — so
@@ -23,10 +27,10 @@ export function MainServices() {
       </div>
 
       <ul className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {services.map((service) => (
+        {featured.map((service, index) => (
           <Card as="li" key={service.slug} className="flex flex-col">
             <span className="font-mono text-xs text-text-secondary">
-              0{service.accentIndex + 1}
+              0{index + 1}
             </span>
             <h3 className="mt-4 font-heading text-xl font-medium text-text-primary">
               {service.name}

@@ -34,7 +34,12 @@ export function ServicesStyleMegaMenu({
       {/* Link list on the left, promo panel (when supplied) on the right so
           the menu reads as a full mega menu rather than a bare column list. */}
       <div className="flex flex-col lg:flex-row">
-      <div className="grid flex-1 gap-8 p-6 sm:grid-cols-3 sm:gap-6 sm:p-8">
+      <div
+        className={clsx(
+          "grid flex-1 gap-8 p-6 sm:gap-6 sm:p-8",
+          columns.length <= 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"
+        )}
+      >
         {columns.map((column) => (
           <div key={column.heading}>
             {column.heading && (

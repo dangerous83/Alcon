@@ -1,7 +1,13 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, FileText } from "lucide-react";
 import { clsx } from "@/lib/clsx";
-import type { MegaMenuColumn, ExternalLinkItem } from "@/lib/content/mega-menu";
+import { assetPath } from "@/lib/asset-path";
+import type {
+  MegaMenuColumn,
+  MegaMenuPromo,
+  ExternalLinkItem,
+} from "@/lib/content/mega-menu";
 
 export function ServicesStyleMegaMenu({
   columns,
@@ -10,6 +16,7 @@ export function ServicesStyleMegaMenu({
   ctaHref,
   onNavigate,
   testId,
+  promo,
 }: {
   columns: MegaMenuColumn[];
   stats: readonly { value: string; label: string }[];
@@ -17,13 +24,17 @@ export function ServicesStyleMegaMenu({
   ctaHref: string;
   onNavigate: () => void;
   testId: string;
+  promo?: MegaMenuPromo;
 }) {
   return (
     <div
       data-testid={testId}
       className="w-[min(64rem,calc(100vw-2rem))] overflow-hidden rounded-[7px] border border-border bg-surface-elevated/98 shadow-[0_30px_70px_-25px_rgba(0,0,0,0.9)] backdrop-blur"
     >
-      <div className="grid gap-8 p-6 sm:grid-cols-3 sm:gap-6 sm:p-8">
+      {/* Link list on the left, promo panel (when supplied) on the right so
+          the menu reads as a full mega menu rather than a bare column list. */}
+      <div className="flex flex-col lg:flex-row">
+      <div className="grid flex-1 gap-8 p-6 sm:grid-cols-3 sm:gap-6 sm:p-8">
         {columns.map((column) => (
           <div key={column.heading}>
             {column.heading && (
@@ -73,6 +84,40 @@ export function ServicesStyleMegaMenu({
             </ul>
           </div>
         ))}
+      </div>
+
+        {promo && (
+          <Link
+            href={promo.href}
+            onClick={onNavigate}
+            className="group block shrink-0 border-t border-border p-6 sm:p-8 lg:w-64 lg:border-l lg:border-t-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+          >
+            <span className="relative block aspect-[4/3] w-full overflow-hidden rounded-[9px] border border-border">
+              <Image
+                src={assetPath(promo.image)}
+                alt=""
+                fill
+                sizes="256px"
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            </span>
+            <span className="mt-4 block text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-accent">
+              {promo.eyebrow}
+            </span>
+            <span className="mt-1.5 flex items-center gap-1.5 font-heading text-sm font-semibold text-text-primary">
+              {promo.heading}
+              <ArrowRight
+                size={14}
+                strokeWidth={2}
+                aria-hidden
+                className="shrink-0 -translate-x-0.5 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100"
+              />
+            </span>
+            <span className="mt-2 block text-xs leading-relaxed text-text-secondary">
+              {promo.description}
+            </span>
+          </Link>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border bg-surface/60 px-6 py-4 sm:px-8">

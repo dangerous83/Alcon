@@ -5,27 +5,25 @@ test.describe("desktop mega menus", () => {
     test.skip(!!(viewport && viewport.width < 1024), "desktop-only");
   });
 
-  test("services mega menu lists all 13 items across 3 columns", async ({
+  test("services mega menu lists its items across 3 columns", async ({
     page,
   }) => {
     await page.goto("/");
     const nav = page.getByRole("navigation", { name: "Primary" });
     await nav.getByRole("link", { name: /^Services/ }).hover();
 
-    // Scoped to the open panel: "White Label" is both a standalone nav
-    // link and a Services mega menu item, so an unscoped query is
-    // ambiguous between the two.
     const panel = page.getByTestId("services-mega-menu");
 
     for (const heading of ["Design", "Video & Animation", "Media & Production"]) {
       await expect(panel.getByText(heading, { exact: true })).toBeVisible();
     }
 
+    // White Label has its own top-level nav link, so it is intentionally
+    // not duplicated in the Services mega menu.
     for (const label of [
       "Brand Identity",
       "Web UI/UX Design",
       "Graphic Design",
-      "White Label",
       "Motion Design",
       "2D Animation",
       "3D Animation",

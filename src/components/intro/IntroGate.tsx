@@ -76,12 +76,6 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
   function handleEnter() {
     sessionStorage.setItem(SESSION_KEY, "1");
 
-    // Go fullscreen on the visitor's click — the "F11" experience the client
-    // asked for. Must be triggered by this user gesture. Best-effort: browsers
-    // that block it, or don't support element fullscreen (iOS Safari), simply
-    // continue into the site rather than erroring.
-    document.documentElement.requestFullscreen?.().catch(() => {});
-
     const video = videoRef.current;
     if (videoFailed || !video) {
       finish();
@@ -136,8 +130,13 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
           aria-modal="true"
           aria-label="Alcon intro"
           className={clsx(
-            "fixed inset-0 z-[100] overflow-hidden bg-background transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
-            phase === "dismissing" ? "opacity-0" : "opacity-100"
+            // The collapse reads as "diving into the system": the whole intro
+            // scales up and blurs out as it fades, rather than a flat opacity
+            // fade — a more high-tech, AI-style hand-off into the page.
+            "fixed inset-0 z-[100] overflow-hidden bg-background transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            phase === "dismissing"
+              ? "scale-[1.08] opacity-0 blur-[6px]"
+              : "scale-100 opacity-100 blur-0"
           )}
         >
           {!videoFailed ? (
@@ -219,7 +218,7 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
               while it runs. */}
           <div
             className={clsx(
-              "absolute inset-x-0 top-[70%] z-10 flex -translate-y-1/2 flex-col items-center justify-center px-4",
+              "absolute inset-x-0 top-[76%] z-10 flex -translate-y-1/2 flex-col items-center justify-center px-4",
               "transition-opacity duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
               phase === "idle"
                 ? "opacity-100"
@@ -243,7 +242,7 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
               />
             </button>
 
-            <p className="mt-20 max-w-2xl text-center font-body text-sm leading-relaxed text-text-secondary sm:text-base">
+            <p className="mt-28 max-w-2xl text-center font-body text-sm leading-relaxed text-text-secondary sm:text-base">
               Alcon pairs sharp <span className="text-text-primary">marketing strategy</span> with in-house{" "}
               <span className="text-text-primary">AI specialists</span> — building intelligent campaigns,
               automations, and creative systems that move the metrics that matter.

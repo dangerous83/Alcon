@@ -31,9 +31,14 @@ type Phase = "idle" | "playing" | "dismissing";
  * Skipped entirely for prefers-reduced-motion, same convention as the hero.
  */
 export function IntroGate({ children }: { children: React.ReactNode }) {
-  // null = not yet decided (avoids a flash of the wrong state before the
-  // reduced-motion query and sessionStorage are read on mount).
-  const [entered, setEntered] = useState<boolean | null>(null);
+  // Default `false` (intro visible) so the SSG'd HTML already contains the
+  // intro overlay and hides the sections beneath. On GitHub Pages the raw
+  // HTML shipped to the browser is a static export of this initial render —
+  // if the default were `null`, every visitor would see the homepage text
+  // flash into place before hydration finished, and JS-disabled clients
+  // would see nothing but sections. `useEffect` still upgrades to `true`
+  // when reduced-motion is on or the intro was already dismissed this tab.
+  const [entered, setEntered] = useState<boolean>(false);
   const [phase, setPhase] = useState<Phase>("idle");
   const [videoFailed, setVideoFailed] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -45,11 +50,11 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
       "(prefers-reduced-motion: reduce)"
     ).matches;
     const alreadySeen = sessionStorage.getItem(SESSION_KEY) === "1";
-    setEntered(reducedMotion || alreadySeen);
+    if (reducedMotion || alreadySeen) setEntered(true);
   }, []);
 
   useEffect(() => {
-    if (entered !== false) return;
+    if (entered) return;
     // Showing over the homepage rather than replacing it, so the page
     // beneath must not scroll while the intro is up.
     const previous = document.body.style.overflow;
@@ -87,16 +92,23 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {children}
+      {/* Kept in the DOM so crawlers (and JS-disabled clients that never
+          get past the intro) still see every section, but visually and
+          interactively suppressed while the intro is up. Without this the
+          static HTML flashes every homepage section into place before the
+          overlay renders on top on slow connections. */}
+      <div
+        aria-hidden={!entered || undefined}
+        // `hidden` (display:none) rather than `invisible`: leaving the sections
+        // in the layout let the page scroll behind the intro overlay before
+        // hydration set body overflow:hidden. Crawlers read the raw HTML, so
+        // display:none does not hurt SEO.
+        className={clsx(!entered && "hidden")}
+      >
+        {children}
+      </div>
 
-      {entered === null && (
-        // Same background colour as the intro/homepage so there's nothing
-        // to flash — just an instant, unstyled hold until we know which
-        // state to render.
-        <div aria-hidden className="fixed inset-0 z-[100] bg-background" />
-      )}
-
-      {entered === false && (
+      {!entered && (
         <div
           role="dialog"
           aria-modal="true"

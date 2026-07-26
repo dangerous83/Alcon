@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { FloatingWidgets } from "@/components/layout/FloatingWidgets";
+import { ScrollTopOnLoad } from "@/components/layout/ScrollTopOnLoad";
 import { siteConfig } from "@/lib/content/site";
 import { organizationJsonLd } from "@/lib/seo/jsonld";
 
@@ -66,6 +67,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
+        <ScrollTopOnLoad />
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>

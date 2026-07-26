@@ -78,6 +78,13 @@ export const servicesMegaMenu: MegaMenuColumn[] = [
         icon: ImageIcon,
         href: "/services/branding",
       },
+      {
+        label: "Tutorials",
+        description: "Hands-on AI creative workshops",
+        icon: GraduationCap,
+        href: "/services/tutorials",
+        badge: "NEW",
+      },
     ],
   },
   {
@@ -135,13 +142,6 @@ export const servicesMegaMenu: MegaMenuColumn[] = [
         description: "AI-assisted post for ads and long-form",
         icon: Film,
         href: "/services/editing",
-      },
-      {
-        label: "Tutorials",
-        description: "Hands-on AI creative workshops",
-        icon: GraduationCap,
-        href: "/services/tutorials",
-        badge: "NEW",
       },
     ],
   },

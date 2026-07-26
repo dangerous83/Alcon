@@ -131,9 +131,17 @@ so it deploys to any static host — including GitHub Pages.
 `.github/workflows/deploy-pages.yml` builds the export and publishes it on
 every push to `main`.
 
-**One-time setup:** repo **Settings → Pages → Source → GitHub Actions**.
-(Not "Deploy from a branch" — that mode just serves raw repo files, which
-is why the site previously showed the README instead of the website.)
+**One-time setup (required):** repo **Settings → Pages → Build and
+deployment → Source → GitHub Actions**.
+
+Do **not** leave it on "Deploy from a branch". That mode makes GitHub's
+built-in Jekyll builder render `README.md` as the site and race this
+workflow for the `github-pages` environment — so the published page
+flickers to this very README instead of the Alcon website. That is exactly
+the "I can't see my interface, it shows the README" symptom. Flip the
+source to **GitHub Actions** once and it's fixed. As a safeguard the deploy
+workflow now also passes `enablement: true` to `actions/configure-pages`,
+which reasserts "GitHub Actions" as the source on every run.
 
 The workflow sets `NEXT_PUBLIC_BASE_PATH` to `/<repo-name>` automatically,
 since Pages serves the site from a subpath. To wire the quote form up, add

@@ -42,9 +42,21 @@ jobs:
 
       # Exposes the resolved Pages URL (steps.pages.outputs.base_url) so the
       # build can bake correct canonical/OG URLs.
+      #
+      # enablement: true asserts the Pages *source* on every run. If the repo's
+      # Pages source is ever left on "Deploy from a branch", GitHub's built-in
+      # Jekyll builder (the `pages-build-deployment` workflow) renders README.md
+      # and races this Actions deploy for the github-pages environment — so the
+      # published site flickers to the raw README instead of the Next.js app.
+      # Forcing build_type "workflow" here keeps GitHub Actions the sole source
+      # and stops the Jekyll README from ever winning. If you also see the README
+      # live, flip Settings -> Pages -> "Build and deployment" -> Source to
+      # "GitHub Actions" once; this step keeps it there afterwards.
       - name: Configure Pages
         id: pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       # Derive the URL path prefix from the actual Pages base URL.
       # - github.io deploy: base_url = https://<user>.github.io/<repo>  -> /<repo>

@@ -8,6 +8,7 @@ import { HeroReveal } from "@/components/hero/HeroReveal";
 import { PositioningCopy } from "@/components/sections/PositioningCopy";
 import { PositioningStatement } from "@/components/sections/PositioningStatement";
 import { Button } from "@/components/ui/Button";
+import { useIntroEntered } from "@/components/intro/intro-context";
 import { clsx } from "@/lib/clsx";
 import { assetPath } from "@/lib/asset-path";
 
@@ -67,6 +68,11 @@ export function ScrollVideoHero() {
   const [copyRevealed, setCopyRevealed] = useState(false);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
+  // False while the intro overlay is still up: the hero is inside a
+  // display:none wrapper then, and a ScrollTrigger built against a zero-height
+  // element has no scrub range — the video would sit frozen on frame 0 once
+  // the intro reveals it. Wait for the reveal before wiring anything up.
+  const introEntered = useIntroEntered();
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -79,6 +85,10 @@ export function ScrollVideoHero() {
   useEffect(() => {
     if (reducedMotion !== false) return; // wait until known-false; skip entirely if true
     if (videoFailed) return;
+    // Hold until the intro overlay is gone. Until then this component is
+    // inside a display:none wrapper, so the wrapper measures 0 tall and the
+    // ScrollTrigger built below would have an empty scroll range.
+    if (!introEntered) return;
 
     const video = videoRef.current;
     const wrapper = wrapperRef.current;
@@ -88,6 +98,7 @@ export function ScrollVideoHero() {
 
     let scrollTrigger: ScrollTrigger | undefined;
     let rafId = 0;
+    let refreshRafId = 0;
     let targetTime = 0;
     let smoothedTime = 0;
     let lastChapterIndex = -1;
@@ -168,6 +179,14 @@ export function ScrollVideoHero() {
         },
       });
 
+      // Re-measure once the browser has settled after the intro's reveal. The
+      // hero's effect can run before the gate's own effect restores
+      // `body.overflow`, so at create time the document may still be
+      // scroll-locked and the trigger's end would clamp short. A refresh on the
+      // next frame — after overflow is restored and layout is final — pins the
+      // scrub range to the real 280/340vh section.
+      refreshRafId = requestAnimationFrame(() => ScrollTrigger.refresh());
+
       // fastSeek, where supported, skips to the nearest keyframe without the
       // full seek pipeline. The source is all-intra so every frame is a
       // keyframe — this is effectively a direct jump.
@@ -224,8 +243,9 @@ export function ScrollVideoHero() {
       video.removeEventListener("error", onError);
       scrollTrigger?.kill();
       if (rafId) cancelAnimationFrame(rafId);
+      if (refreshRafId) cancelAnimationFrame(refreshRafId);
     };
-  }, [reducedMotion, videoFailed]);
+  }, [reducedMotion, videoFailed, introEntered]);
 
   if (reducedMotion === null) {
     // Avoid a flash of the wrong variant before we know the user's preference.

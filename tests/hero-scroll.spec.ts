@@ -6,7 +6,9 @@ import type { Page } from "@playwright/test";
 // document.scrollHeight would overshoot the hero almost immediately.
 async function scrollToFraction(page: Page, fraction: number) {
   await page.evaluate((f) => {
-    const section = document.querySelector("main > section") as HTMLElement | null;
+    // The intro gate wraps the page's sections in a div, so the hero is
+    // `main > div > section`, not a direct child. Match it as a descendant.
+    const section = document.querySelector("main section") as HTMLElement | null;
     if (!section) return;
     const top = section.offsetTop;
     const range = section.offsetHeight - window.innerHeight;
@@ -179,7 +181,7 @@ test.describe("reduced motion", () => {
     await expect(page.getByRole("link", { name: "Explore Our Work" }).first()).toBeVisible();
 
     const { wrapperHeight, viewportHeight } = await page.evaluate(() => {
-      const section = document.querySelector("main > section");
+      const section = document.querySelector("main section");
       return {
         wrapperHeight: section?.getBoundingClientRect().height ?? 0,
         viewportHeight: window.innerHeight,

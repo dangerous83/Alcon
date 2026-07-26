@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { assetPath } from "@/lib/asset-path";
 import { clsx } from "@/lib/clsx";
+import { IntroEnteredContext } from "./intro-context";
 
 // Sessions, not visits: a full-screen intro on every single page load (back
 // button, opening a link in a new tab) would be far more annoying than
@@ -97,16 +98,22 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
           interactively suppressed while the intro is up. Without this the
           static HTML flashes every homepage section into place before the
           overlay renders on top on slow connections. */}
-      <div
-        aria-hidden={!entered || undefined}
-        // `hidden` (display:none) rather than `invisible`: leaving the sections
-        // in the layout let the page scroll behind the intro overlay before
-        // hydration set body overflow:hidden. Crawlers read the raw HTML, so
-        // display:none does not hurt SEO.
-        className={clsx(!entered && "hidden")}
-      >
-        {children}
-      </div>
+      {/* Publishes `entered` to the tree below. The scroll hero waits on it
+          before creating its ScrollTrigger — measuring the trigger while the
+          wrapper is display:none collapses the scrub range to zero and freezes
+          the hero on frame 0 after the reveal. */}
+      <IntroEnteredContext.Provider value={entered}>
+        <div
+          aria-hidden={!entered || undefined}
+          // `hidden` (display:none) rather than `invisible`: leaving the sections
+          // in the layout let the page scroll behind the intro overlay before
+          // hydration set body overflow:hidden. Crawlers read the raw HTML, so
+          // display:none does not hurt SEO.
+          className={clsx(!entered && "hidden")}
+        >
+          {children}
+        </div>
+      </IntroEnteredContext.Provider>
 
       {!entered && (
         <div

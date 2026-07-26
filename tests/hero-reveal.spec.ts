@@ -7,10 +7,12 @@ import type { Page } from "@playwright/test";
 // scrub runs straight through all three clips.
 async function scrollHeroTo(page: Page, fraction: number) {
   // Wait for the real pinned hero (not the pre-hydration placeholder) so
-  // "main > section" resolves to the hero and its height is measurable.
+  // "main section" resolves to the hero and its height is measurable. The
+  // intro gate wraps the sections in a div, so the hero is `main > div >
+  // section`, matched here as a descendant rather than a direct child.
   await page.waitForFunction(() => !!document.querySelector("video"));
   await page.evaluate((f) => {
-    const section = document.querySelector("main > section") as HTMLElement | null;
+    const section = document.querySelector("main section") as HTMLElement | null;
     if (!section) return;
     // End of the *pin* range, not the end of the section: the sticky frame
     // releases one viewport before the section's bottom edge.
@@ -25,7 +27,7 @@ async function scrollHeroTo(page: Page, fraction: number) {
 
 function pinEndOf(page: Page) {
   return page.evaluate(() => {
-    const section = document.querySelector("main > section") as HTMLElement;
+    const section = document.querySelector("main section") as HTMLElement;
     return section.offsetTop + section.offsetHeight - window.innerHeight;
   });
 }

@@ -31,6 +31,7 @@ import {
   portfolioMegaMenuPromo,
   clientPlatformLinks,
   clientWebsiteLinks,
+  clientsMegaMenuPromo,
 } from "@/lib/content/mega-menu";
 
 const linkBase =
@@ -66,7 +67,10 @@ export function SiteHeader() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
   const pathname = usePathname();
-  const navRef = useRef<HTMLUListElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  // Remembers which menu to keep rendering while the panel fades out, so the
+  // content doesn't vanish before the closing transition finishes.
+  const lastMenuRef = useRef<string | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Close any open dropdown on outside click and on Escape, so it never
@@ -115,6 +119,17 @@ export function SiteHeader() {
   const centreLinks = navigation.filter((item) => !item.cta);
   const ctaLink = navigation.find((item) => item.cta);
 
+  // A single mega-menu panel is rendered below the whole nav rather than
+  // inside the trigger that opened it, so it centres on the viewport instead
+  // of under that link. `lastMenuRef` keeps the last menu on screen while the
+  // panel fades closed.
+  if (openMenu) lastMenuRef.current = openMenu;
+  const activeKey = openMenu ?? lastMenuRef.current;
+  const activeItem = activeKey
+    ? centreLinks.find((item) => item.href === activeKey)
+    : undefined;
+  const activeMega = activeItem && hasMega(activeItem) ? activeItem.mega : null;
+
   return (
     <header className="fixed inset-x-0 top-0 z-50">
       {/* Announcement bar: tagline / search / contact number.
@@ -149,6 +164,7 @@ export function SiteHeader() {
       <div className="relative z-10 bg-black">
         <div className="absolute inset-0 bg-black pointer-events-none" />
         <nav
+          ref={navRef}
           aria-label="Primary"
           className="relative mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8"
         >
@@ -172,10 +188,7 @@ export function SiteHeader() {
 
           {/* Centred independently of the logo/CTA widths so the links sit on
               the true middle of the header. */}
-          <ul
-            ref={navRef}
-            className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 lg:flex"
-          >
+          <ul className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 lg:flex">
             {centreLinks.map((item) => {
               const active = pathname.startsWith(item.href);
               const menuOpen = openMenu === item.href;
@@ -253,58 +266,54 @@ export function SiteHeader() {
                       />
                     )}
                   </Link>
-
-                  {/* Only mounted while open — not just visually hidden.
-                      Every item's panel used to render unconditionally
-                      (CSS-only open/close), which left off-screen menus'
-                      links sitting in the tab order and the a11y tree at
-                      all times: a keyboard user tabbing through the nav
-                      would land on invisible items, and role-based queries
-                      would resolve duplicates across menus. `inert` was
-                      tried first to suppress that without unmounting, but
-                      isn't honoured for accessibility-tree exclusion by
-                      every engine this needs to run on — actually removing
-                      the closed panels is the reliable fix. */}
-                  {menuOpen && (
-                    <MegaMenuWrapper
-                      open={menuOpen}
-                      onMouseEnter={() => openNow(item.href)}
-                      onMouseLeave={scheduleClose}
-                    >
-                      {mega === "services" && (
-                        <ServicesStyleMegaMenu
-                          testId="services-mega-menu"
-                          columns={servicesMegaMenu}
-                          stats={servicesMegaMenuStats}
-                          promo={servicesMegaMenuPromo}
-                          ctaLabel="All Services"
-                          ctaHref="/services"
-                          onNavigate={() => setOpenMenu(null)}
-                        />
-                      )}
-                      {mega === "portfolio" && (
-                        <ServicesStyleMegaMenu
-                          testId="portfolio-mega-menu"
-                          columns={portfolioMegaMenu}
-                          stats={portfolioMegaMenuStats}
-                          promo={portfolioMegaMenuPromo}
-                          ctaLabel="View All Work"
-                          ctaHref="/client-projects"
-                          onNavigate={() => setOpenMenu(null)}
-                        />
-                      )}
-                      {mega === "clients" && (
-                        <ClientsMegaMenu
-                          platform={clientPlatformLinks}
-                          website={clientWebsiteLinks}
-                        />
-                      )}
-                    </MegaMenuWrapper>
-                  )}
                 </li>
               );
             })}
           </ul>
+
+          {/* One mega-menu panel for the whole nav. Rendered here as a direct
+              child of the centred <nav> (which has no transform) and absolutely
+              positioned, so it centres on the viewport instead of under
+              whichever trigger opened it — and stays out of the nav's flex
+              flow. Kept mounted and toggled via `open` so it can fade; `inert`
+              (inside MegaMenuWrapper) drops it from the tab order and a11y tree
+              while closed. */}
+          <MegaMenuWrapper
+            open={openMenu !== null}
+            onMouseEnter={cancelClose}
+            onMouseLeave={scheduleClose}
+          >
+            {activeMega === "services" && (
+              <ServicesStyleMegaMenu
+                testId="services-mega-menu"
+                columns={servicesMegaMenu}
+                stats={servicesMegaMenuStats}
+                promo={servicesMegaMenuPromo}
+                ctaLabel="All Services"
+                ctaHref="/services"
+                onNavigate={() => setOpenMenu(null)}
+              />
+            )}
+            {activeMega === "portfolio" && (
+              <ServicesStyleMegaMenu
+                testId="portfolio-mega-menu"
+                columns={portfolioMegaMenu}
+                stats={portfolioMegaMenuStats}
+                promo={portfolioMegaMenuPromo}
+                ctaLabel="View All Work"
+                ctaHref="/client-projects"
+                onNavigate={() => setOpenMenu(null)}
+              />
+            )}
+            {activeMega === "clients" && (
+              <ClientsMegaMenu
+                platform={clientPlatformLinks}
+                website={clientWebsiteLinks}
+                promo={clientsMegaMenuPromo}
+                onNavigate={() => setOpenMenu(null)}
+              />
+            )}
+          </MegaMenuWrapper>
 
           {ctaLink && (
             <Link

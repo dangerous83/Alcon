@@ -42,6 +42,55 @@ test.describe("hero scrub after the intro is dismissed", () => {
     await expect(page.locator("main section video").first()).toBeInViewport();
   });
 
+  test("the footer never flashes through the dismissing overlay", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    // Sample the footer's position, but only while the intro overlay is
+    // see-through (or gone). While the overlay is opaque it covers whatever is
+    // behind it, so the footer's position then is irrelevant. The bug was that
+    // the sections stayed display:none through the 700ms fade, so the fading
+    // overlay revealed a collapsed page with the footer pulled up to mid-screen
+    // — a brief footer flash after the button press.
+    await page.getByRole("button", { name: /Begin Your Journey/i }).click();
+    await page.evaluate(() => {
+      (window as unknown as { __minRatio: number }).__minRatio = Infinity;
+      let done = false;
+      const tick = () => {
+        const overlay = document.querySelector('[role="dialog"]');
+        const opacity = overlay
+          ? parseFloat(getComputedStyle(overlay).opacity)
+          : 0;
+        if (opacity < 0.9) {
+          const f = document.querySelector("footer");
+          if (f) {
+            const w = window as unknown as { __minRatio: number };
+            w.__minRatio = Math.min(
+              w.__minRatio,
+              f.getBoundingClientRect().top / window.innerHeight
+            );
+          }
+        }
+        if (!overlay) done = true;
+        if (!done) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+
+    await expect(
+      page.getByRole("dialog", { name: /Alcon intro/i })
+    ).toBeHidden({ timeout: 20_000 });
+    await page.waitForTimeout(300);
+
+    const minRatio = await page.evaluate(
+      () => (window as unknown as { __minRatio: number }).__minRatio
+    );
+    // Footer top must always be at least a viewport below the fold whenever the
+    // overlay is see-through: it never enters the visible area.
+    expect(minRatio).toBeGreaterThan(1);
+  });
+
   test("scrolling scrubs the hero video after the intro reveal", async ({
     page,
   }) => {

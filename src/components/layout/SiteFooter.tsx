@@ -99,7 +99,7 @@ const socialLinks = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border bg-surface">
+    <footer className="border-t border-border bg-black">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-6">
           <div className="lg:col-span-2">

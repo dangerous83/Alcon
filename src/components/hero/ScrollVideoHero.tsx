@@ -12,11 +12,13 @@ import { useIntroEntered } from "@/components/intro/intro-context";
 import { clsx } from "@/lib/clsx";
 import { assetPath } from "@/lib/asset-path";
 
-// One file, three scroll-scrubbed clips concatenated seamlessly:
+// One file, four scroll-scrubbed clips concatenated seamlessly:
 //
 //   0 .......... 15.04s   chapter loop (three headlines)
 //   15.04s ..... 21.08s   zoom out to a front-on brain close-up
 //   21.08s ..... 27.38s   the brain wires up and Dubai appears inside it
+//   27.38s ..... 32.42s   the brain disperses and reforms as an ascending
+//                         growth-chart of towers — the closing beat
 //
 // Each seam is a handover between overlays:
 //
@@ -26,11 +28,15 @@ import { assetPath } from "@/lib/asset-path";
 //   COPY_REVEAL_AT the statement itself only fades in once the brain has
 //                  turned into profile with the skyline resolved inside it —
 //                  a couple of seconds after CLIP2_END, not at the seam
+//   CLIP3_END      clip 4 (the growth-chart) plays full-frame: the video
+//                  returns to full bleed and the positioning statement fades
+//                  out, so the ascending towers close the hero uncluttered
 //
-// Scrolling runs straight through all three clips; nothing holds the page.
+// Scrolling runs straight through all four clips; nothing holds the page.
 const CLIP1_END = 15.041667;
 const CLIP2_END = 21.083333;
-const VIDEO_DURATION_FALLBACK = 27.375;
+const CLIP3_END = 27.375;
+const VIDEO_DURATION_FALLBACK = 32.416667;
 // The source is encoded all-intra (every frame a keyframe), so seeking is a
 // single-frame decode rather than a decode-forward from the last keyframe.
 // That makes a snappier follow factor affordable without stutter.
@@ -65,6 +71,7 @@ export function ScrollVideoHero() {
   const [phaseB, setPhaseB] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [phaseC, setPhaseC] = useState(false);
+  const [phaseD, setPhaseD] = useState(false);
   const [copyRevealed, setCopyRevealed] = useState(false);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
@@ -105,6 +112,7 @@ export function ScrollVideoHero() {
     let lastPhaseB = false;
     let lastRevealed = false;
     let lastPhaseC = false;
+    let lastPhaseD = false;
     let lastCopyRevealed = false;
     let hasStarted = false;
 
@@ -166,6 +174,14 @@ export function ScrollVideoHero() {
           if (isPhaseC !== lastPhaseC) {
             lastPhaseC = isPhaseC;
             setPhaseC(isPhaseC);
+          }
+
+          // Clip 4: the video returns to full bleed and the statement fades
+          // out, so the growth-chart closes the hero on its own.
+          const isPhaseD = timeInSeconds >= CLIP3_END;
+          if (isPhaseD !== lastPhaseD) {
+            lastPhaseD = isPhaseD;
+            setPhaseD(isPhaseD);
           }
 
           // The copy itself waits a beat longer than the panel switch above,
@@ -259,10 +275,11 @@ export function ScrollVideoHero() {
   return (
     <section
       ref={wrapperRef}
-      /* Back to the original scroll length. Keeping it proportional to the
-         video (~18.6vh/s) meant 620vh of scrolling by the third clip, which
-         was far too much travel; the scrub simply runs faster per pixel. */
-      className="relative h-[280vh] lg:h-[340vh]"
+      /* Scroll length keeps the chosen per-pixel scrub speed, extended for the
+         fourth clip: the scrub distance (section height minus the 100svh
+         sticky viewport) is scaled by the new/old duration ratio
+         (32.42s / 27.38s ≈ 1.18), so 280/340vh becomes ~313/384vh. */
+      className="relative h-[313vh] lg:h-[384vh]"
       aria-label="Alcon — Creative Intelligence"
     >
       <h1 className="sr-only">{heroSummary}</h1>
@@ -287,7 +304,11 @@ export function ScrollVideoHero() {
               // Widths are paired with the copy column below (lg:w-[38%],
               // xl:w-1/3) and must not sum past 100%, or the panel runs under
               // the text — which is exactly what 64% + 38% did at lg.
+              // Clip 4 (phaseD) drops the panel and returns to full bleed so
+              // the growth-chart towers — which sit on the right of the frame
+              // — are no longer squeezed into the left panel under the copy.
               phaseC &&
+                !phaseD &&
                 "lg:w-[60%] lg:object-contain lg:[object-position:left_center] xl:w-[64%]"
             )}
             muted
@@ -442,7 +463,7 @@ export function ScrollVideoHero() {
           data-testid="hero-positioning"
           className={clsx(
             "pointer-events-none absolute inset-0 z-20 flex items-center transition-opacity duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]",
-            copyRevealed ? "opacity-100" : "opacity-0"
+            copyRevealed && !phaseD ? "opacity-100" : "opacity-0"
           )}
         >
           {/* No scrim needed: clip 3 pulls the video into a panel on the left,

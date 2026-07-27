@@ -28,14 +28,13 @@ import { assetPath } from "@/lib/asset-path";
 //   COPY_REVEAL_AT the statement itself only fades in once the brain has
 //                  turned into profile with the skyline resolved inside it —
 //                  a couple of seconds after CLIP2_END, not at the seam
-//   CLIP3_END      clip 4 (the growth-chart) plays full-frame: the video
-//                  returns to full bleed and the positioning statement fades
-//                  out, so the ascending towers close the hero uncluttered
+//   (clip 3→4) clip 4 (the growth-chart) plays in the SAME left panel as
+//                  clip 3, with the positioning statement staying alongside —
+//                  a seamless continuation, no zoom or layout switch
 //
 // Scrolling runs straight through all four clips; nothing holds the page.
 const CLIP1_END = 15.041667;
 const CLIP2_END = 21.083333;
-const CLIP3_END = 27.375;
 const VIDEO_DURATION_FALLBACK = 32.416667;
 // The source is encoded all-intra (every frame a keyframe), so seeking is a
 // single-frame decode rather than a decode-forward from the last keyframe.
@@ -71,7 +70,6 @@ export function ScrollVideoHero() {
   const [phaseB, setPhaseB] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [phaseC, setPhaseC] = useState(false);
-  const [phaseD, setPhaseD] = useState(false);
   const [copyRevealed, setCopyRevealed] = useState(false);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
@@ -112,7 +110,6 @@ export function ScrollVideoHero() {
     let lastPhaseB = false;
     let lastRevealed = false;
     let lastPhaseC = false;
-    let lastPhaseD = false;
     let lastCopyRevealed = false;
     let hasStarted = false;
 
@@ -174,14 +171,6 @@ export function ScrollVideoHero() {
           if (isPhaseC !== lastPhaseC) {
             lastPhaseC = isPhaseC;
             setPhaseC(isPhaseC);
-          }
-
-          // Clip 4: the video returns to full bleed and the statement fades
-          // out, so the growth-chart closes the hero on its own.
-          const isPhaseD = timeInSeconds >= CLIP3_END;
-          if (isPhaseD !== lastPhaseD) {
-            lastPhaseD = isPhaseD;
-            setPhaseD(isPhaseD);
           }
 
           // The copy itself waits a beat longer than the panel switch above,
@@ -304,11 +293,10 @@ export function ScrollVideoHero() {
               // Widths are paired with the copy column below (lg:w-[38%],
               // xl:w-1/3) and must not sum past 100%, or the panel runs under
               // the text — which is exactly what 64% + 38% did at lg.
-              // Clip 4 (phaseD) drops the panel and returns to full bleed so
-              // the growth-chart towers — which sit on the right of the frame
-              // — are no longer squeezed into the left panel under the copy.
+              // Clip 4 stays in this same panel (no zoom / no full-bleed
+              // switch), so the growth-chart plays as a seamless continuation
+              // of clip 3 rather than a jarring jump.
               phaseC &&
-                !phaseD &&
                 "lg:w-[60%] lg:object-contain lg:[object-position:left_center] xl:w-[64%]"
             )}
             muted
@@ -463,7 +451,7 @@ export function ScrollVideoHero() {
           data-testid="hero-positioning"
           className={clsx(
             "pointer-events-none absolute inset-0 z-20 flex items-center transition-opacity duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]",
-            copyRevealed && !phaseD ? "opacity-100" : "opacity-0"
+            copyRevealed ? "opacity-100" : "opacity-0"
           )}
         >
           {/* No scrim needed: clip 3 pulls the video into a panel on the left,

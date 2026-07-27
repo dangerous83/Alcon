@@ -10,6 +10,7 @@ import { Heading } from "@/components/ui/Heading";
 import { Card } from "@/components/ui/Card";
 import { assetPath } from "@/lib/asset-path";
 import { useIntroEntered } from "@/components/intro/intro-context";
+import { clsx } from "@/lib/clsx";
 
 // Same scrub tuning as the hero, so the background reads as one continuous
 // system with it. The clip picks up from the exact brain frame the hero ends
@@ -23,27 +24,50 @@ const DURATION_FALLBACK = 5.041667;
 // powers the routes; this section intentionally features a subset.
 const featured = services.filter((service) => service.slug !== "editing");
 
-function ServiceCards() {
+function ServiceCards({ compact = false }: { compact?: boolean }) {
   return (
-    <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+    <ul
+      className={clsx(
+        "grid gap-3 sm:grid-cols-2",
+        compact ? "mt-6" : "mt-8"
+      )}
+    >
       {featured.map((service, index) => (
         <Card
           as="li"
           key={service.slug}
-          className="flex flex-col bg-surface-elevated/70 p-5 backdrop-blur-sm"
+          className={clsx(
+            "flex flex-col bg-surface-elevated/70 backdrop-blur-sm",
+            compact ? "p-4" : "p-5"
+          )}
         >
-          <span className="font-mono text-xs text-text-secondary">
+          <span className="font-mono text-[11px] text-text-secondary">
             0{index + 1}
           </span>
-          <h3 className="mt-3 font-heading text-lg font-medium text-text-primary">
+          <h3
+            className={clsx(
+              "mt-2 font-heading font-medium text-text-primary",
+              compact ? "text-base leading-tight" : "text-lg"
+            )}
+          >
             {service.name}
           </h3>
-          <p className="mt-2 flex-1 text-sm leading-relaxed text-text-secondary">
+          <p
+            className={clsx(
+              "mt-1.5 flex-1 text-text-secondary",
+              compact
+                ? "text-[13px] leading-snug"
+                : "text-sm leading-relaxed"
+            )}
+          >
             {service.summary}
           </p>
           <Link
             href={`/services/${service.slug}`}
-            className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
+            className={clsx(
+              "inline-flex items-center gap-1 text-sm font-medium text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded",
+              compact ? "mt-3" : "mt-4"
+            )}
           >
             Learn more
             <span aria-hidden>→</span>
@@ -54,14 +78,24 @@ function ServiceCards() {
   );
 }
 
-function SectionCopy() {
+function SectionCopy({ compact = false }: { compact?: boolean }) {
   return (
     <>
       <SectionLabel>What we do</SectionLabel>
-      <Heading as="h2" id="services-heading" size="lg" className="mt-4">
+      <Heading
+        as="h2"
+        id="services-heading"
+        size={compact ? "md" : "lg"}
+        className={compact ? "mt-3" : "mt-4"}
+      >
         One creative system, four disciplines.
       </Heading>
-      <p className="mt-4 max-w-xl text-text-secondary">
+      <p
+        className={clsx(
+          "max-w-xl text-text-secondary",
+          compact ? "mt-3 text-sm" : "mt-4"
+        )}
+      >
         Every service is built to plug into the same brand system — so
         identity, motion, and content stay consistent no matter which team you
         start with.
@@ -199,51 +233,56 @@ export function MainServices() {
   return (
     <section
       ref={wrapperRef}
-      className="relative bg-[#010103]"
+      // Tall enough to give the 5s clip a comfortable scrub. The composition
+      // (cards left, towers right) is pinned for the whole section, and only
+      // the video scrubs — so it ENDS on the full frame: heading + all four
+      // cards still in place with the growth-chart fully formed on the right.
+      className="relative h-[220vh] lg:h-[240vh]"
       aria-labelledby="services-heading"
     >
-      {/* Scroll-scrubbed background pinned for the length of the section: the
-          growth-chart clip, picking up from the brain frame the hero ended on.
-          The content below scrolls over it, so it isn't boxed into one
-          viewport. Towers sit on the right of the frame; the cards on the left
-          are translucent, so the video reads through them either way. */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
-          <video
-            ref={videoRef}
-            className="absolute inset-0 h-full w-full object-cover [object-position:70%_center] sm:[object-position:center]"
-            muted
-            playsInline
-            preload="auto"
-            poster={assetPath("/images/services-poster.jpg")}
-          >
-            <source
-              media="(max-width: 767px)"
-              src={assetPath("/video/services-scroll-mobile.mp4")}
-              type="video/mp4"
-            />
-            <source
-              media="(max-width: 767px)"
-              src={assetPath("/video/services-scroll-mobile.webm")}
-              type="video/webm"
-            />
-            <source src={assetPath("/video/services-scroll.mp4")} type="video/mp4" />
-            <source src={assetPath("/video/services-scroll.webm")} type="video/webm" />
-          </video>
-          {/* Legibility scrim: darkens the left where the cards sit, fading
-              out to the right where the towers rise. */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
-        </div>
-      </div>
+      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#010103]">
+        {/* Scroll-scrubbed background: the growth-chart clip, picking up from
+            the brain frame the hero ended on. Towers sit on the right of the
+            frame; the cards on the left never move. */}
+        <video
+          ref={videoRef}
+          className="absolute inset-0 h-full w-full object-cover [object-position:75%_center] sm:object-center"
+          muted
+          playsInline
+          preload="auto"
+          poster={assetPath("/images/services-poster.jpg")}
+          aria-hidden
+        >
+          <source
+            media="(max-width: 767px)"
+            src={assetPath("/video/services-scroll-mobile.mp4")}
+            type="video/mp4"
+          />
+          <source
+            media="(max-width: 767px)"
+            src={assetPath("/video/services-scroll-mobile.webm")}
+            type="video/webm"
+          />
+          <source src={assetPath("/video/services-scroll.mp4")} type="video/mp4" />
+          <source src={assetPath("/video/services-scroll.webm")} type="video/webm" />
+        </video>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-        <div className="lg:max-w-[60%]">
-          <SectionCopy />
-          <ServiceCards />
+        {/* Legibility scrim: darkens the left where the cards sit, fading out
+            to the right where the towers rise. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent"
+        />
+
+        {/* Pinned composition, top-aligned below the fixed header so the
+            heading is always visible; on very short viewports only the last
+            card's base clips rather than the title. */}
+        <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-start px-4 pb-8 pt-24 sm:px-6 sm:pt-28 lg:px-8">
+          <div className="lg:max-w-[58%]">
+            <SectionCopy compact />
+            <ServiceCards compact />
+          </div>
         </div>
-        {/* Extra travel so the clip finishes on the towers before the section
-            releases and the next one scrolls in. */}
-        <div aria-hidden className="h-[45vh] lg:h-[60vh]" />
       </div>
     </section>
   );

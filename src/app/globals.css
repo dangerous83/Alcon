@@ -256,22 +256,71 @@ body {
   animation-delay: 1.2s;
 }
 
-/* Mega-menu "analysis" grid: small squares pulsing in a diagonal wave. The
-   per-cell animation-delay (set inline) sweeps the wave across the grid. The
-   global prefers-reduced-motion block above disables the animation, leaving
-   the cells at their static base opacity. */
-@keyframes mega-scan {
-  0%,
-  100% {
-    opacity: 0.08;
-  }
-  50% {
-    opacity: 0.85;
+/* Mega-menu signal-analysis graphic: two flowing gradient waveforms and a
+   scanning beam over a faint monitor grid. The global prefers-reduced-motion
+   block above disables the animations, leaving a static waveform. */
+.mega-signal-line {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 2 7;
+  animation: mega-signal-flow 2.8s linear infinite;
+  filter: drop-shadow(0 0 4px rgba(113, 56, 255, 0.55));
+}
+
+.mega-signal-line-dim {
+  fill: none;
+  stroke-width: 1;
+  stroke-opacity: 0.35;
+  stroke-dasharray: 2 9;
+  animation: mega-signal-flow 4.4s linear infinite reverse;
+}
+
+.mega-signal-sweep {
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(22, 199, 255, 0.9),
+    transparent
+  );
+  box-shadow: 0 0 16px 3px rgba(22, 199, 255, 0.4);
+  animation: mega-signal-sweep 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.mega-signal-blink {
+  animation: mega-signal-blink 1.4s ease-in-out infinite;
+}
+
+@keyframes mega-signal-flow {
+  to {
+    stroke-dashoffset: -240;
   }
 }
 
-.mega-scan-cell {
-  background-image: linear-gradient(120deg, #2870ff 0%, #7138ff 55%, #d12dff 100%);
-  opacity: 0.2;
-  animation: mega-scan 2.6s ease-in-out infinite;
+@keyframes mega-signal-sweep {
+  0% {
+    left: -2%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    left: 102%;
+    opacity: 0;
+  }
+}
+
+@keyframes mega-signal-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
 }

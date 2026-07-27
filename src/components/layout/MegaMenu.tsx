@@ -10,39 +10,87 @@ import type {
 } from "@/lib/content/mega-menu";
 
 /**
- * Decorative "analysis" loop that fills the empty space at the bottom of a
- * mega menu — a grid of small digital squares pulsing in a diagonal wave, so
- * the panel reads as a live, high-tech / AI surface rather than dead space.
- * Purely ornamental (aria-hidden) and desktop-only; respects
- * prefers-reduced-motion via the CSS in globals.css.
+ * Decorative signal-analysis graphic that fills the empty space at the bottom
+ * of a mega menu: a faint monitor grid, two flowing gradient waveform lines,
+ * and a scanning beam that sweeps across — an oscilloscope / AI-analysis
+ * aesthetic, refined rather than blocky. Purely ornamental (aria-hidden),
+ * desktop-only, and disabled under prefers-reduced-motion (see globals.css).
  */
+const SIGNAL_W = 1200;
+const SIGNAL_H = 96;
+
+function signalPath(seed: number, amp: number) {
+  const mid = SIGNAL_H / 2;
+  const n = 72;
+  let d = "";
+  for (let i = 0; i <= n; i++) {
+    const x = (i / n) * SIGNAL_W;
+    const y =
+      mid +
+      Math.sin(i * 0.5 + seed) * amp +
+      Math.sin(i * 1.3 + seed * 1.7) * amp * 0.5 +
+      Math.sin(i * 2.9 + seed) * amp * 0.22;
+    d += `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)} `;
+  }
+  return d.trim();
+}
+
 function MegaMenuScan() {
-  const cols = 24;
-  const rows = 3;
-  const cells = Array.from({ length: cols * rows });
+  const ticks = 32;
   return (
     <div aria-hidden className="mt-auto hidden select-none pt-8 lg:block">
       <div className="mb-2.5 flex items-center gap-2">
-        <span className="h-1 w-1 animate-pulse rounded-full bg-cyan-accent" />
+        <span className="mega-signal-blink h-1 w-1 rounded-full bg-cyan-accent" />
         <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-text-secondary/50">
           Analyzing creative signals
         </span>
       </div>
-      <div
-        className="grid w-full gap-[3px]"
-        style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-      >
-        {cells.map((_, i) => {
-          const x = i % cols;
-          const y = Math.floor(i / cols);
-          return (
-            <span
+      <div className="relative h-16 w-full overflow-hidden rounded-[5px] border border-white/[0.06] bg-[radial-gradient(120%_120%_at_50%_0%,rgba(113,56,255,0.06),transparent_70%)]">
+        <svg
+          viewBox={`0 0 ${SIGNAL_W} ${SIGNAL_H}`}
+          preserveAspectRatio="none"
+          className="absolute inset-0 h-full w-full"
+        >
+          <defs>
+            <linearGradient id="mm-signal" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stopColor="#2870FF" />
+              <stop offset="0.55" stopColor="#7138FF" />
+              <stop offset="1" stopColor="#D12DFF" />
+            </linearGradient>
+          </defs>
+          {Array.from({ length: ticks }).map((_, i) => (
+            <line
               key={i}
-              className="mega-scan-cell aspect-square rounded-[2px]"
-              style={{ animationDelay: `${(x + y * 2) * 65}ms` }}
+              x1={(i / (ticks - 1)) * SIGNAL_W}
+              y1="0"
+              x2={(i / (ticks - 1)) * SIGNAL_W}
+              y2={SIGNAL_H}
+              stroke="#ffffff"
+              strokeOpacity="0.035"
+              strokeWidth="1"
             />
-          );
-        })}
+          ))}
+          <line
+            x1="0"
+            y1={SIGNAL_H / 2}
+            x2={SIGNAL_W}
+            y2={SIGNAL_H / 2}
+            stroke="#ffffff"
+            strokeOpacity="0.05"
+            strokeWidth="1"
+          />
+          <path
+            d={signalPath(2.1, 18)}
+            className="mega-signal-line-dim"
+            stroke="url(#mm-signal)"
+          />
+          <path
+            d={signalPath(0.6, 26)}
+            className="mega-signal-line"
+            stroke="url(#mm-signal)"
+          />
+        </svg>
+        <span className="mega-signal-sweep pointer-events-none absolute inset-y-0 w-px" />
       </div>
     </div>
   );

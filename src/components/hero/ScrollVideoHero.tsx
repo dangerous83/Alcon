@@ -271,19 +271,26 @@ export function ScrollVideoHero() {
     >
       <h1 className="sr-only">{heroSummary}</h1>
 
-      {/* Behind the video, kept a hair off pure black (#010103, a near-black
-          requested by the client) rather than #000. */}
+      {/* Behind the video. In clip 3 the video shrinks to a left panel and
+          this shows on the right — kept a hair off pure black (#010103, a
+          near-black requested by the client) rather than #000. */}
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#010103]">
         {!videoFailed ? (
           <video
             ref={videoRef}
-            // Full-bleed the whole way through. The brain that closes clip 3 is
-            // handed straight to the services section below, whose scrubbed
-            // background opens on the exact same full-bleed frame — so the two
-            // read as one continuous video. (Clip 3 used to shrink to a left
-            // panel here; that made the brain change size at the hand-off,
-            // which read as a jarring zoom.)
-            className="absolute inset-0 h-full w-full object-cover [object-position:65%_center] sm:[object-position:center]"
+            className={clsx(
+              "absolute inset-0 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]",
+              // Clips 1-2 fill the frame.
+              "h-full w-full object-cover [object-position:65%_center] sm:[object-position:center]",
+              // Clip 3 becomes a panel on the left rather than a full-bleed
+              // background: narrower box + object-contain, so the WHOLE frame
+              // is visible at a smaller size (no crop / no zoom), brain
+              // anchored left and the right side free for the statement. The
+              // services section below opens clip 4 in this same panel, so the
+              // two connect without the brain changing size.
+              phaseC &&
+                "lg:w-[60%] lg:object-contain lg:[object-position:left_center] xl:w-[64%]"
+            )}
             muted
             playsInline
             preload="auto"
@@ -439,14 +446,9 @@ export function ScrollVideoHero() {
             copyRevealed ? "opacity-100" : "opacity-0"
           )}
         >
-          {/* Right-side scrim: the video is full-bleed now, so the statement
-              sits over the artwork — this darkens the right half for
-              legibility and fades with the copy. */}
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-gradient-to-l from-background via-background/70 to-transparent"
-          />
-          {/* Anchored left *within* a right-hand column, not right. */}
+          {/* Clip 3 pulls the video into a panel on the left, so the copy
+              sits on plain background — no scrim needed. Anchored left within
+              a right-hand column. */}
           <div className="relative ml-auto w-full px-6 sm:px-10 lg:w-1/2 lg:pl-0 lg:pr-10 xl:w-[46%]">
             <PositioningCopy className="mr-auto max-w-sm xl:max-w-md" />
           </div>

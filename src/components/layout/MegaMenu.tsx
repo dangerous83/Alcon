@@ -10,6 +10,45 @@ import type {
 } from "@/lib/content/mega-menu";
 
 /**
+ * Decorative "analysis" loop that fills the empty space at the bottom of a
+ * mega menu — a grid of small digital squares pulsing in a diagonal wave, so
+ * the panel reads as a live, high-tech / AI surface rather than dead space.
+ * Purely ornamental (aria-hidden) and desktop-only; respects
+ * prefers-reduced-motion via the CSS in globals.css.
+ */
+function MegaMenuScan() {
+  const cols = 24;
+  const rows = 3;
+  const cells = Array.from({ length: cols * rows });
+  return (
+    <div aria-hidden className="mt-auto hidden select-none pt-8 lg:block">
+      <div className="mb-2.5 flex items-center gap-2">
+        <span className="h-1 w-1 animate-pulse rounded-full bg-cyan-accent" />
+        <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-text-secondary/50">
+          Analyzing creative signals
+        </span>
+      </div>
+      <div
+        className="grid w-full gap-[3px]"
+        style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+      >
+        {cells.map((_, i) => {
+          const x = i % cols;
+          const y = Math.floor(i / cols);
+          return (
+            <span
+              key={i}
+              className="mega-scan-cell aspect-square rounded-[2px]"
+              style={{ animationDelay: `${(x + y * 2) * 65}ms` }}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
  * Right-hand promo panel shared by every mega menu (services, portfolio,
  * clients): a thumbnail image with an eyebrow, heading, and short blurb, so
  * each dropdown reads as a full mega menu rather than a bare link list.
@@ -80,9 +119,10 @@ export function ServicesStyleMegaMenu({
       {/* Link list on the left, promo panel (when supplied) on the right so
           the menu reads as a full mega menu rather than a bare column list. */}
       <div className="flex flex-col lg:flex-row">
+      <div className="flex flex-1 flex-col p-6 sm:p-8">
       <div
         className={clsx(
-          "grid flex-1 gap-8 p-6 sm:gap-6 sm:p-8",
+          "grid gap-8 sm:gap-6",
           columns.length <= 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"
         )}
       >
@@ -135,6 +175,9 @@ export function ServicesStyleMegaMenu({
             </ul>
           </div>
         ))}
+      </div>
+        {/* AI-style "analysis" loop fills the empty space below the columns. */}
+        {promo && <MegaMenuScan />}
       </div>
 
         {promo && <PromoPanel promo={promo} onNavigate={onNavigate} />}
@@ -280,7 +323,9 @@ export function MegaMenuWrapper({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       className={clsx(
-        "absolute left-1/2 top-full -translate-x-1/2 pt-3 transition-all duration-200",
+        // No top padding: the panel sits flush against the nav, with no gap
+        // between the navbar and the dropdown.
+        "absolute left-1/2 top-full -translate-x-1/2 transition-all duration-200",
         open
           ? "pointer-events-auto translate-y-0 opacity-100"
           : "pointer-events-none -translate-y-1 opacity-0"

@@ -24,12 +24,19 @@ const DURATION_FALLBACK = 5.041667;
 // powers the routes; this section intentionally features a subset.
 const featured = services.filter((service) => service.slug !== "editing");
 
-function ServiceCards({ compact = false }: { compact?: boolean }) {
+function ServiceCards({
+  compact = false,
+  single = false,
+}: {
+  compact?: boolean;
+  single?: boolean;
+}) {
   return (
     <ul
       className={clsx(
-        "grid gap-3 sm:grid-cols-2",
-        compact ? "mt-6" : "mt-8"
+        "grid gap-3",
+        single ? "grid-cols-1" : "sm:grid-cols-2",
+        compact ? "mt-5" : "mt-8"
       )}
     >
       {featured.map((service, index) => (
@@ -38,26 +45,37 @@ function ServiceCards({ compact = false }: { compact?: boolean }) {
           key={service.slug}
           className={clsx(
             "flex flex-col bg-surface-elevated/70 backdrop-blur-sm",
-            compact ? "p-4" : "p-5"
+            single ? "p-3.5" : compact ? "p-4" : "p-5"
           )}
         >
-          <span className="font-mono text-[11px] text-text-secondary">
-            0{index + 1}
-          </span>
-          <h3
-            className={clsx(
-              "mt-2 font-heading font-medium text-text-primary",
-              compact ? "text-base leading-tight" : "text-lg"
-            )}
-          >
-            {service.name}
-          </h3>
+          <div className={single ? "flex items-baseline gap-2" : undefined}>
+            <span className="font-mono text-[11px] text-text-secondary">
+              0{index + 1}
+            </span>
+            <h3
+              className={clsx(
+                "font-heading font-medium text-text-primary",
+                single
+                  ? "text-sm leading-tight"
+                  : compact
+                    ? "mt-2 text-base leading-tight"
+                    : "mt-2 text-lg"
+              )}
+            >
+              {service.name}
+            </h3>
+          </div>
+          {/* In the narrow single-column layout the summary is clamped so the
+              four cards always fit the pinned viewport; the /services page
+              carries the full text. */}
           <p
             className={clsx(
-              "mt-1.5 flex-1 text-text-secondary",
-              compact
-                ? "text-[13px] leading-snug"
-                : "text-sm leading-relaxed"
+              "flex-1 text-text-secondary",
+              single
+                ? "mt-1 line-clamp-2 text-xs leading-snug"
+                : compact
+                  ? "mt-1.5 text-[13px] leading-snug"
+                  : "mt-1.5 text-sm leading-relaxed"
             )}
           >
             {service.summary}
@@ -65,8 +83,9 @@ function ServiceCards({ compact = false }: { compact?: boolean }) {
           <Link
             href={`/services/${service.slug}`}
             className={clsx(
-              "inline-flex items-center gap-1 text-sm font-medium text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded",
-              compact ? "mt-3" : "mt-4"
+              "inline-flex items-center gap-1 font-medium text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded",
+              single ? "mt-2 text-[13px]" : "text-sm",
+              !single && (compact ? "mt-3" : "mt-4")
             )}
           >
             Learn more
@@ -78,7 +97,13 @@ function ServiceCards({ compact = false }: { compact?: boolean }) {
   );
 }
 
-function SectionCopy({ compact = false }: { compact?: boolean }) {
+function SectionCopy({
+  compact = false,
+  hideIntro = false,
+}: {
+  compact?: boolean;
+  hideIntro?: boolean;
+}) {
   return (
     <>
       <SectionLabel>What we do</SectionLabel>
@@ -90,16 +115,18 @@ function SectionCopy({ compact = false }: { compact?: boolean }) {
       >
         One creative system, four disciplines.
       </Heading>
-      <p
-        className={clsx(
-          "max-w-xl text-text-secondary",
-          compact ? "mt-3 text-sm" : "mt-4"
-        )}
-      >
-        Every service is built to plug into the same brand system — so
-        identity, motion, and content stay consistent no matter which team you
-        start with.
-      </p>
+      {!hideIntro && (
+        <p
+          className={clsx(
+            "max-w-xl text-text-secondary",
+            compact ? "mt-3 text-sm" : "mt-4"
+          )}
+        >
+          Every service is built to plug into the same brand system — so
+          identity, motion, and content stay consistent no matter which team
+          you start with.
+        </p>
+      )}
     </>
   );
 }
@@ -253,9 +280,9 @@ export function MainServices() {
       // one continuous scroll-scrubbed video with no gap and no repeated brain.
       //
       // Tall enough to give the 5s clip a comfortable scrub. The composition
-      // (cards left, towers right) is pinned for the whole section, and only
-      // the video scrubs — so it ENDS on the full frame: heading + all four
-      // cards still in place with the growth-chart fully formed on the right.
+      // (video panel left, four cards right) is pinned for the whole section,
+      // and only the video scrubs — so it ENDS on the full frame: the four
+      // cards still in place with the growth-chart fully formed in the panel.
       className="relative z-20 -mt-[100svh] h-[220vh] lg:h-[240vh]"
       aria-labelledby="services-heading"
     >
@@ -265,12 +292,13 @@ export function MainServices() {
           covering ? "opacity-100" : "pointer-events-none opacity-0"
         )}
       >
-        {/* Scroll-scrubbed background: the growth-chart clip, picking up from
-            the brain frame the hero ended on. Matches the hero's full-bleed
-            object-position so the hand-off frame is pixel-identical. */}
+        {/* Scroll-scrubbed background in the SAME left panel as the hero's
+            clip 3 (object-contain, no crop / no zoom), so the brain that opens
+            clip 4 is the exact size and position the hero closes on — the two
+            connect without the frame changing size. */}
         <video
           ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover [object-position:65%_center] sm:[object-position:center]"
+          className="absolute inset-0 h-full w-full object-cover [object-position:65%_center] sm:[object-position:center] lg:w-[60%] lg:object-contain lg:[object-position:left_center] xl:w-[64%]"
           muted
           playsInline
           preload="auto"
@@ -291,20 +319,21 @@ export function MainServices() {
           <source src={assetPath("/video/services-scroll.webm")} type="video/webm" />
         </video>
 
-        {/* Legibility scrim: darkens the left where the cards sit, fading out
-            to the right where the towers rise. */}
+        {/* On mobile the video is full-bleed, so darken the left for the cards;
+            on lg the video is a left panel and the cards sit on plain
+            background on the right, so the scrim fades out there. */}
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent"
+          className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent lg:hidden"
         />
 
-        {/* Pinned composition, top-aligned below the fixed header so the
-            heading is always visible; on very short viewports only the last
-            card's base clips rather than the title. */}
-        <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-start px-4 pb-8 pt-24 sm:px-6 sm:pt-28 lg:px-8">
-          <div className="lg:max-w-[58%]">
-            <SectionCopy compact />
-            <ServiceCards compact />
+        {/* Pinned composition: video (brain → towers) on the left, the four
+            disciplines on the right — mirroring the hero's clip 3 (artwork
+            left, copy right). Top-aligned below the fixed header. */}
+        <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-start px-4 pb-8 pt-20 sm:px-6 sm:pt-24 lg:px-8">
+          <div className="lg:ml-auto lg:w-[40%] xl:w-[36%]">
+            <SectionCopy compact hideIntro />
+            <ServiceCards compact single />
           </div>
         </div>
       </div>

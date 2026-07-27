@@ -26,7 +26,10 @@ export function MainServices() {
         </p>
       </div>
 
-      <ul className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Cards occupy the left two-thirds; the right column is intentionally
+          left empty as space for a future animation/feature. */}
+      <div className="mt-14 grid gap-6 lg:grid-cols-3">
+        <ul className="grid gap-6 sm:grid-cols-2 lg:col-span-2">
         {featured.map((service, index) => (
           <Card as="li" key={service.slug} className="flex flex-col">
             <span className="font-mono text-xs text-text-secondary">
@@ -47,7 +50,10 @@ export function MainServices() {
             </Link>
           </Card>
         ))}
-      </ul>
+        </ul>
+        {/* Reserved space for a future animation/feature. */}
+        <div aria-hidden className="hidden lg:block" />
+      </div>
     </section>
   );
 }

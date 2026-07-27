@@ -255,3 +255,23 @@ body {
 .intro-echo-btn::after {
   animation-delay: 1.2s;
 }
+
+/* Mega-menu "analysis" grid: small squares pulsing in a diagonal wave. The
+   per-cell animation-delay (set inline) sweeps the wave across the grid. The
+   global prefers-reduced-motion block above disables the animation, leaving
+   the cells at their static base opacity. */
+@keyframes mega-scan {
+  0%,
+  100% {
+    opacity: 0.08;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.mega-scan-cell {
+  background-image: linear-gradient(120deg, #2870ff 0%, #7138ff 55%, #d12dff 100%);
+  opacity: 0.2;
+  animation: mega-scan 2.6s ease-in-out infinite;
+}

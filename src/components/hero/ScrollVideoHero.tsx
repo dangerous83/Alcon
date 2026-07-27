@@ -12,13 +12,11 @@ import { useIntroEntered } from "@/components/intro/intro-context";
 import { clsx } from "@/lib/clsx";
 import { assetPath } from "@/lib/asset-path";
 
-// One file, four scroll-scrubbed clips concatenated seamlessly:
+// One file, three scroll-scrubbed clips concatenated seamlessly:
 //
 //   0 .......... 15.04s   chapter loop (three headlines)
 //   15.04s ..... 21.08s   zoom out to a front-on brain close-up
 //   21.08s ..... 27.38s   the brain wires up and Dubai appears inside it
-//   27.38s ..... 32.42s   the brain disperses and reforms as an ascending
-//                         growth-chart of towers — the closing beat
 //
 // Each seam is a handover between overlays:
 //
@@ -28,14 +26,15 @@ import { assetPath } from "@/lib/asset-path";
 //   COPY_REVEAL_AT the statement itself only fades in once the brain has
 //                  turned into profile with the skyline resolved inside it —
 //                  a couple of seconds after CLIP2_END, not at the seam
-//   (clip 3→4) clip 4 (the growth-chart) plays in the SAME left panel as
-//                  clip 3, with the positioning statement staying alongside —
-//                  a seamless continuation, no zoom or layout switch
 //
-// Scrolling runs straight through all four clips; nothing holds the page.
+// The fourth clip — the brain dispersing into a growth-chart of towers — is
+// NOT in this file. It is the scroll-scrubbed background of the services
+// section below, which picks up from the exact brain frame this hero ends on.
+//
+// Scrolling runs straight through all three clips; nothing holds the page.
 const CLIP1_END = 15.041667;
 const CLIP2_END = 21.083333;
-const VIDEO_DURATION_FALLBACK = 32.416667;
+const VIDEO_DURATION_FALLBACK = 27.375;
 // The source is encoded all-intra (every frame a keyframe), so seeking is a
 // single-frame decode rather than a decode-forward from the last keyframe.
 // That makes a snappier follow factor affordable without stutter.
@@ -264,11 +263,10 @@ export function ScrollVideoHero() {
   return (
     <section
       ref={wrapperRef}
-      /* Scroll length keeps the chosen per-pixel scrub speed, extended for the
-         fourth clip: the scrub distance (section height minus the 100svh
-         sticky viewport) is scaled by the new/old duration ratio
-         (32.42s / 27.38s ≈ 1.18), so 280/340vh becomes ~313/384vh. */
-      className="relative h-[313vh] lg:h-[384vh]"
+      /* Back to the original scroll length. Keeping it proportional to the
+         video (~18.6vh/s) meant 620vh of scrolling by the third clip, which
+         was far too much travel; the scrub simply runs faster per pixel. */
+      className="relative h-[280vh] lg:h-[340vh]"
       aria-label="Alcon — Creative Intelligence"
     >
       <h1 className="sr-only">{heroSummary}</h1>
@@ -293,9 +291,6 @@ export function ScrollVideoHero() {
               // Widths are paired with the copy column below (lg:w-[38%],
               // xl:w-1/3) and must not sum past 100%, or the panel runs under
               // the text — which is exactly what 64% + 38% did at lg.
-              // Clip 4 stays in this same panel (no zoom / no full-bleed
-              // switch), so the growth-chart plays as a seamless continuation
-              // of clip 3 rather than a jarring jump.
               phaseC &&
                 "lg:w-[60%] lg:object-contain lg:[object-position:left_center] xl:w-[64%]"
             )}

@@ -107,20 +107,29 @@ fourth clip (the brain dispersing into the growth-chart of towers) were
 originally two separate repo uploads (`scroll scrubbed 3.mp4` and
 `scroll scrubbed 4.mp4`) with an authored seam between them. Both were
 superseded by a single re-rendered upload, `scroll scrubbed merge.mp4`
-(1920×1080, H.264, 24fps, 11.33s total — 6.29s + 5.04s), which fixes that
-seam by rendering the handover as one continuous sequence instead of two
-clips cut together. The two old source files were deleted from the repo.
+(1920×1080, H.264, 24fps, 11.33s total — 6.29s + 5.04s), which renders that
+handover as one continuous sequence instead of two clips cut together. The
+two old source files were deleted from the repo.
 
-`scroll scrubbed merge.mp4` is split back into its two halves at the
-frame-exact 6.291667s mark (151 frames / 121 frames — the same durations
-the old clip 3 and clip 4 had) and each half is re-encoded all-intra to the
-same parameters as clips 1-2. The first half extends `hero-scroll.mp4` to
-its original ~27.38s; the second half becomes `services-scroll.mp4`, the
-scroll-scrubbed background of "One creative system, four disciplines" (see
-below). Verified all 657 frames of the hero's merged timeline are
-keyframes, and the seam at 21.08s is visually continuous.
+The whole merge is appended — as a single unbroken clip, **not** split back
+into halves — to clips 1+2 to form one continuous hero video. Concretely:
+the first 506 frames of the previous `hero-scroll.mp4` (clips 1+2, the
+untouched ~21.08s) are joined with the full merge (272 frames, re-encoded
+all-intra to the same parameters) via an ffmpeg `concat` filter. The result
+is `hero-scroll.{mp4,webm}` (+ mobile), 778 frames / ~32.42s, every frame a
+keyframe, seam at 21.08s visually continuous.
 
-All three clips scrub continuously from scroll alone. An earlier revision
+This is deliberately one video for the entire journey — brain → skyline →
+towers scrub as a single uninterrupted clip, never chopped across two
+`<video>` elements. An earlier revision instead split clip 4 out into a
+separate `services-scroll.*` video behind the "One creative system, four
+disciplines" section; that split was reversed because the brief is that all
+the clips read as *one connected* scroll-scrub (hence the source name). The
+services section now carries only a static still of the towers finale
+(`services-poster.jpg`, the video's last frame) so it continues straight out
+of the scrub above, and `services-scroll.*` was removed.
+
+All four clips scrub continuously from scroll alone. An earlier revision
 gated the third clip behind a "Continue Journey" button that also locked
 the page (clamping scroll position, cancelling wheel/touch/key input) until
 it was clicked; that was removed at the client's request — holding a
@@ -130,9 +139,11 @@ one uninterrupted scrub.
 Two things follow from that removal, both deliberate:
 
 - **Scroll length is no longer proportional to video length.** Keeping the
-  original ~18.6vh-per-second ratio would have meant 620vh of travel by the
-  third clip. The wrapper is back to the original `h-[280vh] lg:h-[340vh]`,
-  so the scrub simply advances faster per pixel.
+  original ~18.6vh-per-second ratio would have meant far too much travel by
+  the finale. The wrapper is `h-[330vh] lg:h-[400vh]` — scaled from the old
+  three-clip `280/340vh` by the fourth clip's extra ~5s so the per-pixel
+  scrub speed stays the same, with the scrub simply advancing faster per
+  pixel than the raw video length.
 - **Each seam is an overlay handover.** The HUD readout owns the front-brain
   stretch (easing in ~4s of video before the clip2/clip3 boundary), then
   clears at the seam so the positioning statement can take clip 3. Its node

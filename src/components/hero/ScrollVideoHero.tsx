@@ -282,14 +282,12 @@ export function ScrollVideoHero() {
               "absolute inset-0 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]",
               // Clips 1-2 fill the frame.
               "h-full w-full object-cover [object-position:65%_center] sm:[object-position:center]",
-              // Clip 3 becomes a panel on the RIGHT rather than a full-bleed
+              // Clip 3 becomes a panel on the left rather than a full-bleed
               // background: narrower box + object-contain, so the WHOLE frame
               // is visible at a smaller size (no crop / no zoom), brain
-              // anchored right and the left side free for the statement. The
-              // services section below opens clip 4 in this same right panel,
-              // so the two connect without the brain changing size or side.
+              // anchored left and the right side free for the statement.
               phaseC &&
-                "lg:left-auto lg:w-[60%] lg:object-contain lg:[object-position:right_center] xl:w-[64%]"
+                "lg:w-[60%] lg:object-contain lg:[object-position:left_center] xl:w-[64%]"
             )}
             muted
             playsInline
@@ -446,10 +444,10 @@ export function ScrollVideoHero() {
             copyRevealed ? "opacity-100" : "opacity-0"
           )}
         >
-          {/* Clip 3 pulls the video into a panel on the right, so the copy
-              sits on plain background on the left — no scrim needed.
-              Left-anchored in a left-hand column, clear of the artwork. */}
-          <div className="relative mr-auto w-full px-6 sm:px-10 lg:w-1/2 lg:pr-0 lg:pl-8 xl:w-[46%]">
+          {/* Clip 3 pulls the video into a panel on the left, so the copy
+              sits on plain background on the right — no scrim needed.
+              Left-anchored within a right-hand column, close to the artwork. */}
+          <div className="relative ml-auto w-full px-6 sm:px-10 lg:w-1/2 lg:pl-0 lg:pr-10 xl:w-[46%]">
             <PositioningCopy className="mr-auto max-w-sm xl:max-w-md" />
           </div>
         </div>

@@ -27,8 +27,7 @@ const pillars: Pillar[] = [
     icon: Brain,
     kicker: "What we do",
     title: "Services",
-    summary:
-      "Branding, motion, social, and post-production — one AI-accelerated creative team.",
+    summary: "Branding, motion, social, and post — one AI-accelerated team.",
     image: "/images/feature-brain.webp",
   },
   {
@@ -36,8 +35,7 @@ const pillars: Pillar[] = [
     icon: Cloud,
     kicker: "Selected work",
     title: "Portfolio",
-    summary:
-      "A living body of work across every discipline, updated as we ship.",
+    summary: "A living body of work, updated as we ship.",
     image: "/images/feature-cloud.webp",
   },
   {
@@ -45,7 +43,7 @@ const pillars: Pillar[] = [
     icon: Shield,
     kicker: "Trusted worldwide",
     title: "Clients",
-    summary: "Live platforms and websites shipped for brands across the globe.",
+    summary: "Live platforms and sites shipped for brands worldwide.",
     image: "/images/feature-shield.webp",
   },
 ];
@@ -96,18 +94,23 @@ export function FeaturedProjects() {
                   />
 
                   {/* Detail block, top-aligned over the black upper area of the
-                      artwork: icon, kicker, title, and a short line. */}
+                      artwork: icon with the kicker + title beside it, then a
+                      short two-line description. */}
                   <div className="absolute inset-x-0 top-0 p-6">
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-background/50 text-cyan-accent backdrop-blur-sm transition-colors duration-500 group-hover:border-cyan-accent/50">
-                      <Icon size={20} strokeWidth={1.75} aria-hidden />
-                    </span>
-                    <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.24em] text-text-secondary/80">
-                      {pillar.kicker}
-                    </p>
-                    <h3 className="mt-1.5 font-heading text-xl font-semibold text-text-primary">
-                      {pillar.title}
-                    </h3>
-                    <p className="mt-2 max-w-[16rem] text-sm leading-relaxed text-text-secondary">
+                    <div className="flex items-center gap-3">
+                      <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-background/50 text-cyan-accent backdrop-blur-sm transition-colors duration-500 group-hover:border-cyan-accent/50">
+                        <Icon size={20} strokeWidth={1.75} aria-hidden />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-text-secondary/80">
+                          {pillar.kicker}
+                        </p>
+                        <h3 className="mt-0.5 font-heading text-xl font-semibold leading-tight text-text-primary">
+                          {pillar.title}
+                        </h3>
+                      </div>
+                    </div>
+                    <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-text-secondary">
                       {pillar.summary}
                     </p>
                   </div>

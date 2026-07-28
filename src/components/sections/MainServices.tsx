@@ -136,12 +136,6 @@ export function MainServices() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
-  // This section is pulled up over the hero's tail (-mt-[100svh]). While the
-  // hero is still finishing (its positioning statement), this stays invisible
-  // so the statement shows through; the instant this section's own scrub
-  // starts it fades in — on the exact same brain frame the hero closes on, so
-  // the hand-off is seamless rather than a second brain.
-  const [covering, setCovering] = useState(false);
   const introEntered = useIntroEntered();
 
   useEffect(() => {
@@ -170,7 +164,6 @@ export function MainServices() {
     let refreshRafId = 0;
     let targetTime = 0;
     let smoothedTime = 0;
-    let lastCovering = false;
 
     function onLoadedMetadata() {
       const duration =
@@ -184,13 +177,6 @@ export function MainServices() {
         end: "bottom bottom",
         onUpdate: (self) => {
           targetTime = self.progress * duration;
-          // Reveal only once our own scrub has started (progress > 0), so the
-          // hero's tail stays visible underneath until the exact hand-off.
-          const isCovering = self.progress > 0.0005;
-          if (isCovering !== lastCovering) {
-            lastCovering = isCovering;
-            setCovering(isCovering);
-          }
         },
       });
 
@@ -274,24 +260,14 @@ export function MainServices() {
   return (
     <section
       ref={wrapperRef}
-      // Pulled up by one viewport (-mt-[100svh]) and lifted above the hero
-      // (z-20) so this section PINS exactly as the hero's scrub ends. The clip
-      // opens on the same brain frame the hero closes on, so the two read as
-      // one continuous scroll-scrubbed video with no gap and no repeated brain.
-      //
       // Tall enough to give the 5s clip a comfortable scrub. The composition
-      // (video panel left, four cards right) is pinned for the whole section,
+      // (four cards left, video panel right) is pinned for the whole section,
       // and only the video scrubs — so it ENDS on the full frame: the four
       // cards still in place with the growth-chart fully formed in the panel.
-      className="relative z-20 -mt-[100svh] h-[220vh] lg:h-[240vh]"
+      className="relative h-[220vh] lg:h-[240vh]"
       aria-labelledby="services-heading"
     >
-      <div
-        className={clsx(
-          "sticky top-0 h-[100svh] w-full overflow-hidden bg-[#010103] transition-opacity duration-300 ease-out",
-          covering ? "opacity-100" : "pointer-events-none opacity-0"
-        )}
-      >
+      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#010103]">
         {/* Scroll-scrubbed background in the SAME right panel as the hero's
             clip 3 (object-contain, no crop / no zoom), so the brain that opens
             clip 4 is the exact size and position the hero closes on — the two

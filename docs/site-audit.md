@@ -100,15 +100,25 @@ first clip (`-g 1 -keyint_min 1 -sc_threshold 0 -crf 24 -preset slow
 -pix_fmt yuv420p`), then joined to `hero-scroll.mp4` with an ffmpeg
 `concat` filter (matching codec params end to end, so every frame across
 the ~21.08s merged timeline is independently seekable, not just each half).
-### Third clip merged in (`scroll scrubbed 3.mp4`)
+### Third and fourth clips merged in (`scroll scrubbed merge.mp4`)
 
-A third clip (1920×1080, H.264, 24fps, 6.29s, again a repo upload) extends
-the scrub once more. It starts on the same front-view brain the second clip
-ends on, then wires the brain up and reveals the Dubai skyline inside it.
-Same treatment: re-encoded all-intra to identical parameters, audio
-stripped, joined with an ffmpeg `concat` filter. Verified all 657 frames of
-the ~27.38s result are keyframes, and the seam at 21.08s is visually
-continuous.
+The third clip (brain wiring up, Dubai skyline resolving inside it) and
+fourth clip (the brain dispersing into the growth-chart of towers) were
+originally two separate repo uploads (`scroll scrubbed 3.mp4` and
+`scroll scrubbed 4.mp4`) with an authored seam between them. Both were
+superseded by a single re-rendered upload, `scroll scrubbed merge.mp4`
+(1920×1080, H.264, 24fps, 11.33s total — 6.29s + 5.04s), which fixes that
+seam by rendering the handover as one continuous sequence instead of two
+clips cut together. The two old source files were deleted from the repo.
+
+`scroll scrubbed merge.mp4` is split back into its two halves at the
+frame-exact 6.291667s mark (151 frames / 121 frames — the same durations
+the old clip 3 and clip 4 had) and each half is re-encoded all-intra to the
+same parameters as clips 1-2. The first half extends `hero-scroll.mp4` to
+its original ~27.38s; the second half becomes `services-scroll.mp4`, the
+scroll-scrubbed background of "One creative system, four disciplines" (see
+below). Verified all 657 frames of the hero's merged timeline are
+keyframes, and the seam at 21.08s is visually continuous.
 
 All three clips scrub continuously from scroll alone. An earlier revision
 gated the third clip behind a "Continue Journey" button that also locked

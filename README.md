@@ -63,6 +63,13 @@ delivery — see `docs/site-audit.md` "Video source audit" and
 - `public/images/hero-poster.jpg` / `.webp` (+ mobile variants) — poster /
   reduced-motion fallback frame
 
+The hero's third clip and the services section's background clip
+(`public/video/services-scroll*`) both come from a single re-rendered
+upload, `scroll scrubbed merge.mp4` — it replaced the old separately-cut
+`scroll scrubbed 3.mp4` / `scroll scrubbed 4.mp4` to fix a seam between
+them. See `docs/site-audit.md` "Third and fourth clips merged in" for how
+it's split and re-encoded.
+
 ## AI assistant widget
 
 The bottom-right "brain" icon (`src/components/layout/FloatingWidgets.tsx`)

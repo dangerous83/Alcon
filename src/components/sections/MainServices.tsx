@@ -268,13 +268,13 @@ export function MainServices() {
       aria-labelledby="services-heading"
     >
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#010103]">
-        {/* Scroll-scrubbed background in the SAME right panel as the hero's
+        {/* Scroll-scrubbed background in the SAME left panel as the hero's
             clip 3 (object-contain, no crop / no zoom), so the brain that opens
             clip 4 is the exact size and position the hero closes on — the two
-            connect without the frame changing size. Cards sit on the left. */}
+            connect without the frame changing side or size. Cards sit on the right. */}
         <video
           ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover [object-position:65%_center] sm:[object-position:center] lg:left-auto lg:w-[60%] lg:object-contain lg:[object-position:right_center] xl:w-[64%]"
+          className="absolute inset-0 h-full w-full object-cover [object-position:65%_center] sm:[object-position:center] lg:w-[60%] lg:object-contain lg:[object-position:left_center] xl:w-[64%]"
           muted
           playsInline
           preload="auto"
@@ -296,18 +296,20 @@ export function MainServices() {
         </video>
 
         {/* On mobile the video is full-bleed, so darken the left for the cards;
-            on lg the video is a right panel and the cards sit on plain
-            background on the left, so the scrim fades out there. */}
+            on lg the video is a left panel and the cards sit on plain
+            background on the right, so the scrim fades out there. */}
         <div
           aria-hidden
           className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent lg:hidden"
         />
 
-        {/* Pinned composition: the four disciplines on the left, video
-            (brain → towers) on the right — mirroring the hero's clip 3 (copy
-            left, artwork right). Top-aligned below the fixed header. */}
+        {/* Pinned composition: video (brain → towers) on the left, the four
+            disciplines on the right — mirroring the hero's clip 3 (artwork
+            left, copy right), so the two sections hand off on the same side
+            instead of the brain jumping across the screen. Top-aligned below
+            the fixed header. */}
         <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-start px-4 pb-8 pt-20 sm:px-6 sm:pt-24 lg:px-8">
-          <div className="lg:mr-auto lg:w-[40%] xl:w-[36%]">
+          <div className="lg:ml-auto lg:w-[40%] xl:w-[36%]">
             <SectionCopy compact hideIntro />
             <ServiceCards compact single />
           </div>

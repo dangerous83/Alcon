@@ -111,40 +111,31 @@ superseded by a single re-rendered upload, `scroll scrubbed merge.mp4`
 seam by rendering the handover as one continuous sequence instead of two
 clips cut together. The two old source files were deleted from the repo.
 
-`scroll scrubbed merge.mp4` is split at the frame-exact 6.291667s mark
-(151 frames / 121 frames — the same durations the old clip 3 and clip 4
-had) and each half is re-encoded all-intra to the same parameters as
-clips 1-2. The first half extends `hero-scroll.mp4` to its ~27.38s so the
-hero **ends on the brain-with-skyline frame** (the "Dubai-based creative,
-built for speed" moment) — the towers finale is deliberately NOT in the
-hero. The second half becomes `services-scroll.mp4`, the scroll-scrubbed
-background of "One creative system, four disciplines" (see "Services
-composition" below). The two clips share a frame at the split, so scrolling
-out of the hero and into the services section reads as one continuous
-clip — the brain the hero settles on is the exact frame the services scrub
-opens on, then disperses into the towers. Verified all 657 frames of the
-hero timeline are keyframes, and the seam at 21.08s is visually continuous.
+`scroll scrubbed merge.mp4` (both halves, unbroken) is appended to clips 1-2
+to make ONE hero video of all four clips — `hero-scroll.{mp4,webm}` (+ mobile),
+778 frames / ~32.42s, every frame a keyframe. There is **no separate services
+video**: the whole journey — chapters → brain → skyline → growth-chart of
+towers — plays as a single scroll-scrub in a single pinned section, so nothing
+ever cuts to a second `<video>` or a second section. (An earlier revision split
+clip 4 into a `services-scroll.*` file behind its own pinned "One creative
+system" section; that put a visible seam at the section boundary — the hero's
+brain and the services' brain were two differently-scaled elements with a gap
+between them as the sticky sections handed over — so it was folded back into the
+one section. `services-scroll.*` was removed.)
 
-All three clips scrub continuously from scroll alone. An earlier revision
-gated the third clip behind a "Continue Journey" button that also locked
-the page (clamping scroll position, cancelling wheel/touch/key input) until
-it was clicked; that was removed at the client's request — holding a
-visitor's scroll hostage is hostile, and the payoff reads fine as part of
-one uninterrupted scrub.
+The scrub is **non-linear**: page-scroll 0..0.6 covers clips 1-3 at roughly the
+old per-pixel rate, and 0.6..1.0 is given to clip 4 so the towers-growth finale
+and the cards reveal get room instead of flashing past in the ~15% of the travel
+a linear map would allot a 5s clip in a 32.4s timeline. The section is
+`h-[460vh] lg:h-[560vh]`.
 
-Two things follow from that removal, both deliberate:
-
-- **Scroll length is no longer proportional to video length.** Keeping the
-  original ~18.6vh-per-second ratio would have meant 620vh of travel by the
-  third clip. The wrapper is back to the original `h-[280vh] lg:h-[340vh]`,
-  so the scrub simply advances faster per pixel.
-- **Each seam is an overlay handover.** The HUD readout owns the front-brain
-  stretch (easing in ~4s of video before the clip2/clip3 boundary), then
-  clears at the seam so the positioning statement can take clip 3. Its node
-  plates still overlap bright artwork, so their backing is near-opaque
-  (`bg-black/70`–`/85` plus a backdrop blur) with the active state carried by
-  border and glow rather than fill — a translucent panel washed the labels
-  out completely.
+The overlays hand over as the one scrub advances — chapter copy (clips 1-2) →
+HUD readout (easing in ~4s before the clip2/clip3 seam) → positioning statement
+(clip 3, right of frame) → the "One creative system, four disciplines" copy +
+four cards (clip 4, left of frame, over the towers). The HUD's node plates carry
+their own near-opaque backing (`bg-black/70`–`/85` plus a backdrop blur) with
+the active state on border and glow rather than fill — a translucent panel
+washed the labels out completely.
 
 ### Clip 3 composition
 
@@ -178,29 +169,31 @@ Two details are load-bearing:
   sentence twice in a row, and dropping it entirely would hide the statement
   from reduced-motion visitors.
 
-`public/video/hero-scroll*.{mp4,webm}` now contain the merged, ~27.38s
-timeline — see `docs/asset-inventory.json` for exact file sizes.
+`public/video/hero-scroll*.{mp4,webm}` now contain the full ~32.42s
+four-clip timeline — see `docs/asset-inventory.json` for exact file sizes.
 
 ### Services composition ("One creative system, four disciplines")
 
-This is where the scrub finishes. `MainServices` is its own pinned
-scroll-scrubbed section playing `services-scroll.*` (clip 4), tuned
-identically to the hero so the two read as one continuous scrub across the
-section boundary. Composition, matching the client's reference:
+This is the FINAL phase of the hero's one scroll-scrub (clip 4), **not** a
+separate section — that is what keeps it connected to the brain with no cut.
+As clip 4 begins (`phaseD`, video-time ≥ 27.38s) the video panel opens from the
+clip-3 left panel to full-bleed (`object-contain` throughout, so it scales
+rather than popping) and the brain disperses into a growth-chart of towers.
+Composition, matching the client's reference:
 
-- **The chart is on the RIGHT, the copy on the LEFT.** The clip disperses
-  the brain into a growth-chart of towers that settles on the right of the
-  frame; the black left of frame is where the heading and the four
-  discipline cards live. The video is **full-bleed and centred**
-  (`object-cover object-center`), not a shrunk left panel.
+- **The chart is on the RIGHT, the copy on the LEFT.** The towers settle on the
+  right of the frame; the black left of frame is where the "One creative system,
+  four disciplines" heading and the four discipline cards live.
 - **No dark overlay.** Nothing washes the artwork. The copy stays legible
-  because it waits for the brain to clear the left of frame — the cards fade
-  in only past `COPY_REVEAL_PROGRESS` (~45% of the scrub), by which point
-  the left of frame is black — and each card carries its own translucent,
-  blurred plate.
-- **Reduced-motion / no-JS / SSR** fall back to a static frame of the towers
-  finale (`services-poster.jpg`, the frame the scrub ends on) with the same
-  left-copy / right-chart composition, again with no dark overlay.
+  because it waits for the brain to clear the left of frame — it fades in only
+  past `SERVICES_REVEAL_AT` (~30.5s, frame-checked), by which point the left of
+  frame is black — and each card carries its own translucent, blurred plate.
+- **`MainServices`** no longer renders a scrubbed section for motion visitors
+  (it would duplicate this content behind a section boundary). It exports
+  `ServicesCopy` / `ServicesCards` for the hero to render, and itself renders
+  only the **reduced-motion / no-JS / SSR** fallback: a static frame of the
+  towers finale (`services-poster.jpg`) with the same left-copy / right-chart
+  composition, no dark overlay.
 
 
 ## GitHub Pages deployment (why the repo's Pages URL showed only text)

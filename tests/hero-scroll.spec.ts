@@ -133,14 +133,14 @@ test.describe("scroll-scrubbed hero", () => {
 
     await expect(page.getByText("01 / 03")).toBeVisible();
 
-    // Total scrubbed timeline is ~27.38s across three concatenated clips.
-    // Chapters only span the first ~15.04s, so fractions are scaled against
-    // the full length to land inside that range.
-    await scrollToFraction(page, 0.27); // ~7.4s -> chapter 2
+    // The scrub is non-linear: page-scroll 0..0.6 covers clips 1-3 (the
+    // ~27.38s brain build-up), the rest covers clip 4. Chapters span the first
+    // ~15.04s, so these fractions land inside the 0..0.6 band.
+    await scrollToFraction(page, 0.15); // ~6.8s -> chapter 2
     await page.waitForTimeout(700);
     await expect(page.getByText("02 / 03")).toBeVisible();
 
-    await scrollToFraction(page, 0.47); // ~12.9s -> chapter 3, still phase A
+    await scrollToFraction(page, 0.28); // ~12.8s -> chapter 3, still phase A
     await page.waitForTimeout(700);
     await expect(page.getByText("03 / 03")).toBeVisible();
   });
@@ -158,8 +158,9 @@ test.describe("scroll-scrubbed hero", () => {
       .poll(() => column.evaluate((el) => getComputedStyle(el).opacity))
       .toBe("1");
 
-    // Past the clip1/clip2 seam (~15.04s of the ~27.38s timeline -> ~0.55).
-    await scrollToFraction(page, 0.70);
+    // Past the clip1/clip2 seam (~15.04s; on the non-linear map that clip1-3
+    // band is 0..0.6, so ~0.45 lands well past the seam).
+    await scrollToFraction(page, 0.45);
     await page.waitForTimeout(700);
 
     await expect

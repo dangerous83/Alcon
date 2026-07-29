@@ -12,11 +12,13 @@ import { useIntroEntered } from "@/components/intro/intro-context";
 import { clsx } from "@/lib/clsx";
 import { assetPath } from "@/lib/asset-path";
 
-// One file, three scroll-scrubbed clips concatenated seamlessly:
+// One file, four scroll-scrubbed clips concatenated seamlessly — the whole
+// journey plays as a single uninterrupted scrub, never split across sections:
 //
 //   0 .......... 15.04s   chapter loop (three headlines)
 //   15.04s ..... 21.08s   zoom out to a front-on brain close-up
 //   21.08s ..... 27.38s   the brain wires up and Dubai appears inside it
+//   27.38s ..... 32.42s   the brain disperses into a growth-chart of towers
 //
 // Each seam is a handover between overlays:
 //
@@ -25,16 +27,15 @@ import { assetPath } from "@/lib/asset-path";
 //                  on the right for the positioning statement
 //   COPY_REVEAL_AT the statement itself only fades in once the brain has
 //                  turned into profile with the skyline resolved inside it —
-//                  a couple of seconds after CLIP2_END, not at the seam
+//                  a couple of seconds after CLIP2_END, not at the seam — then
+//                  stays alongside through the fourth clip's towers finale
 //
-// The fourth clip — the brain dispersing into a growth-chart of towers — is
-// NOT in this file. It is the scroll-scrubbed background of the services
-// section below, which picks up from the exact brain frame this hero ends on.
-//
-// Scrolling runs straight through all three clips; nothing holds the page.
+// Scrolling runs straight through all four clips; nothing holds the page, and
+// the "One creative system, four disciplines" section picks up right where the
+// towers finale settles.
 const CLIP1_END = 15.041667;
 const CLIP2_END = 21.083333;
-const VIDEO_DURATION_FALLBACK = 27.375;
+const VIDEO_DURATION_FALLBACK = 32.416667;
 // The source is encoded all-intra (every frame a keyframe), so seeking is a
 // single-frame decode rather than a decode-forward from the last keyframe.
 // That makes a snappier follow factor affordable without stutter.
@@ -173,8 +174,10 @@ export function ScrollVideoHero() {
           }
 
           // The copy itself waits a beat longer than the panel switch above,
-          // until the brain has actually turned into profile with the
-          // skyline visible in it.
+          // until the brain has actually turned into profile with the skyline
+          // visible in it, then stays alongside through the fourth clip so the
+          // towers-growth finale plays as a balanced frame (video left, copy
+          // right) before handing off to the "One creative system" section.
           const isCopyRevealed = timeInSeconds >= COPY_REVEAL_AT;
           if (isCopyRevealed !== lastCopyRevealed) {
             lastCopyRevealed = isCopyRevealed;
@@ -263,10 +266,11 @@ export function ScrollVideoHero() {
   return (
     <section
       ref={wrapperRef}
-      /* Back to the original scroll length. Keeping it proportional to the
-         video (~18.6vh/s) meant 620vh of scrolling by the third clip, which
-         was far too much travel; the scrub simply runs faster per pixel. */
-      className="relative h-[280vh] lg:h-[340vh]"
+      /* Scaled from the old three-clip length (280/340vh over ~27.38s) by the
+         fourth clip's extra ~5s so the per-pixel scrub speed stays the same
+         now that the towers finale plays as part of this one scrub rather than
+         a separate section. */
+      className="relative h-[330vh] lg:h-[400vh]"
       aria-label="Alcon — Creative Intelligence"
     >
       <h1 className="sr-only">{heroSummary}</h1>
@@ -282,10 +286,12 @@ export function ScrollVideoHero() {
               "absolute inset-0 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]",
               // Clips 1-2 fill the frame.
               "h-full w-full object-cover [object-position:65%_center] sm:[object-position:center]",
-              // Clip 3 becomes a panel on the left rather than a full-bleed
+              // Clips 3-4 play in a panel on the left rather than a full-bleed
               // background: narrower box + object-contain, so the WHOLE frame
-              // is visible at a smaller size (no crop / no zoom), brain
-              // anchored left and the right side free for the statement.
+              // is visible at a smaller size (no crop / no zoom), artwork
+              // anchored left and the right side free for the statement. The
+              // panel layout holds across the clip3/clip4 seam so the brain
+              // dispersing into towers never jumps side or size.
               phaseC &&
                 "lg:w-[60%] lg:object-contain lg:[object-position:left_center] xl:w-[64%]"
             )}

@@ -2,9 +2,9 @@ import { test, expect } from "./fixtures";
 import type { Page } from "@playwright/test";
 
 // Scrolls to a fraction of the hero's own pin range. 1.0 is the last frame of
-// the scrub (the Dubai reveal); the HUD eases in from ~0.71, where the scrub
-// settles on the front-view brain. Nothing clamps or blocks the page — the
-// scrub runs straight through all three clips.
+// the scrub (the growth-chart of towers); the HUD eases in around ~0.53-0.65,
+// where the scrub settles on the front-view brain. Nothing clamps or blocks
+// the page — the scrub runs straight through all four clips.
 async function scrollHeroTo(page: Page, fraction: number) {
   // Wait for the real pinned hero (not the pre-hydration placeholder) so
   // "main section" resolves to the hero and its height is measurable. The
@@ -82,9 +82,9 @@ test.describe("hero reveal HUD over the scrub", () => {
 
   test("HUD eases in once the scrub reaches the brain", async ({ page }) => {
     await page.goto("/");
-    // Inside the HUD's window: it eases in from ~0.62 (4s of video before the
-    // clip2/clip3 seam) and hands over to the statement at the seam, ~0.77.
-    await scrollHeroTo(page, 0.70);
+    // Inside the HUD's window: it eases in from ~0.53 (4s of video before the
+    // clip2/clip3 seam, on the ~32.42s timeline) and clears at the seam, ~0.65.
+    await scrollHeroTo(page, 0.60);
 
     const panel = page.getByTestId("hero-reveal");
     await expect(panel).toBeInViewport();
@@ -109,8 +109,9 @@ test.describe("hero reveal HUD over the scrub", () => {
     await page.goto("/");
 
     // Just past the seam, mid-rotation: panel is in the left layout, copy
-    // must not be shown yet.
-    await scrollHeroTo(page, 0.85);
+    // must not be shown yet. On the ~32.42s timeline ~0.70 lands at ~22.7s,
+    // between the seam (21.08s) and the copy reveal (24.4s).
+    await scrollHeroTo(page, 0.70);
     const t85 = await page
       .locator("video")
       .first()
@@ -124,8 +125,9 @@ test.describe("hero reveal HUD over the scrub", () => {
       .toBe("0");
 
     // Past the reveal threshold: the brain is now in profile with the
-    // skyline inside it, and the copy fades in.
-    await scrollHeroTo(page, 0.95);
+    // skyline inside it, and the copy fades in. ~0.80 lands at ~25.9s, past
+    // the 24.4s reveal point.
+    await scrollHeroTo(page, 0.80);
     await expect
       .poll(() =>
         page.getByTestId("hero-positioning").evaluate((el) => getComputedStyle(el).opacity)

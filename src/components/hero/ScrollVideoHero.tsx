@@ -372,6 +372,27 @@ export function ScrollVideoHero() {
           />
         )}
 
+        {/* In clip 4 the video is object-contain full-bleed, so on a wide
+            viewport its 16:9 frame is letterboxed and the frame's left/right
+            edge (where the brain/towers content stops) reads as a hard cut
+            against the black. These fade the side edges into black so that
+            boundary blends away. Only during clip 4 — the earlier phases keep
+            their own composition. */}
+        <div
+          aria-hidden
+          className={clsx(
+            "pointer-events-none absolute inset-y-0 left-0 z-[5] hidden w-[14%] bg-gradient-to-r from-black via-black/70 to-transparent transition-opacity duration-700 lg:block",
+            phaseD ? "opacity-100" : "opacity-0"
+          )}
+        />
+        <div
+          aria-hidden
+          className={clsx(
+            "pointer-events-none absolute inset-y-0 right-0 z-[5] hidden w-[14%] bg-gradient-to-l from-black via-black/70 to-transparent transition-opacity duration-700 lg:block",
+            phaseD ? "opacity-100" : "opacity-0"
+          )}
+        />
+
         {/* Legibility scrim for the copy column, and nothing else — it fades
             out with the copy at the seam so the brain plays at full
             brightness for the reveal instead of sitting under a wash. */}

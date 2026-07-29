@@ -372,12 +372,30 @@ export function ScrollVideoHero() {
           />
         )}
 
-        {/* In clip 4 the video is object-contain full-bleed, so on a wide
-            viewport its 16:9 frame is letterboxed and the frame's left/right
-            edge (where the brain/towers content stops) reads as a hard cut
-            against the black. These fade the side edges into black so that
-            boundary blends away. Only during clip 4 — the earlier phases keep
-            their own composition. */}
+        {/* Edge-fade overlays that hide the vertical cut where the video's
+            content ends and the black background begins. The video is a black
+            source on a black backdrop, so wherever the video element (or its
+            visible content) stops on the wide viewport, a sharp line shows.
+            These gradients bridge that seam with a soft transparent→black
+            fade. Two states matter:
+
+            - Clip 3 (phaseC && !phaseD): the video is a 60/64%-wide left panel.
+              Its right edge sits at ~60/64% of the viewport and is the visible
+              cut — fade it out with a gradient straddling that edge.
+            - Clip 4 (phaseD): the video is object-contain full-bleed, so its
+              16:9 content leaves narrower letterbox margins on the far left
+              and right — fade both edges into black.
+
+            All are lg-only: below lg the video is object-cover full-bleed,
+            fills the frame, no cut. */}
+        <div
+          aria-hidden
+          className={clsx(
+            "pointer-events-none absolute inset-y-0 z-[5] hidden bg-gradient-to-r from-transparent via-black/70 to-black transition-opacity duration-700 lg:block",
+            "lg:left-[48%] lg:w-[24%] xl:left-[52%] xl:w-[24%]",
+            phaseC && !phaseD ? "opacity-100" : "opacity-0"
+          )}
+        />
         <div
           aria-hidden
           className={clsx(

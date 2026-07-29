@@ -2,39 +2,75 @@
   "video": [
     {
       "path": "public/video/hero-scroll.mp4",
-      "source": "client-supplied (repo uploads) — four clips concatenated into ONE continuous scrub timeline, never split across sections: the original hero clip, then \"scroll scrubbed 2.mp4\" (zoom out to a front-on brain close-up), then the whole of \"scroll scrubbed merge.mp4\" appended unbroken (the brain wires up and the Dubai skyline resolves inside it, then the brain disperses into a growth-chart of towers). \"scroll scrubbed merge.mp4\" superseded the old \"scroll scrubbed 3.mp4\" / \"scroll scrubbed 4.mp4\" pair, re-rendering their seam as one continuous sequence; the two old files were deleted.",
+      "source": "client-supplied (repo uploads) — three clips concatenated into one continuous scrub timeline: the original hero clip, then \"scroll scrubbed 2.mp4\" (zoom out to a front-on brain close-up), then the first 6.29s of \"scroll scrubbed merge.mp4\" (the brain wires up and the Dubai skyline appears inside it). \"scroll scrubbed merge.mp4\" superseded the old \"scroll scrubbed 3.mp4\" / \"scroll scrubbed 4.mp4\" pair, re-rendering their seam as one continuous sequence; the two old files were deleted.",
       "purpose": "scroll-scrubbed hero, desktop/tablet",
       "resolution": "1920x1080",
-      "durationSeconds": 32.416667,
-      "sizeBytes": 41494445,
+      "durationSeconds": 27.375,
+      "sizeBytes": 34413391,
       "optimization": "re-encoded H.264 ALL-INTRA (-g 1: every frame a keyframe), crf24, faststart, audio removed. The two clips were re-encoded to identical codec parameters and joined with an ffmpeg concat filter before this final all-intra pass, so every frame across the full merged timeline — not just each original clip — is independently seekable. All-intra makes an arbitrary seek a single-frame decode instead of decoding forward from the previous keyframe, which is what makes scroll-scrubbing feel smooth."
     },
     {
       "path": "public/video/hero-scroll-mobile.mp4",
-      "source": "client-supplied (repo uploads) — four clips concatenated into ONE continuous scrub timeline, never split across sections: the original hero clip, then \"scroll scrubbed 2.mp4\" (zoom out to a front-on brain close-up), then the whole of \"scroll scrubbed merge.mp4\" appended unbroken (the brain wires up and the Dubai skyline resolves inside it, then the brain disperses into a growth-chart of towers). \"scroll scrubbed merge.mp4\" superseded the old \"scroll scrubbed 3.mp4\" / \"scroll scrubbed 4.mp4\" pair, re-rendering their seam as one continuous sequence; the two old files were deleted.",
+      "source": "client-supplied (repo uploads) — three clips concatenated into one continuous scrub timeline: the original hero clip, then \"scroll scrubbed 2.mp4\" (zoom out to a front-on brain close-up), then the first 6.29s of \"scroll scrubbed merge.mp4\" (the brain wires up and the Dubai skyline appears inside it). \"scroll scrubbed merge.mp4\" superseded the old \"scroll scrubbed 3.mp4\" / \"scroll scrubbed 4.mp4\" pair, re-rendering their seam as one continuous sequence; the two old files were deleted.",
       "purpose": "scroll-scrubbed hero, mobile (<768px)",
       "resolution": "960px wide, aspect preserved",
-      "durationSeconds": 32.416667,
-      "sizeBytes": 14576137,
+      "durationSeconds": 27.375,
+      "sizeBytes": 11668613,
       "optimization": "re-encoded H.264 all-intra (-g 1), crf25, faststart, audio removed."
     },
     {
       "path": "public/video/hero-scroll.webm",
-      "source": "client-supplied (repo uploads) — four clips concatenated into ONE continuous scrub timeline, never split across sections: the original hero clip, then \"scroll scrubbed 2.mp4\" (zoom out to a front-on brain close-up), then the whole of \"scroll scrubbed merge.mp4\" appended unbroken (the brain wires up and the Dubai skyline resolves inside it, then the brain disperses into a growth-chart of towers). \"scroll scrubbed merge.mp4\" superseded the old \"scroll scrubbed 3.mp4\" / \"scroll scrubbed 4.mp4\" pair, re-rendering their seam as one continuous sequence; the two old files were deleted.",
+      "source": "client-supplied (repo uploads) — three clips concatenated into one continuous scrub timeline: the original hero clip, then \"scroll scrubbed 2.mp4\" (zoom out to a front-on brain close-up), then the first 6.29s of \"scroll scrubbed merge.mp4\" (the brain wires up and the Dubai skyline appears inside it). \"scroll scrubbed merge.mp4\" superseded the old \"scroll scrubbed 3.mp4\" / \"scroll scrubbed 4.mp4\" pair, re-rendering their seam as one continuous sequence; the two old files were deleted.",
       "purpose": "codec fallback only for browsers without H.264 (listed AFTER the mp4 sources)",
       "resolution": "1280px wide",
-      "sizeBytes": 50423452,
+      "sizeBytes": 38094735,
       "optimization": "VP9 all-intra crf40. VP9 compresses intra-only poorly, so this is larger than the 1080p H.264 despite lower resolution — hence mp4-first source ordering.",
-      "durationSeconds": 32.416667
+      "durationSeconds": 27.375
     },
     {
       "path": "public/video/hero-scroll-mobile.webm",
-      "source": "client-supplied (repo uploads) — four clips concatenated into ONE continuous scrub timeline, never split across sections: the original hero clip, then \"scroll scrubbed 2.mp4\" (zoom out to a front-on brain close-up), then the whole of \"scroll scrubbed merge.mp4\" appended unbroken (the brain wires up and the Dubai skyline resolves inside it, then the brain disperses into a growth-chart of towers). \"scroll scrubbed merge.mp4\" superseded the old \"scroll scrubbed 3.mp4\" / \"scroll scrubbed 4.mp4\" pair, re-rendering their seam as one continuous sequence; the two old files were deleted.",
+      "source": "client-supplied (repo uploads) — three clips concatenated into one continuous scrub timeline: the original hero clip, then \"scroll scrubbed 2.mp4\" (zoom out to a front-on brain close-up), then the first 6.29s of \"scroll scrubbed merge.mp4\" (the brain wires up and the Dubai skyline appears inside it). \"scroll scrubbed merge.mp4\" superseded the old \"scroll scrubbed 3.mp4\" / \"scroll scrubbed 4.mp4\" pair, re-rendering their seam as one continuous sequence; the two old files were deleted.",
       "purpose": "mobile codec fallback",
       "resolution": "960px wide",
-      "sizeBytes": 32110891,
+      "sizeBytes": 23438166,
       "optimization": "VP9 all-intra crf44.",
-      "durationSeconds": 32.416667
+      "durationSeconds": 27.375
+    },
+    {
+      "path": "public/video/services-scroll.mp4",
+      "source": "client-supplied (repo upload) — the second half (last 5.04s) of \"scroll scrubbed merge.mp4\": the brain disperses and reforms as an ascending growth-chart of towers. Picks up on the exact brain frame hero-scroll.mp4 ends on.",
+      "purpose": "scroll-scrubbed background for 'One creative system, four disciplines', desktop/tablet",
+      "resolution": "1920x1080",
+      "durationSeconds": 5.041667,
+      "sizeBytes": 7179783,
+      "optimization": "re-encoded H.264 all-intra (-g 1, crf24, preset slow), audio removed, matching the hero clips' parameters so seeking stays frame-accurate."
+    },
+    {
+      "path": "public/video/services-scroll-mobile.mp4",
+      "source": "derived from the same scroll scrubbed merge.mp4 half as services-scroll.mp4",
+      "purpose": "scroll-scrubbed services background, mobile (<768px)",
+      "resolution": "960px wide, aspect preserved",
+      "durationSeconds": 5.041667,
+      "sizeBytes": 2824043,
+      "optimization": "re-encoded H.264 all-intra, crf24, preset slow, audio removed."
+    },
+    {
+      "path": "public/video/services-scroll.webm",
+      "source": "derived from the same scroll scrubbed merge.mp4 half as services-scroll.mp4",
+      "purpose": "codec fallback only for browsers without H.264 (listed AFTER the mp4 sources)",
+      "resolution": "1920x1080",
+      "durationSeconds": 5.042,
+      "sizeBytes": 16912014,
+      "optimization": "VP9 all-intra crf32."
+    },
+    {
+      "path": "public/video/services-scroll-mobile.webm",
+      "source": "derived from the same scroll scrubbed merge.mp4 half as services-scroll.mp4",
+      "purpose": "mobile codec fallback",
+      "resolution": "960px wide",
+      "durationSeconds": 5.042,
+      "sizeBytes": 7895197,
+      "optimization": "VP9 all-intra crf32."
     },
     {
       "path": "public/video/intro-start.mp4",

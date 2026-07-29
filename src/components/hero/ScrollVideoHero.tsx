@@ -317,8 +317,10 @@ export function ScrollVideoHero() {
     >
       <h1 className="sr-only">{heroSummary}</h1>
 
-      {/* Near-black backdrop (#010103, client-requested) behind the video. */}
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#010103]">
+      {/* Solid black backdrop behind the video, so the video's own black
+          background blends into it with no visible edge (the object-contain
+          letterbox and the open right/left of frame sit on the same black). */}
+      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-black">
         {!videoFailed ? (
           <video
             ref={videoRef}

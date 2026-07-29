@@ -98,7 +98,7 @@ export function MainServices() {
 
   return (
     <section
-      className="relative overflow-hidden bg-[#010103]"
+      className="relative overflow-hidden bg-black"
       aria-labelledby="services-heading"
     >
       <div

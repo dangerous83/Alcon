@@ -63,12 +63,15 @@ delivery — see `docs/site-audit.md` "Video source audit" and
 - `public/images/hero-poster.jpg` / `.webp` (+ mobile variants) — poster /
   reduced-motion fallback frame
 
-The hero's third clip and the services section's background clip
-(`public/video/services-scroll*`) both come from a single re-rendered
-upload, `scroll scrubbed merge.mp4` — it replaced the old separately-cut
-`scroll scrubbed 3.mp4` / `scroll scrubbed 4.mp4` to fix a seam between
-them. See `docs/site-audit.md` "Third and fourth clips merged in" for how
-it's split and re-encoded.
+The hero is **one continuous scroll-scrubbed video** of all four clips
+(chapters → brain → Dubai skyline → growth-chart of towers) playing in a
+single pinned section — there is no separate services video, so the scrub
+never cuts to a second clip or section. The last two clips come from a
+single re-rendered upload, `scroll scrubbed merge.mp4`, which replaced the
+old separately-cut `scroll scrubbed 3.mp4` / `scroll scrubbed 4.mp4`. The
+"One creative system, four disciplines" cards resolve over the towers as the
+final phase of that same scrub. See `docs/site-audit.md` "Third and fourth
+clips merged in" and "Services composition" for details.
 
 ## AI assistant widget
 

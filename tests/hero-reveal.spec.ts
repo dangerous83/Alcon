@@ -1,10 +1,11 @@
 import { test, expect } from "./fixtures";
 import type { Page } from "@playwright/test";
 
-// Scrolls to a fraction of the hero's own pin range. 1.0 is the last frame of
-// the scrub (the Dubai reveal); the HUD eases in from ~0.71, where the scrub
-// settles on the front-view brain. Nothing clamps or blocks the page — the
-// scrub runs straight through all three clips.
+// Scrolls to a fraction of the hero's own pin range. The scrub is non-linear:
+// page-scroll 0..0.6 covers clips 1-3 (chapters -> brain -> skyline, ~27.4s)
+// and 0.6..1.0 covers clip 4 (the growth-chart of towers finale). So the
+// positioning statement lives around ~0.53-0.6 and the towers finale at 1.0.
+// It is one pinned section the whole way — nothing clamps, blocks, or cuts.
 async function scrollHeroTo(page: Page, fraction: number) {
   // Wait for the real pinned hero (not the pre-hydration placeholder) so
   // "main section" resolves to the hero and its height is measurable. The
@@ -82,9 +83,10 @@ test.describe("hero reveal HUD over the scrub", () => {
 
   test("HUD eases in once the scrub reaches the brain", async ({ page }) => {
     await page.goto("/");
-    // Inside the HUD's window: it eases in from ~0.62 (4s of video before the
-    // clip2/clip3 seam) and hands over to the statement at the seam, ~0.77.
-    await scrollHeroTo(page, 0.70);
+    // The scrub is non-linear (clips 1-3 occupy page-scroll 0..0.6). The HUD is
+    // up for video-time ~17.1s..21.1s, i.e. page-scroll ~0.37..0.46, so 0.42
+    // lands mid-window.
+    await scrollHeroTo(page, 0.42);
 
     const panel = page.getByTestId("hero-reveal");
     await expect(panel).toBeInViewport();
@@ -109,8 +111,9 @@ test.describe("hero reveal HUD over the scrub", () => {
     await page.goto("/");
 
     // Just past the seam, mid-rotation: panel is in the left layout, copy
-    // must not be shown yet.
-    await scrollHeroTo(page, 0.85);
+    // must not be shown yet. ~0.50 -> ~22.8s (between the 21.1s seam and the
+    // 24.4s reveal).
+    await scrollHeroTo(page, 0.50);
     const t85 = await page
       .locator("video")
       .first()
@@ -123,9 +126,10 @@ test.describe("hero reveal HUD over the scrub", () => {
       )
       .toBe("0");
 
-    // Past the reveal threshold: the brain is now in profile with the
-    // skyline inside it, and the copy fades in.
-    await scrollHeroTo(page, 0.95);
+    // Past the reveal threshold: the brain is now in profile with the skyline
+    // inside it, and the copy fades in. ~0.57 -> ~26s, still within clip 3
+    // (before the copy fades back out at the 27.4s clip3/clip4 handover).
+    await scrollHeroTo(page, 0.57);
     await expect
       .poll(() =>
         page.getByTestId("hero-positioning").evaluate((el) => getComputedStyle(el).opacity)
@@ -140,12 +144,12 @@ test.describe("hero reveal HUD over the scrub", () => {
     // skyline inside it, so the readout steps aside and the positioning
     // statement takes the open right half instead.
     await page.goto("/");
-    await scrollHeroTo(page, 1.0);
+    await scrollHeroTo(page, 0.57);
 
     const video = page.locator("video").first();
     expect(
       await video.evaluate((el: HTMLVideoElement) => el.currentTime)
-    ).toBeGreaterThan(26);
+    ).toBeGreaterThan(24.4);
 
     await expect
       .poll(() =>
@@ -168,7 +172,7 @@ test.describe("hero reveal HUD over the scrub", () => {
   }) => {
     test.skip(!!(viewport && viewport.width < 1024), "layout is lg-and-up");
     await page.goto("/");
-    await scrollHeroTo(page, 1.0);
+    await scrollHeroTo(page, 0.57);
 
     const heading = page
       .getByTestId("hero-positioning")
@@ -177,8 +181,8 @@ test.describe("hero reveal HUD over the scrub", () => {
     const width = viewport!.width;
     expect(box).not.toBeNull();
 
-    // Past the midpoint: the video is full-bleed and the brain fills roughly
-    // the left three-quarters, so the copy belongs in the remainder.
+    // Clip 3 keeps the video in a left panel with the brain, so the copy
+    // belongs in the open right half.
     expect(box!.x).toBeGreaterThan(width * 0.45);
 
     // Left-aligned, not centred — reads as a column beside the artwork.
@@ -202,7 +206,7 @@ test.describe("hero reveal HUD over the scrub", () => {
     // copy. Clip 3 now narrows the element and switches it to object-contain
     // so the frame shrinks and anchors left, with the copy beside it.
     await page.goto("/");
-    await scrollHeroTo(page, 1.0);
+    await scrollHeroTo(page, 0.57);
 
     const geom = await page.evaluate(() => {
       const v = document.querySelector("video")!.getBoundingClientRect();
@@ -237,7 +241,7 @@ test.describe("hero reveal HUD over the scrub", () => {
     // the column, so their right edges disagreed and the block read as
     // misaligned. Both should wrap to the same column width.
     await page.goto("/");
-    await scrollHeroTo(page, 1.0);
+    await scrollHeroTo(page, 0.57);
 
     const edges = await page.evaluate(() => {
       const root = document.querySelector('[data-testid="hero-positioning"]')!;
@@ -256,7 +260,7 @@ test.describe("hero reveal HUD over the scrub", () => {
     page,
   }) => {
     await page.goto("/");
-    await scrollHeroTo(page, 1.0);
+    await scrollHeroTo(page, 0.57);
     const panel = page.getByTestId("hero-positioning");
 
     // Same Allura script the hero headlines use for their accent word.

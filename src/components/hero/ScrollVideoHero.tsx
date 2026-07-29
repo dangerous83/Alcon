@@ -7,34 +7,43 @@ import { heroChapters, heroSummary, heroCtas } from "@/lib/content/hero";
 import { HeroReveal } from "@/components/hero/HeroReveal";
 import { PositioningCopy } from "@/components/sections/PositioningCopy";
 import { PositioningStatement } from "@/components/sections/PositioningStatement";
+import { ServicesCopy, ServicesCards } from "@/components/sections/MainServices";
 import { Button } from "@/components/ui/Button";
 import { useIntroEntered } from "@/components/intro/intro-context";
 import { clsx } from "@/lib/clsx";
 import { assetPath } from "@/lib/asset-path";
 
-// One file, three scroll-scrubbed clips concatenated seamlessly:
+// ONE file, ONE pinned section, four scroll-scrubbed clips concatenated
+// seamlessly. The whole journey is a single uninterrupted scrub — there is no
+// second section to "cut" to, so the brain never jumps scale or restarts:
 //
 //   0 .......... 15.04s   chapter loop (three headlines)
 //   15.04s ..... 21.08s   zoom out to a front-on brain close-up
 //   21.08s ..... 27.38s   the brain wires up and Dubai appears inside it
+//   27.38s ..... 32.42s   the brain disperses into a growth-chart of towers
 //
-// Each seam is a handover between overlays:
+// The overlays hand over as the scrub advances:
 //
 //   CLIP1_END      chapter copy fades out; the frame plays clean into the brain
-//   CLIP2_END      the HUD clears and the video panel moves left, making room
-//                  on the right for the positioning statement
-//   COPY_REVEAL_AT the statement itself only fades in once the brain has
-//                  turned into profile with the skyline resolved inside it —
-//                  a couple of seconds after CLIP2_END, not at the seam
+//   CLIP2_END      the HUD clears, making room for the positioning statement
+//   COPY_REVEAL_AT the statement fades in once the brain has turned into
+//                  profile with the skyline resolved inside it (right of frame)
+//   CLIP3_END      clip 4 begins: the statement fades out and the "One creative
+//                  system, four disciplines" copy + cards take the LEFT of
+//                  frame while the towers grow on the RIGHT — the finale of the
+//                  same scrub, not a separate section below it
 //
-// The fourth clip — the brain dispersing into a growth-chart of towers — is
-// NOT in this file. It is the scroll-scrubbed background of the services
-// section below, which picks up from the exact brain frame this hero ends on.
-//
-// Scrolling runs straight through all three clips; nothing holds the page.
+// The video stays full-bleed the whole way, so nothing resizes or cuts.
 const CLIP1_END = 15.041667;
 const CLIP2_END = 21.083333;
-const VIDEO_DURATION_FALLBACK = 27.375;
+const CLIP3_END = 27.375;
+const VIDEO_DURATION_FALLBACK = 32.416667;
+// The scrub is non-linear: the first SCROLL_SPLIT of the page-scroll covers
+// clips 1-3 (the brain build-up) at roughly the old per-pixel rate, and the
+// remaining scroll is given to clip 4 so the towers-growth finale and the
+// cards reveal get room to breathe rather than flashing past in ~15% of the
+// travel a linear map would allot the 5s clip.
+const SCROLL_SPLIT = 0.6;
 // The source is encoded all-intra (every frame a keyframe), so seeking is a
 // single-frame decode rather than a decode-forward from the last keyframe.
 // That makes a snappier follow factor affordable without stutter.
@@ -58,6 +67,12 @@ const REVEAL_LEAD_SECONDS = 4;
 // the side view and skyline are both established, independent of the video
 // panel's own layout switch at CLIP2_END.
 const COPY_REVEAL_AT = 24.4;
+// Clip 4: the brain fills the left of frame at first and only clears as it
+// disperses into towers on the right. The "One creative system" copy + cards
+// live on that left side, so they wait until the brain has moved off it
+// (frame-checked ~3.1s into the 5s clip) — no dark overlay is used, the copy
+// simply waits for black.
+const SERVICES_REVEAL_AT = 30.5;
 
 export function ScrollVideoHero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -69,7 +84,9 @@ export function ScrollVideoHero() {
   const [phaseB, setPhaseB] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [phaseC, setPhaseC] = useState(false);
+  const [phaseD, setPhaseD] = useState(false);
   const [copyRevealed, setCopyRevealed] = useState(false);
+  const [servicesRevealed, setServicesRevealed] = useState(false);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
   // False while the intro overlay is still up: the hero is inside a
@@ -109,7 +126,9 @@ export function ScrollVideoHero() {
     let lastPhaseB = false;
     let lastRevealed = false;
     let lastPhaseC = false;
+    let lastPhaseD = false;
     let lastCopyRevealed = false;
+    let lastServicesRevealed = false;
     let hasStarted = false;
 
     function computeChapterIndex(timeInSeconds: number) {
@@ -124,10 +143,18 @@ export function ScrollVideoHero() {
           ? video!.duration
           : VIDEO_DURATION_FALLBACK;
 
-      const revealAt = Math.max(
-        0,
-        (CLIP2_END - REVEAL_LEAD_SECONDS) / duration
-      );
+      // Non-linear map: page-scroll 0..SCROLL_SPLIT covers clips 1-3, the rest
+      // covers clip 4, so the towers finale gets a generous share of the travel.
+      const progressToTime = (progress: number) => {
+        if (progress <= SCROLL_SPLIT) {
+          return (progress / SCROLL_SPLIT) * CLIP3_END;
+        }
+        return (
+          CLIP3_END +
+          ((progress - SCROLL_SPLIT) / (1 - SCROLL_SPLIT)) *
+            (duration - CLIP3_END)
+        );
+      };
 
       scrollTrigger = ScrollTrigger.create({
         trigger: wrapper,
@@ -135,7 +162,8 @@ export function ScrollVideoHero() {
         end: "bottom bottom",
         onUpdate: (self) => {
           const progress = self.progress;
-          targetTime = progress * duration;
+          const timeInSeconds = progressToTime(progress);
+          targetTime = timeInSeconds;
 
           if (!hasStarted && progress > 0.001) {
             hasStarted = true;
@@ -146,7 +174,6 @@ export function ScrollVideoHero() {
             progressFillRef.current.style.transform = `scaleX(${progress})`;
           }
 
-          const timeInSeconds = progress * duration;
           const chapterIdx = computeChapterIndex(timeInSeconds);
           if (chapterIdx !== lastChapterIndex) {
             lastChapterIndex = chapterIdx;
@@ -159,7 +186,8 @@ export function ScrollVideoHero() {
             setPhaseB(isPhaseB);
           }
 
-          const isRevealed = progress >= revealAt;
+          // HUD eases in a few seconds of video before the clip2/clip3 seam.
+          const isRevealed = timeInSeconds >= CLIP2_END - REVEAL_LEAD_SECONDS;
           if (isRevealed !== lastRevealed) {
             lastRevealed = isRevealed;
             setRevealed(isRevealed);
@@ -172,13 +200,30 @@ export function ScrollVideoHero() {
             setPhaseC(isPhaseC);
           }
 
-          // The copy itself waits a beat longer than the panel switch above,
-          // until the brain has actually turned into profile with the
-          // skyline visible in it.
-          const isCopyRevealed = timeInSeconds >= COPY_REVEAL_AT;
+          // Clip 4 (the towers finale): the panel opens up to full-bleed and
+          // the services content takes over.
+          const isPhaseD = timeInSeconds >= CLIP3_END;
+          if (isPhaseD !== lastPhaseD) {
+            lastPhaseD = isPhaseD;
+            setPhaseD(isPhaseD);
+          }
+
+          // The positioning statement owns clip 3 only: it fades in once the
+          // brain is in profile with the skyline (right of frame) and fades
+          // back out as clip 4 begins, so it never sits over the towers.
+          const isCopyRevealed =
+            timeInSeconds >= COPY_REVEAL_AT && timeInSeconds < CLIP3_END;
           if (isCopyRevealed !== lastCopyRevealed) {
             lastCopyRevealed = isCopyRevealed;
             setCopyRevealed(isCopyRevealed);
+          }
+
+          // The services copy + cards resolve on the left once the brain has
+          // dispersed off it into the towers on the right.
+          const isServicesRevealed = timeInSeconds >= SERVICES_REVEAL_AT;
+          if (isServicesRevealed !== lastServicesRevealed) {
+            lastServicesRevealed = isServicesRevealed;
+            setServicesRevealed(isServicesRevealed);
           }
         },
       });
@@ -188,7 +233,7 @@ export function ScrollVideoHero() {
       // `body.overflow`, so at create time the document may still be
       // scroll-locked and the trigger's end would clamp short. A refresh on the
       // next frame — after overflow is restored and layout is final — pins the
-      // scrub range to the real 280/340vh section.
+      // scrub range to the real 460/560vh section.
       refreshRafId = requestAnimationFrame(() => ScrollTrigger.refresh());
 
       // fastSeek, where supported, skips to the nearest keyframe without the
@@ -263,17 +308,16 @@ export function ScrollVideoHero() {
   return (
     <section
       ref={wrapperRef}
-      /* Back to the original scroll length. Keeping it proportional to the
-         video (~18.6vh/s) meant 620vh of scrolling by the third clip, which
-         was far too much travel; the scrub simply runs faster per pixel. */
-      className="relative h-[280vh] lg:h-[340vh]"
+      /* One pinned section for the whole four-clip scrub. Tall enough that the
+         non-linear map (see SCROLL_SPLIT) gives clips 1-3 roughly the old
+         per-pixel rate over the first ~60% and hands the towers finale a
+         generous last ~40%. */
+      className="relative h-[460vh] lg:h-[560vh]"
       aria-label="Alcon — Creative Intelligence"
     >
       <h1 className="sr-only">{heroSummary}</h1>
 
-      {/* Behind the video. In clip 3 the video shrinks to a left panel and
-          this shows on the right — kept a hair off pure black (#010103, a
-          near-black requested by the client) rather than #000. */}
+      {/* Near-black backdrop (#010103, client-requested) behind the video. */}
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#010103]">
         {!videoFailed ? (
           <video
@@ -282,12 +326,17 @@ export function ScrollVideoHero() {
               "absolute inset-0 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]",
               // Clips 1-2 fill the frame.
               "h-full w-full object-cover [object-position:65%_center] sm:[object-position:center]",
-              // Clip 3 becomes a panel on the left rather than a full-bleed
-              // background: narrower box + object-contain, so the WHOLE frame
-              // is visible at a smaller size (no crop / no zoom), brain
-              // anchored left and the right side free for the statement.
+              // Clips 3-4 switch to object-contain (whole frame visible, no
+              // crop). Clip 3 is a panel on the left with the brain, the right
+              // free for the statement; clip 4 opens the SAME element up to
+              // full width so the brain grows smoothly into the towers finale —
+              // object-fit stays `contain` across the clip3/clip4 handover, so
+              // it scales rather than popping. It is one continuous scrub in one
+              // pinned section: nothing cuts to a second video or section.
+              phaseC && "lg:object-contain",
               phaseC &&
-                "lg:w-[60%] lg:object-contain lg:[object-position:left_center] xl:w-[64%]"
+                !phaseD &&
+                "lg:w-[60%] lg:[object-position:left_center] xl:w-[64%]"
             )}
             muted
             playsInline
@@ -432,11 +481,10 @@ export function ScrollVideoHero() {
         {/* HUD owns the front-brain stretch, then clears at the seam. */}
         <HeroReveal visible={revealed && !phaseC} />
 
-        {/* Clip 3: the brain drifts to the left of frame and the Dubai
-            skyline resolves inside it, leaving the right half open — that is
-            where the positioning statement lands. Half-width and offset to
-            the right rather than centred, so the copy never sits on top of
-            the artwork. */}
+        {/* Clip 3: the video is a panel on the left with the brain and the
+            resolved Dubai skyline, so the right of the sticky frame is plain
+            near-black — that is where the positioning statement lands, no scrim
+            needed. Fades out again as clip 4 opens the video to full-bleed. */}
         <div
           data-testid="hero-positioning"
           className={clsx(
@@ -444,11 +492,31 @@ export function ScrollVideoHero() {
             copyRevealed ? "opacity-100" : "opacity-0"
           )}
         >
-          {/* Clip 3 pulls the video into a panel on the left, so the copy
-              sits on plain background on the right — no scrim needed.
-              Left-anchored within a right-hand column, close to the artwork. */}
           <div className="relative ml-auto w-full px-6 sm:px-10 lg:w-1/2 lg:pl-0 lg:pr-10 xl:w-[46%]">
             <PositioningCopy className="mr-auto max-w-sm xl:max-w-md" />
+          </div>
+        </div>
+
+        {/* Clip 4 (the towers finale): the brain has dispersed into a
+            growth-chart of towers on the RIGHT, leaving the black left of frame
+            for the "One creative system, four disciplines" copy + the four
+            discipline cards. This is the end of the SAME scrub — the services
+            content resolving over the towers — not a separate section, so there
+            is no cut. No dark overlay: the copy waits for the left to clear
+            (servicesRevealed) and each card carries its own translucent plate. */}
+        <div
+          data-testid="hero-services"
+          className={clsx(
+            "absolute inset-0 z-20 flex items-center transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            servicesRevealed ? "opacity-100" : "pointer-events-none opacity-0"
+          )}
+          aria-hidden={!servicesRevealed}
+        >
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="lg:max-w-[54%]">
+              <ServicesCopy />
+              <ServicesCards />
+            </div>
           </div>
         </div>
       </div>

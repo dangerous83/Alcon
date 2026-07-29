@@ -43,3 +43,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Raw source-video uploads — only the encoded copies in public/video/ are used
+scroll scrubbed*.mp4

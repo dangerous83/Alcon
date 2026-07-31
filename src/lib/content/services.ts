@@ -13,6 +13,7 @@ export type Service = {
   name: string;
   shortName: string;
   summary: string;
+  keywords?: string[];
   valueProposition: string;
   description: string[];
   deliverables: string[];
@@ -24,58 +25,78 @@ export type Service = {
 export const services: Service[] = [
   {
     slug: "branding",
-    name: "AI-Accelerated Branding & Identity",
+    name: "Branding & Identity Design Agency in Dubai",
     shortName: "Branding",
     summary:
-      "Advertising-ready brand systems for Dubai and GCC businesses — positioning, identity, and guidelines built with AI-assisted exploration and a human creative director on every decision.",
+      "Strategy-led branding, logo design, and identity systems for ambitious Dubai, UAE, and GCC businesses — accelerated by AI and finished by senior creative direction.",
+    keywords: [
+      "branding agency Dubai",
+      "brand identity design Dubai",
+      "logo design company Dubai",
+      "rebranding agency UAE",
+      "corporate branding Dubai",
+      "AI branding agency",
+      "brand strategy GCC",
+    ],
     valueProposition:
-      "A distinct, campaign-ready brand identity delivered in weeks instead of quarters — because AI compresses the exploration, not the craft.",
+      "Build a brand people recognise, trust, and choose — with a distinctive identity engineered to perform everywhere your business shows up.",
     description: [
-      "Alcon builds brand identities that are engineered to sell, not just to look good in a case study. Every engagement starts with a positioning brief: what the brand needs to stand for, which buyer it needs to convert, and where it competes in the Dubai and wider GCC market. Nothing hits Figma before that answer is on the wall.",
-      "AI accelerates the exploration phase — hundreds of directional concepts reviewed inside days, not weeks — but every finished logo, wordmark, colour system, and guideline document is finished by a human creative director. The output is a brand toolkit built to run in real advertising and marketing environments: paid social, out-of-home, product UI, and long-form content.",
-      "Deliverables ship as living systems, not static PDFs. Teams get source files, motion primitives, voice rules, and campaign-ready templates, so the brand stays consistent whether the next asset is a Meta ad, a mall activation, or a keynote deck.",
+      "A memorable brand starts before the logo. Alcon combines commercial brand strategy, customer insight, and competitive research to define what your business should stand for, who it must move, and why it deserves attention in the Dubai and wider GCC market.",
+      "Our AI-accelerated branding process explores more relevant creative territories in less time. Senior designers and a human creative director then shape the strongest direction into a distinctive logo, visual identity, verbal identity, and scalable design system. AI speeds up discovery; judgment, originality, and craft remain human.",
+      "The result is not a static brand-guidelines PDF. It is a campaign-ready identity toolkit built for websites, social media, pitch decks, packaging, out-of-home advertising, product interfaces, and every future touchpoint your team needs to create.",
     ],
     deliverables: [
-      "Brand strategy, positioning & messaging framework",
-      "Logo suite, wordmark & responsive lock-ups",
-      "Colour, typography & iconography systems",
-      "Voice, tone & copy guidelines",
-      "Motion primitives for digital advertising",
-      "Campaign-ready templates for paid social, print & OOH",
-      "Full brand guidelines document with usage rules",
+      "Brand strategy, market positioning & audience definition",
+      "Brand story, messaging framework, voice & tone",
+      "Logo design, wordmark & responsive logo system",
+      "Colour palette, typography & iconography system",
+      "Art direction for photography, imagery & campaigns",
+      "Social media, presentation, print & OOH templates",
+      "Motion identity principles for digital advertising",
+      "Complete brand guidelines and production-ready source files",
     ],
     process: [
       {
         title: "Discover",
         description:
-          "Stakeholder interviews, competitor teardown across the GCC market, and a positioning workshop that ends with one written direction, not five options.",
+          "Stakeholder interviews, audience insight, and a GCC competitor audit reveal the commercial opportunity your brand can own.",
       },
       {
         title: "Explore",
         description:
-          "AI-assisted concept generation across dozens of visual and verbal territories, filtered down by the creative director to three you would actually ship.",
+          "AI-assisted exploration expands the creative field; our creative director filters it into a small set of original, strategically relevant directions.",
       },
       {
         title: "Design",
         description:
-          "Build the identity system across logo, colour, type, and applied mockups — landing pages, ad units, product packaging, whatever the brand touches.",
+          "We build and stress-test the chosen identity across logo, type, colour, imagery, web, social, packaging, and advertising applications.",
       },
       {
-        title: "Deliver",
+        title: "Activate",
         description:
-          "Ship a production-grade guidelines document, source files, and a set of campaign-ready templates your team can pick up on day one.",
+          "Your team receives practical guidelines, source files, and campaign-ready templates, followed by a clear rollout plan for launch.",
       },
     ],
     faqs: [
       {
-        question: "Do you design brands from scratch or refresh existing ones?",
+        question: "Do you create new brands and rebrand existing businesses?",
         answer:
-          "Both. A full identity build takes six to ten weeks; a focused rebrand or refresh that preserves existing equity typically ships in three to five. Either way, you leave with a system your marketing team can actually run.",
+          "Both. We create complete brand identities for new ventures and lead strategic rebrands for established UAE and GCC businesses. A full identity usually takes six to ten weeks; a focused refresh that protects existing brand equity typically takes three to five.",
       },
       {
-        question: "How does AI change the branding process for clients?",
+        question: "What is included in a complete brand identity package?",
         answer:
-          "It shortens the exploration phase — what used to be four weeks of moodboards is a few days of directed concept generation — so more of the timeline is spent on the strategic and craft decisions that actually differentiate the brand.",
+          "A typical engagement covers positioning, messaging, logo design, typography, colour, iconography, image direction, brand guidelines, source files, and practical templates for the channels your team uses most. We tailor the scope to your launch and growth plan.",
+      },
+      {
+        question: "How does AI improve your branding process?",
+        answer:
+          "AI helps us test more strategic and visual territories early, shorten research and iteration cycles, and spend more time refining the strongest idea. Every final design and recommendation is reviewed, shaped, and approved by experienced human creatives.",
+      },
+      {
+        question: "How much does branding cost in Dubai?",
+        answer:
+          "Branding costs depend on the depth of strategy, number of applications, and rollout support required. After a short discovery call, we provide a clear fixed-scope proposal with deliverables, milestones, and timing — no vague retainers or hidden production fees.",
       },
     ],
     accentIndex: 0,

@@ -77,14 +77,12 @@ export function ServicesCards() {
                   sizes="(min-width: 1024px) 17vw, 46vw"
                   className="object-cover brightness-125 contrast-110 saturate-125 transition duration-700 ease-out group-hover:scale-[1.045]"
                 />
-                <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.76)_0%,rgba(0,0,0,0.14)_34%,transparent_62%)]" />
-
                 <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/60 px-2 py-1 font-mono text-[9px] text-white/85 backdrop-blur-md">
                   {String(index + 1).padStart(2, "0")}
                 </span>
 
                 <span className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-3 p-3 sm:p-4">
-                  <span>
+                  <span className="rounded-xl border border-white/10 bg-black/60 px-2.5 py-2 backdrop-blur-md">
                     <span className="block font-mono text-[8px] uppercase tracking-[0.17em] text-cyan-accent sm:text-[9px]">
                       {product.category}
                     </span>

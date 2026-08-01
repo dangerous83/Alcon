@@ -56,7 +56,7 @@ export default function ClientProjectsPage() {
           </Link>
         </div>
         <div className="mt-8">
-          <ClientLinkGrid items={clientPlatformLinks} />
+          <ClientLinkGrid items={clientPlatformLinks} kind="Platform" />
         </div>
 
         <div className="mt-24 flex items-end justify-between gap-6">
@@ -69,7 +69,7 @@ export default function ClientProjectsPage() {
           </Link>
         </div>
         <div className="mt-8">
-          <ClientLinkGrid items={clientWebsiteLinks} />
+          <ClientLinkGrid items={clientWebsiteLinks} kind="Website" />
         </div>
       </section>
 
@@ -80,3 +80,4 @@ export default function ClientProjectsPage() {
     </main>
   );
 }
+

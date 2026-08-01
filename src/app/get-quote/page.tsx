@@ -1,73 +1,76 @@
 import type { Metadata } from "next";
-import { SectionLabel } from "@/components/ui/SectionLabel";
-import { Heading } from "@/components/ui/Heading";
-import { QuoteForm } from "@/components/forms/QuoteForm";
+import { Mail, MapPin, MessageCircle } from "lucide-react";
+import { PageHero } from "@/components/sections/PageHero";
+import { QuoteBuilder } from "@/components/forms/QuoteBuilder";
 import { siteConfig } from "@/lib/content/site";
 
 export const metadata: Metadata = {
-  title: "Get a Quote",
+  title: "Build Your Custom Quote",
   description:
-    "Tell Alcon about your project and get a response within one business day.",
+    "Select the creative services your project needs, build a focused brief, and request a tailored proposal from Alcon.",
   alternates: { canonical: `${siteConfig.url}/get-quote` },
 };
 
+const contactRoutes = [
+  { label: "Email the studio", value: siteConfig.contact.email, href: `mailto:${siteConfig.contact.email}`, icon: Mail },
+  { label: "Message on WhatsApp", value: "Fast project questions", href: siteConfig.contact.whatsapp, icon: MessageCircle, external: true },
+  { label: "Studio", value: `${siteConfig.location.city}, ${siteConfig.location.country}`, icon: MapPin },
+];
+
 export default function GetQuotePage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-      <div className="grid gap-16 lg:grid-cols-[1fr_1.2fr]">
-        <div>
-          <SectionLabel>Start a project</SectionLabel>
-          <Heading as="h1" size="lg" className="mt-4">
-            Tell us what you're building.
-          </Heading>
-          <p className="mt-4 text-text-secondary">
-            Share a few details about the project and we'll get back to you
-            with next steps — usually within one business day.
-          </p>
+    <main>
+      <PageHero
+        eyebrow="Custom quote · Clear scope · Right-sized team"
+        headline="Build the right project, not the biggest package."
+        accent="right"
+        description="Choose the capabilities your idea needs, then add the context. We will turn that project stack into a focused scope and a tailored proposal."
+        image="/images/pages/get-quote-hero.webp"
+        imageAlt="Luminous modular creative services converging into one tailored project plan"
+        primaryLabel="Choose your services"
+        primaryHref="#quote-builder"
+        secondaryLabel="Message on WhatsApp"
+        secondaryHref={siteConfig.contact.whatsapp}
+        animated
+        stats={[
+          { value: "No fixed bundles", label: "Select only what adds value" },
+          { value: "Clear next steps", label: "Scope before pricing" },
+          { value: "1 business day", label: "Typical first response" },
+        ]}
+      />
 
-          <div className="mt-10 space-y-4 border-t border-border pt-8 text-sm">
-            <div>
-              <p className="text-text-secondary">Email</p>
-              <a
-                href={`mailto:${siteConfig.contact.email}`}
-                className="text-text-primary hover:text-cyan-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
-              >
-                {siteConfig.contact.email}
-              </a>
-            </div>
-            <div>
-              <p className="text-text-secondary">Phone</p>
-              <a
-                href={`tel:${siteConfig.contact.phone}`}
-                className="text-text-primary hover:text-cyan-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
-              >
-                {siteConfig.contact.phone}
-              </a>
-            </div>
-            <div>
-              <p className="text-text-secondary">WhatsApp</p>
-              <a
-                href={siteConfig.contact.whatsapp}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-text-primary hover:text-cyan-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
-              >
-                Message on WhatsApp
-              </a>
-            </div>
-            <div>
-              <p className="text-text-secondary">Studio</p>
-              <p className="text-text-primary">
-                {siteConfig.location.city}, {siteConfig.location.country}
-              </p>
-            </div>
-          </div>
-        </div>
+      <section className="border-b border-border bg-surface/60">
+        <ul className="mx-auto grid max-w-7xl gap-px bg-border px-4 sm:grid-cols-3 sm:px-6 lg:px-8">
+          {contactRoutes.map((route) => {
+            const Icon = route.icon;
+            const content = (
+              <>
+                <Icon size={18} className="text-cyan-accent" aria-hidden />
+                <span>
+                  <span className="block text-xs text-text-secondary">{route.label}</span>
+                  <span className="mt-1 block text-sm text-text-primary">{route.value}</span>
+                </span>
+              </>
+            );
 
-        <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8">
-          <QuoteForm />
-        </div>
+            return (
+              <li key={route.label} className="bg-background">
+                {route.href ? (
+                  <a href={route.href} target={route.external ? "_blank" : undefined} rel={route.external ? "noopener noreferrer" : undefined} className="flex min-h-24 items-center gap-4 px-6 transition hover:bg-white/[0.03]">
+                    {content}
+                  </a>
+                ) : (
+                  <div className="flex min-h-24 items-center gap-4 px-6">{content}</div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <div id="quote-builder" className="scroll-mt-24">
+        <QuoteBuilder />
       </div>
-    </div>
+    </main>
   );
 }

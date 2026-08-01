@@ -324,3 +324,70 @@ body {
     opacity: 0.25;
   }
 }
+
+/* Quote-page energy system: slow orbital signals and a restrained scan line
+   make the custom-scope hero feel interactive without competing with copy. */
+.quote-orbit {
+  position: absolute;
+  right: 8%;
+  top: 18%;
+  width: 34rem;
+  height: 34rem;
+  border: 1px solid rgba(80, 119, 255, 0.18);
+  border-radius: 9999px;
+  box-shadow: inset 0 0 48px rgba(122, 58, 255, 0.04);
+  animation: quote-orbit 18s linear infinite;
+}
+
+.quote-orbit::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: #16c7ff;
+  box-shadow: 0 0 18px 5px rgba(22, 199, 255, 0.65);
+}
+
+.quote-orbit-two {
+  right: 14%;
+  top: 28%;
+  width: 22rem;
+  height: 22rem;
+  border-color: rgba(209, 45, 255, 0.2);
+  animation-direction: reverse;
+  animation-duration: 13s;
+}
+
+.quote-orbit-two::after {
+  background: #d12dff;
+  box-shadow: 0 0 18px 5px rgba(209, 45, 255, 0.6);
+}
+
+.quote-scan {
+  position: absolute;
+  inset: 0 auto 0 42%;
+  width: 18%;
+  transform: skewX(-12deg);
+  background: linear-gradient(90deg, transparent, rgba(72, 104, 255, 0.08), transparent);
+  animation: quote-scan 7s ease-in-out infinite;
+}
+
+@keyframes quote-orbit {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes quote-scan {
+  0%, 100% { transform: translateX(-30%) skewX(-12deg); opacity: 0; }
+  25%, 75% { opacity: 1; }
+  50% { transform: translateX(180%) skewX(-12deg); opacity: 0.9; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quote-orbit,
+  .quote-scan {
+    animation: none;
+  }
+}

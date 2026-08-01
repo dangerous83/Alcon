@@ -47,7 +47,7 @@ const budgetOptions = [
   "Not sure yet",
 ];
 
-export function QuoteForm() {
+export function QuoteForm({ selectedServices = [] }: { selectedServices?: string[] }) {
   const formId = useId();
   const [errors, setErrors] = useState<QuoteFormErrors>({});
   const [status, setStatus] = useState<Status>("idle");
@@ -137,7 +137,7 @@ export function QuoteForm() {
           Thanks — your request is in.
         </h2>
         <p className="mt-2 text-sm text-text-secondary">
-          We'll follow up at the email address you provided, usually within
+          We&apos;ll follow up at the email address you provided, usually within
           one business day.
         </p>
         <Button
@@ -202,14 +202,28 @@ export function QuoteForm() {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
-        <SelectField
-          id={`${formId}-service`}
-          name="service"
-          label="Service"
-          required
-          error={errors.service}
-          options={services.map((s) => ({ value: s.slug, label: s.name }))}
-        />
+        {selectedServices.length > 0 ? (
+          <div>
+            <p className="block text-sm font-medium text-text-primary">Selected services</p>
+            <input type="hidden" name="service" value={selectedServices.join(", ")} />
+            <div className="mt-2 flex min-h-11 flex-wrap items-center gap-2 rounded-xl border border-cyan-accent/40 bg-blue-500/10 px-3 py-2">
+              {selectedServices.map((service) => (
+                <span key={service} className="rounded-full border border-white/10 bg-black/30 px-2.5 py-1 text-xs text-text-primary">
+                  {service}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <SelectField
+            id={`${formId}-service`}
+            name="service"
+            label="Primary service"
+            required
+            error={errors.service}
+            options={services.map((s) => ({ value: s.slug, label: s.name }))}
+          />
+        )}
         <SelectField
           id={`${formId}-budget`}
           name="budget"
@@ -248,7 +262,7 @@ export function QuoteForm() {
 
       <p className="text-xs text-text-secondary">
         By submitting this form, you agree to be contacted about your
-        project. We don't share your details with third parties.
+        project. We don&apos;t share your details with third parties.
       </p>
 
       {(formError || mailtoHref) && (

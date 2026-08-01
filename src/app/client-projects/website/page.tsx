@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ClientLinkGrid } from "@/components/clients/ClientLinkGrid";
+import { FinalCta } from "@/components/sections/FinalCta";
+import { PageHero } from "@/components/sections/PageHero";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Heading } from "@/components/ui/Heading";
-import { Card } from "@/components/ui/Card";
 import { clientWebsiteLinks } from "@/lib/content/mega-menu";
 import { siteConfig } from "@/lib/content/site";
 
@@ -15,44 +15,33 @@ export const metadata: Metadata = {
 
 export default function ClientProjectsWebsitePage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-      <nav aria-label="Breadcrumb" className="text-xs text-text-secondary">
-        <Link href="/client-projects" className="hover:text-text-primary">
-          Clients
-        </Link>{" "}
-        / <span className="text-text-primary">Website</span>
-      </nav>
-      <SectionLabel className="mt-6">Clients / Website</SectionLabel>
-      <Heading as="h1" size="xl" className="mt-4">
-        Website Work
-      </Heading>
-      <p className="mt-4 max-w-2xl text-lg text-text-secondary">
-        Live marketing sites and web experiences. Each link opens the real,
-        deployed project.
-      </p>
+    <main>
+      <PageHero
+        eyebrow="Clients · Website work"
+        headline="Websites built to earn the next action."
+        accent="action"
+        description="Explore live brand and marketing experiences designed to clarify the offer, build confidence, and move visitors forward."
+        image="/images/pages/clients-hero.webp"
+        imageAlt="Curated gallery of live brand websites on illuminated displays"
+        primaryLabel="Explore live websites"
+        primaryHref="#website-work"
+        secondaryLabel="Start a website"
+        secondaryHref="/get-quote"
+        stats={[
+          { value: "Live websites", label: "Open the real deployed work" },
+          { value: "Conversion-led", label: "Clear journeys and next actions" },
+          { value: "Brand-first", label: "Distinctive systems, not templates" },
+        ]}
+      />
 
-      <ul className="mt-12 grid gap-4 sm:grid-cols-2">
-        {clientWebsiteLinks.map((item) => (
-          <Card as="li" key={item.url} className="p-5">
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center justify-between gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
-            >
-              <span className="font-heading text-base font-medium text-text-primary">
-                {item.label}
-              </span>
-              <ExternalLink
-                size={16}
-                strokeWidth={1.75}
-                aria-hidden
-                className="shrink-0 text-text-secondary transition-colors group-hover:text-cyan-accent"
-              />
-            </a>
-          </Card>
-        ))}
-      </ul>
-    </div>
+      <section id="website-work" className="scroll-mt-24 mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+        <SectionLabel>Website portfolio</SectionLabel>
+        <Heading as="h2" size="lg" className="mt-4 max-w-3xl">Published experiences, ready to explore.</Heading>
+        <p className="mt-5 max-w-2xl text-text-secondary">Every cover below is captured from the live project. Open any card to see the website in market.</p>
+        <div className="mt-12"><ClientLinkGrid items={clientWebsiteLinks} /></div>
+      </section>
+
+      <FinalCta heading="Ready for a website that earns attention?" body="We will turn the business story into a focused digital experience built to create confidence and action." />
+    </main>
   );
 }

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { clsx } from "@/lib/clsx";
 import { siteConfig } from "@/lib/content/site";
 
-type Status = "idle" | "submitting" | "success" | "error";
+type Status = "idle" | "submitting" | "success" | "handoff" | "error";
 
 /**
  * The site is a static export (no server, see next.config.ts), so
@@ -89,9 +89,11 @@ export function QuoteForm({ selectedServices = [] }: { selectedServices?: string
     if (!FORM_ENDPOINT) {
       // No delivery service configured — hand over a pre-filled email
       // rather than claiming a message was sent.
-      setMailtoHref(buildMailtoHref(values));
-      setStatus("error");
+      const href = buildMailtoHref(values);
+      setMailtoHref(href);
+      setStatus("handoff");
       setFormError(null);
+      window.location.href = href;
       return;
     }
 
@@ -273,14 +275,16 @@ export function QuoteForm({ selectedServices = [] }: { selectedServices?: string
           {formError && <p className="text-magenta">{formError}</p>}
           {mailtoHref && (
             <p className={clsx("text-text-secondary", formError && "mt-2")}>
-              Your details are ready to send by email —{" "}
+              {status === "handoff"
+                ? "Your email draft is ready. Press Send in your email app, or "
+                : "Your details are ready to send by email — "}
               <a
                 href={mailtoHref}
                 className="font-medium text-text-primary underline hover:text-cyan-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
               >
-                open a pre-filled email
+                reopen the pre-filled email
               </a>
-              , or write to us at{" "}
+              . It is addressed to{" "}
               <a
                 href={`mailto:${siteConfig.contact.email}`}
                 className="font-medium text-text-primary underline hover:text-cyan-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"

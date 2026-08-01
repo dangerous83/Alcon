@@ -375,6 +375,32 @@ body {
   animation: quote-scan 7s ease-in-out infinite;
 }
 
+/* Motion shared only by internal full-height heroes. Home has its own hero
+   system and deliberately does not use these selectors. */
+.internal-hero-media {
+  animation: internal-hero-drift 18s ease-in-out infinite alternate;
+  transform-origin: 62% 48%;
+}
+
+.internal-hero-scroll-cue {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  width: 1px;
+  height: 2.5rem;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.internal-hero-scroll-cue::after {
+  content: "";
+  position: absolute;
+  inset: -100% 0 auto;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, #16c7ff, transparent);
+  animation: internal-hero-scroll 2.2s ease-in-out infinite;
+}
+
 @keyframes quote-orbit {
   to { transform: rotate(360deg); }
 }
@@ -385,9 +411,22 @@ body {
   50% { transform: translateX(180%) skewX(-12deg); opacity: 0.9; }
 }
 
+@keyframes internal-hero-drift {
+  0% { transform: scale(1.02) translate3d(0, 0, 0); }
+  100% { transform: scale(1.09) translate3d(-1.25%, -0.75%, 0); }
+}
+
+@keyframes internal-hero-scroll {
+  0% { transform: translateY(0); opacity: 0; }
+  22% { opacity: 1; }
+  100% { transform: translateY(200%); opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .quote-orbit,
-  .quote-scan {
+  .quote-scan,
+  .internal-hero-media,
+  .internal-hero-scroll-cue::after {
     animation: none;
   }
 }

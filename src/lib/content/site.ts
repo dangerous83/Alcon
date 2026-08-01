@@ -29,7 +29,7 @@ export const siteConfig = {
   },
   contact: {
     // TODO(content-swap): email still pending — replace once confirmed.
-    email: "hello@alcon-online.site",
+    email: "alvinjampazar1983@gmail.com",
     // Client-supplied real numbers.
     phone: "+971561643886",
     whatsapp: "https://wa.me/971561643886",

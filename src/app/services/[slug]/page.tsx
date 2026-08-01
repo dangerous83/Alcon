@@ -126,14 +126,14 @@ export default async function ServicePage({
         }}
       />
 
-      <section className="relative isolate min-h-[720px] overflow-hidden border-b border-border lg:min-h-[800px]">
+      <section className="relative isolate min-h-screen min-h-[100svh] overflow-hidden border-b border-border">
         <Image
           src={assetPath(service.heroImage)}
           alt={service.heroAlt}
           fill
           priority
           sizes="100vw"
-          className="-z-30 object-cover object-center"
+          className="internal-hero-media -z-30 object-cover object-center"
         />
         <div
           aria-hidden
@@ -143,8 +143,13 @@ export default async function ServicePage({
           aria-hidden
           className={`absolute inset-x-0 bottom-0 -z-10 h-72 bg-gradient-to-t ${theme.glow}`}
         />
+        <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
+          <span className="quote-orbit quote-orbit-one" />
+          <span className="quote-orbit quote-orbit-two" />
+          <span className="quote-scan" />
+        </div>
 
-        <div className="mx-auto flex min-h-[720px] max-w-7xl flex-col px-4 py-20 sm:px-6 lg:min-h-[800px] lg:px-8 lg:py-24">
+        <div className="mx-auto flex min-h-screen min-h-[100svh] max-w-7xl flex-col px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <nav aria-label="Breadcrumb" className="text-xs text-text-secondary">
             <Link href="/services" className="hover:text-text-primary">
               Services
@@ -190,6 +195,7 @@ export default async function ServicePage({
             ))}
           </ul>
         </div>
+        <span aria-hidden className="internal-hero-scroll-cue" />
       </section>
 
       <section className="relative overflow-hidden">

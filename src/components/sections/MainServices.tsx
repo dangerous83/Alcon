@@ -47,6 +47,7 @@ export function ServicesCards() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const detailsId = useId();
   const activeProduct = printProducts[activeIndex ?? 0];
+  const detailsOpen = activeIndex !== null;
 
   return (
     <>
@@ -62,7 +63,7 @@ export function ServicesCards() {
                 aria-controls={detailsId}
                 aria-label={`${isActive ? "Collapse" : "View"} details for ${product.name}`}
                 onClick={() => setActiveIndex(isActive ? null : index)}
-                className={`relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border bg-black text-left shadow-[0_18px_55px_-34px_rgba(40,112,255,0.8)] hover:border-cyan-accent/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent sm:aspect-[16/10] ${
+                className={`group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border bg-black text-left shadow-[0_18px_55px_-34px_rgba(40,112,255,0.8)] transition-[border-color,box-shadow] duration-300 hover:border-cyan-accent/60 hover:shadow-[0_22px_60px_-30px_rgba(64,205,255,0.75)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent sm:aspect-[16/10] ${
                   isActive
                     ? "border-cyan-accent/70 ring-1 ring-cyan-accent/35"
                     : "border-white/12"
@@ -74,8 +75,24 @@ export function ServicesCards() {
                   fill
                   unoptimized
                   sizes="(min-width: 1024px) 26vw, 50vw"
-                  className="object-contain"
+                  className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
                 />
+                <span
+                  aria-hidden
+                  className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent"
+                />
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-gradient-to-r from-transparent via-cyan-accent to-magenta transition-transform duration-500 group-hover:scale-x-100"
+                />
+                <span className="absolute inset-x-0 bottom-0 z-10 p-3 sm:p-4">
+                  <span className="block font-heading text-sm font-semibold text-white sm:text-base">
+                    {product.name}
+                  </span>
+                  <span className="mt-1 block text-[11px] leading-4 text-white/75 sm:text-xs sm:leading-5">
+                    {product.description}
+                  </span>
+                </span>
               </button>
             </li>
           );
@@ -84,15 +101,28 @@ export function ServicesCards() {
 
       <aside
         id={detailsId}
-        data-open={activeIndex !== null}
-        aria-hidden={activeIndex === null}
+        data-open={detailsOpen}
+        aria-hidden={!detailsOpen}
         aria-label={`${activeProduct.name} details`}
         style={{
-          opacity: activeIndex === null ? 0 : 1,
-          visibility: activeIndex === null ? "hidden" : "visible",
+          opacity: detailsOpen ? 1 : 0,
+          visibility: detailsOpen ? "visible" : "hidden",
+          transform: detailsOpen
+            ? "translate3d(0, 0, 0) scale(1)"
+            : "translate3d(36px, 20px, 0) scale(0.94)",
+          clipPath: detailsOpen
+            ? "inset(0 0 0 0 round 1.5rem)"
+            : "inset(0 0 100% 0 round 1.5rem)",
+          filter: detailsOpen ? "blur(0px)" : "blur(8px)",
         }}
-        className="absolute inset-x-3 bottom-16 z-40 max-h-[68svh] overflow-y-auto rounded-3xl border border-white/15 bg-[#080a12] shadow-[0_28px_90px_-28px_rgba(40,112,255,0.75)] lg:inset-x-auto lg:bottom-auto lg:right-[4vw] lg:top-[16vh] lg:max-h-[calc(100svh-9rem)] lg:w-[39vw] lg:max-w-[520px]"
+        className={`absolute inset-x-3 bottom-16 z-40 max-h-[68svh] overflow-y-auto rounded-3xl border border-cyan-accent/25 bg-[rgba(8,10,18,0.80)] shadow-[0_28px_90px_-28px_rgba(40,112,255,0.85)] backdrop-blur-xl transition-[opacity,transform,clip-path,filter,visibility] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform lg:inset-x-auto lg:bottom-auto lg:right-[4vw] lg:top-[16vh] lg:max-h-[calc(100svh-9rem)] lg:w-[39vw] lg:max-w-[520px] ${
+          detailsOpen ? "pointer-events-auto" : "pointer-events-none"
+        }`}
       >
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-30 rounded-[inherit] shadow-[inset_0_0_0_1px_rgba(96,210,255,0.08),inset_0_0_48px_rgba(40,112,255,0.08)]"
+        />
         <div className="relative h-36 overflow-hidden border-b border-white/10 bg-black sm:h-44 lg:h-52">
           <Image
             src={assetPath(activeProduct.image)}
@@ -100,7 +130,7 @@ export function ServicesCards() {
             fill
             unoptimized
             sizes="(min-width: 1024px) 520px, 100vw"
-            className="object-contain"
+            className="object-cover"
           />
           <button
             type="button"
@@ -113,7 +143,11 @@ export function ServicesCards() {
           </button>
         </div>
 
-        <div className="p-5 sm:p-6">
+        <div
+          className={`relative p-5 transition-[opacity,transform] delay-150 duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:p-6 ${
+            detailsOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+          }`}
+        >
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-accent">
             {activeProduct.category}
           </p>

@@ -73,9 +73,9 @@ export function ServicesCards() {
                   alt={product.imageAlt}
                   fill
                   sizes="(min-width: 1024px) 17vw, 46vw"
-                  className="object-cover brightness-110 saturate-125 transition duration-700 ease-out group-hover:scale-[1.045]"
+                  className="object-cover brightness-125 contrast-110 saturate-125 transition duration-700 ease-out group-hover:scale-[1.045]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/5 to-transparent" />
+                <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.76)_0%,rgba(0,0,0,0.14)_34%,transparent_62%)]" />
 
                 <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/60 px-2 py-1 font-mono text-[9px] text-white/85 backdrop-blur-md">
                   {String(index + 1).padStart(2, "0")}
@@ -125,9 +125,8 @@ export function ServicesCards() {
             alt={activeProduct.imageAlt}
             fill
             sizes="(min-width: 1024px) 39vw, 92vw"
-            className="object-contain brightness-110 saturate-125"
+            className="object-contain brightness-125 contrast-110 saturate-125"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#080a12] via-transparent to-black/20" />
           <button
             type="button"
             tabIndex={activeIndex === null ? -1 : 0}

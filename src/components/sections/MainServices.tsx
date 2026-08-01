@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useId, useState, useSyncExternalStore } from "react";
 import { ArrowUpRight, X } from "lucide-react";
@@ -62,22 +61,13 @@ export function ServicesCards() {
                 aria-controls={detailsId}
                 aria-label={`${isActive ? "Collapse" : "View"} details for ${product.name}`}
                 onClick={() => setActiveIndex(isActive ? null : index)}
+                style={{ backgroundImage: `url(${assetPath(product.image)})` }}
                 className={`relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border bg-black text-left shadow-[0_18px_55px_-34px_rgba(40,112,255,0.8)] hover:border-cyan-accent/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent sm:aspect-[16/10] ${
                   isActive
                     ? "border-cyan-accent/70 ring-1 ring-cyan-accent/35"
                     : "border-white/12"
-                }`}
-              >
-                <Image
-                  src={assetPath(product.image)}
-                  alt={product.imageAlt}
-                  fill
-                  loading="eager"
-                  decoding="sync"
-                  sizes="(min-width: 1024px) 17vw, 46vw"
-                  className="object-contain"
-                />
-              </button>
+                } bg-contain bg-center bg-no-repeat`}
+              />
             </li>
           );
         })}
@@ -94,16 +84,12 @@ export function ServicesCards() {
         }}
         className="absolute inset-x-3 bottom-16 z-40 max-h-[68svh] overflow-y-auto rounded-3xl border border-white/15 bg-[#080a12] shadow-[0_28px_90px_-28px_rgba(40,112,255,0.75)] lg:inset-x-auto lg:bottom-auto lg:right-[4vw] lg:top-[16vh] lg:max-h-[calc(100svh-9rem)] lg:w-[39vw] lg:max-w-[520px]"
       >
-        <div className="relative h-36 overflow-hidden border-b border-white/10 bg-black sm:h-44 lg:h-52">
-          <Image
-            src={assetPath(activeProduct.image)}
-            alt={activeProduct.imageAlt}
-            fill
-            loading="eager"
-            decoding="sync"
-            sizes="(min-width: 1024px) 39vw, 92vw"
-            className="object-contain"
-          />
+        <div
+          role="img"
+          aria-label={activeProduct.imageAlt}
+          style={{ backgroundImage: `url(${assetPath(activeProduct.image)})` }}
+          className="relative h-36 overflow-hidden border-b border-white/10 bg-black bg-contain bg-center bg-no-repeat sm:h-44 lg:h-52"
+        >
           <button
             type="button"
             tabIndex={activeIndex === null ? -1 : 0}

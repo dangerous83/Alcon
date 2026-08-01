@@ -1,9 +1,12 @@
+Exit code: 0
+Wall time: 1 seconds
+Output:
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useId, useState, useSyncExternalStore } from "react";
-import { ArrowUpRight, Plus, X } from "lucide-react";
+import { ArrowUpRight, X } from "lucide-react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Heading } from "@/components/ui/Heading";
 import { assetPath } from "@/lib/asset-path";
@@ -62,7 +65,7 @@ export function ServicesCards() {
                 aria-controls={detailsId}
                 aria-label={`${isActive ? "Collapse" : "View"} details for ${product.name}`}
                 onClick={() => setActiveIndex(isActive ? null : index)}
-                className={`group relative block aspect-[16/9] w-full overflow-hidden rounded-2xl border bg-black/70 text-left shadow-[0_18px_55px_-34px_rgba(40,112,255,0.8)] transition duration-300 hover:-translate-y-1 hover:border-cyan-accent/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent ${
+                className={`relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border bg-black text-left shadow-[0_18px_55px_-34px_rgba(40,112,255,0.8)] hover:border-cyan-accent/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent sm:aspect-[16/10] ${
                   isActive
                     ? "border-cyan-accent/70 ring-1 ring-cyan-accent/35"
                     : "border-white/12"
@@ -75,29 +78,8 @@ export function ServicesCards() {
                   loading="eager"
                   decoding="sync"
                   sizes="(min-width: 1024px) 17vw, 46vw"
-                  className="object-cover transition duration-700 ease-out group-hover:scale-[1.045]"
+                  className="object-contain"
                 />
-                <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/80 px-2 py-1 font-mono text-[9px] text-white/85">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-
-                <span className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-3 p-3 sm:p-4">
-                  <span className="rounded-xl border border-white/10 bg-black/80 px-2.5 py-2">
-                    <span className="block font-mono text-[8px] uppercase tracking-[0.17em] text-cyan-accent sm:text-[9px]">
-                      {product.category}
-                    </span>
-                    <span className="mt-1 block font-heading text-sm font-semibold text-white sm:text-base">
-                      {product.name}
-                    </span>
-                  </span>
-                  <span className="grid size-8 shrink-0 place-items-center rounded-full border border-white/20 bg-black/80 text-white transition group-hover:border-cyan-accent/70 group-hover:text-cyan-accent">
-                    {isActive ? (
-                      <X size={14} aria-hidden />
-                    ) : (
-                      <Plus size={14} aria-hidden />
-                    )}
-                  </span>
-                </span>
               </button>
             </li>
           );
@@ -113,13 +95,9 @@ export function ServicesCards() {
           opacity: activeIndex === null ? 0 : 1,
           visibility: activeIndex === null ? "hidden" : "visible",
         }}
-        className={`absolute inset-x-3 bottom-16 z-40 max-h-[68svh] overflow-y-auto rounded-3xl border border-white/15 bg-[#080a12]/95 shadow-[0_28px_90px_-28px_rgba(40,112,255,0.75)] backdrop-blur-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:inset-x-auto lg:bottom-auto lg:right-[4vw] lg:top-1/2 lg:max-h-[calc(100svh-9rem)] lg:w-[39vw] lg:max-w-[520px] ${
-          activeIndex === null
-            ? "translate-y-4 scale-[0.97] lg:-translate-y-[46%]"
-            : "translate-y-0 scale-100 lg:-translate-y-1/2"
-        }`}
+        className="absolute inset-x-3 bottom-16 z-40 max-h-[68svh] overflow-y-auto rounded-3xl border border-white/15 bg-[#080a12] shadow-[0_28px_90px_-28px_rgba(40,112,255,0.75)] lg:inset-x-auto lg:bottom-auto lg:right-[4vw] lg:top-[16vh] lg:max-h-[calc(100svh-9rem)] lg:w-[39vw] lg:max-w-[520px]"
       >
-        <div className="relative h-36 overflow-hidden border-b border-white/10 sm:h-44 lg:h-52">
+        <div className="relative h-36 overflow-hidden border-b border-white/10 bg-black sm:h-44 lg:h-52">
           <Image
             src={assetPath(activeProduct.image)}
             alt={activeProduct.imageAlt}
@@ -134,7 +112,7 @@ export function ServicesCards() {
             tabIndex={activeIndex === null ? -1 : 0}
             aria-label="Close product details"
             onClick={() => setActiveIndex(null)}
-            className="absolute right-3 top-3 grid size-9 place-items-center rounded-full border border-white/20 bg-black/65 text-white backdrop-blur-md transition hover:border-cyan-accent/70 hover:text-cyan-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+            className="absolute right-3 top-3 grid size-9 place-items-center rounded-full border border-white/20 bg-black/90 text-white hover:border-cyan-accent/70 hover:text-cyan-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
           >
             <X size={16} aria-hidden />
           </button>
@@ -185,7 +163,7 @@ export function ServicesCopy() {
       </Heading>
       <p className="mt-2.5 max-w-xl text-sm leading-5 text-text-secondary sm:text-[15px] sm:leading-6">
         Premium custom print for teams, launches, events, client gifts, and
-        everyday brand visibility—produced with sharp detail and a finish that
+        everyday brand visibilityâ€”produced with sharp detail and a finish that
         feels considered.
       </p>
     </>
@@ -230,3 +208,4 @@ export function MainServices() {
     </section>
   );
 }
+

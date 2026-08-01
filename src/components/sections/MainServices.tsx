@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { useId, useState, useSyncExternalStore } from "react";
+import { ArrowUpRight, Plus, X } from "lucide-react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Heading } from "@/components/ui/Heading";
 import { assetPath } from "@/lib/asset-path";
@@ -13,6 +13,7 @@ const printProducts = [
     name: "Custom T-shirts",
     category: "Apparel",
     description: "Premium tees printed for teams, launches, events, and brand drops.",
+    highlights: ["Premium cotton options", "DTF, screen print & embroidery"],
     image: "/images/print-products/print-tshirt.webp",
     imageAlt: "Premium black custom printed T-shirt with electric blue and violet artwork",
   },
@@ -20,6 +21,7 @@ const printProducts = [
     name: "Custom Hoodies",
     category: "Apparel",
     description: "Heavyweight branded hoodies with durable, high-impact finishing.",
+    highlights: ["Heavyweight fleece options", "Print or embroidery finishing"],
     image: "/images/print-products/print-hoodie.webp",
     imageAlt: "Premium black custom hoodie with electric blue and violet artwork",
   },
@@ -27,6 +29,7 @@ const printProducts = [
     name: "Printed Mugs",
     category: "Drinkware",
     description: "Sharp, colour-rich mugs made for gifts, offices, and campaigns.",
+    highlights: ["Vivid, durable colour", "Ideal for teams and gifting"],
     image: "/images/print-products/print-mugs.webp",
     imageAlt: "Matte black printed ceramic mug with blue and violet artwork",
   },
@@ -34,56 +37,141 @@ const printProducts = [
     name: "Custom Stickers",
     category: "Brand details",
     description: "Premium die-cut vinyl stickers that make every surface feel branded.",
+    highlights: ["Custom shapes and sizes", "Durable vinyl finishing"],
     image: "/images/print-products/print-stickers.webp",
     imageAlt: "Premium die-cut sticker collection with blue, violet, and magenta graphics",
   },
 ] as const;
 
 export function ServicesCards() {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const detailsId = useId();
+  const activeProduct = printProducts[activeIndex ?? 0];
+
   return (
-    <ul className="mt-4 grid grid-cols-2 gap-3">
-      {printProducts.map((product, index) => (
-        <li
-          key={product.name}
-          className="group overflow-hidden rounded-2xl border border-white/10 bg-surface-elevated/90 shadow-[0_18px_55px_-34px_rgba(40,112,255,0.8)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-accent/45"
-        >
+    <>
+      <ul className="mt-4 grid grid-cols-2 gap-3">
+        {printProducts.map((product, index) => {
+          const isActive = activeIndex === index;
+
+          return (
+            <li key={product.name}>
+              <button
+                type="button"
+                aria-expanded={isActive}
+                aria-controls={detailsId}
+                aria-label={`${isActive ? "Collapse" : "View"} details for ${product.name}`}
+                onClick={() => setActiveIndex(isActive ? null : index)}
+                className={`group relative block aspect-[16/9] w-full overflow-hidden rounded-2xl border bg-black/70 text-left shadow-[0_18px_55px_-34px_rgba(40,112,255,0.8)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-accent/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent ${
+                  isActive
+                    ? "border-cyan-accent/70 ring-1 ring-cyan-accent/35"
+                    : "border-white/12"
+                }`}
+              >
+                <Image
+                  src={assetPath(product.image)}
+                  alt={product.imageAlt}
+                  fill
+                  sizes="(min-width: 1024px) 17vw, 46vw"
+                  className="object-cover brightness-110 saturate-125 transition duration-700 ease-out group-hover:scale-[1.045]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/5 to-transparent" />
+
+                <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/60 px-2 py-1 font-mono text-[9px] text-white/85 backdrop-blur-md">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+
+                <span className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-3 p-3 sm:p-4">
+                  <span>
+                    <span className="block font-mono text-[8px] uppercase tracking-[0.17em] text-cyan-accent sm:text-[9px]">
+                      {product.category}
+                    </span>
+                    <span className="mt-1 block font-heading text-sm font-semibold text-white sm:text-base">
+                      {product.name}
+                    </span>
+                  </span>
+                  <span className="grid size-8 shrink-0 place-items-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur-md transition group-hover:border-cyan-accent/70 group-hover:text-cyan-accent">
+                    {isActive ? (
+                      <X size={14} aria-hidden />
+                    ) : (
+                      <Plus size={14} aria-hidden />
+                    )}
+                  </span>
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+
+      <aside
+        id={detailsId}
+        data-open={activeIndex !== null}
+        aria-hidden={activeIndex === null}
+        aria-label={`${activeProduct.name} details`}
+        style={{
+          opacity: activeIndex === null ? 0 : 1,
+          visibility: activeIndex === null ? "hidden" : "visible",
+        }}
+        className={`absolute inset-x-3 bottom-16 z-40 max-h-[68svh] overflow-y-auto rounded-3xl border border-white/15 bg-[#080a12]/95 shadow-[0_28px_90px_-28px_rgba(40,112,255,0.75)] backdrop-blur-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:inset-x-auto lg:bottom-auto lg:right-[4vw] lg:top-1/2 lg:max-h-[calc(100svh-9rem)] lg:w-[39vw] lg:max-w-[520px] ${
+          activeIndex === null
+            ? "translate-y-4 scale-[0.97] lg:-translate-y-[46%]"
+            : "translate-y-0 scale-100 lg:-translate-y-1/2"
+        }`}
+      >
+        <div className="relative h-36 overflow-hidden border-b border-white/10 sm:h-44 lg:h-52">
+          <Image
+            src={assetPath(activeProduct.image)}
+            alt={activeProduct.imageAlt}
+            fill
+            sizes="(min-width: 1024px) 39vw, 92vw"
+            className="object-contain brightness-110 saturate-125"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#080a12] via-transparent to-black/20" />
+          <button
+            type="button"
+            tabIndex={activeIndex === null ? -1 : 0}
+            aria-label="Close product details"
+            onClick={() => setActiveIndex(null)}
+            className="absolute right-3 top-3 grid size-9 place-items-center rounded-full border border-white/20 bg-black/65 text-white backdrop-blur-md transition hover:border-cyan-accent/70 hover:text-cyan-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+          >
+            <X size={16} aria-hidden />
+          </button>
+        </div>
+
+        <div className="p-5 sm:p-6">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-accent">
+            {activeProduct.category}
+          </p>
+          <h3 className="mt-2 font-heading text-2xl font-semibold text-white sm:text-3xl">
+            {activeProduct.name}
+          </h3>
+          <p className="mt-3 text-sm leading-6 text-text-secondary">
+            {activeProduct.description}
+          </p>
+
+          <ul className="mt-5 grid gap-2 sm:grid-cols-2">
+            {activeProduct.highlights.map((highlight) => (
+              <li
+                key={highlight}
+                className="rounded-xl border border-white/10 bg-white/[0.035] px-3 py-2 text-xs leading-5 text-white/80"
+              >
+                {highlight}
+              </li>
+            ))}
+          </ul>
+
           <Link
             href="/get-quote#project-details"
-            className="flex h-full flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+            tabIndex={activeIndex === null ? -1 : 0}
+            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#2870FF] via-[#7138FF] to-[#D12DFF] px-4 py-3 text-sm font-semibold text-white shadow-[0_14px_40px_-18px_rgba(113,56,255,0.95)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
           >
-            <div className="relative h-16 overflow-hidden border-b border-white/10 sm:h-20">
-              <Image
-                src={assetPath(product.image)}
-                alt={product.imageAlt}
-                fill
-                sizes="(min-width: 1024px) 17vw, 46vw"
-                className="object-cover transition duration-700 ease-out group-hover:scale-[1.06]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
-              <span className="absolute left-3 top-3 rounded-full border border-white/15 bg-black/55 px-2 py-1 font-mono text-[9px] text-white/80 backdrop-blur-md">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-            </div>
-
-            <div className="flex flex-1 flex-col p-2.5 sm:p-3">
-              <p className="font-mono text-[8px] uppercase tracking-[0.17em] text-cyan-accent sm:text-[9px]">
-                {product.category}
-              </p>
-              <h3 className="mt-1.5 font-heading text-sm font-semibold leading-tight text-text-primary">
-                {product.name}
-              </h3>
-              <p className="mt-1 hidden text-[11px] leading-4 text-text-secondary sm:line-clamp-2 sm:block">
-                {product.description}
-              </p>
-              <span className="mt-2.5 inline-flex items-center gap-1.5 text-[11px] font-medium text-text-primary transition group-hover:text-cyan-accent sm:text-xs">
-                Request a quote
-                <ArrowUpRight size={13} strokeWidth={1.9} aria-hidden />
-              </span>
-            </div>
+            Request a quote
+            <ArrowUpRight size={15} aria-hidden />
           </Link>
-        </li>
-      ))}
-    </ul>
+        </div>
+      </aside>
+    </>
   );
 }
 

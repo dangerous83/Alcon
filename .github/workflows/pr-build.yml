@@ -1,0 +1,37 @@
+name: PR Build Check
+
+on:
+  pull_request:
+    branches: [main]
+
+# Pull requests only need repository contents. Pages publishing remains in
+# deploy-pages.yml and still runs after a PR is merged into main.
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-build-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Production build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static export
+        env:
+          NEXT_PUBLIC_BASE_PATH: /Alcon
+          NEXT_PUBLIC_SITE_URL: https://dangerous83.github.io/Alcon
+          NEXT_PUBLIC_FORM_ENDPOINT: ${{ vars.NEXT_PUBLIC_FORM_ENDPOINT }}
+        run: npm run build

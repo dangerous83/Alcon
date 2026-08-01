@@ -1,24 +1,26 @@
-// Service positioning: Alcon is a Dubai advertising and marketing agency
-// with AI specialisation baked into every discipline. Copy is written to
-// read as a real, credentialled service page — not brochure filler — with
-// SEO keywords ("AI-powered", "Dubai", "creative agency", "advertising",
-// "marketing", "performance", "content production") worked into the value
-// propositions and body without keyword-stuffing.
-//
-// Slugs are preserved (branding, motion, editing, social, tutorials) so
-// existing routes, sitemap entries, and mega-menu links keep resolving.
-
 export type Service = {
   slug: string;
   name: string;
   shortName: string;
+  category: string;
   summary: string;
-  keywords?: string[];
+  keywords: string[];
   valueProposition: string;
+  heroEyebrow: string;
+  heroHeadline: string;
+  heroImage: string;
+  heroAlt: string;
+  heroStats: { value: string; label: string }[];
+  introLabel: string;
+  introHeading: string;
   description: string[];
+  outcomes: { title: string; description: string }[];
+  featureImages: [string, string, string];
   deliverables: string[];
   process: { title: string; description: string }[];
   faqs: { question: string; answer: string }[];
+  cta: { heading: string; body: string; label: string };
+  related: string[];
   accentIndex: 0 | 1 | 2 | 3 | 4;
 };
 
@@ -26,306 +28,530 @@ export const services: Service[] = [
   {
     slug: "branding",
     name: "Branding & Identity Design Agency in Dubai",
-    shortName: "Branding",
-    summary:
-      "Strategy-led branding, logo design, and identity systems for ambitious Dubai, UAE, and GCC businesses — accelerated by AI and finished by senior creative direction.",
-    keywords: [
-      "branding agency Dubai",
-      "brand identity design Dubai",
-      "logo design company Dubai",
-      "rebranding agency UAE",
-      "corporate branding Dubai",
-      "AI branding agency",
-      "brand strategy GCC",
+    shortName: "Brand Identity",
+    category: "Design",
+    summary: "Strategy-led branding, logo design, and identity systems for ambitious Dubai, UAE, and GCC businesses.",
+    keywords: ["branding agency Dubai", "brand identity design Dubai", "logo design company Dubai", "rebranding agency UAE", "brand strategy GCC"],
+    valueProposition: "Build a brand people recognise, trust, and choose — with a distinctive identity engineered to perform everywhere.",
+    heroEyebrow: "Branding agency Dubai · Strategy · Identity · Launch",
+    heroHeadline: "Build a brand they remember — and choose.",
+    heroImage: "/images/services/branding-hero-v2.webp",
+    heroAlt: "Premium brand identity system taking shape in glass, metal, electric blue, and violet light",
+    heroStats: [
+      { value: "Dubai + GCC", label: "Market-aware strategy" },
+      { value: "Human-led AI", label: "More exploration, sharper choices" },
+      { value: "Launch-ready", label: "A system your team can use" },
     ],
-    valueProposition:
-      "Build a brand people recognise, trust, and choose — with a distinctive identity engineered to perform everywhere your business shows up.",
+    introLabel: "Brand strategy + identity design",
+    introHeading: "More than a logo. A commercial identity system.",
     description: [
-      "A memorable brand starts before the logo. Alcon combines commercial brand strategy, customer insight, and competitive research to define what your business should stand for, who it must move, and why it deserves attention in the Dubai and wider GCC market.",
-      "Our AI-accelerated branding process explores more relevant creative territories in less time. Senior designers and a human creative director then shape the strongest direction into a distinctive logo, visual identity, verbal identity, and scalable design system. AI speeds up discovery; judgment, originality, and craft remain human.",
-      "The result is not a static brand-guidelines PDF. It is a campaign-ready identity toolkit built for websites, social media, pitch decks, packaging, out-of-home advertising, product interfaces, and every future touchpoint your team needs to create.",
+      "A memorable brand starts before the logo. Alcon combines commercial strategy, audience insight, and competitive research to define what your business should stand for and why it deserves attention.",
+      "AI accelerates exploration while senior creative direction protects originality and craft. The result is a campaign-ready identity built for websites, social media, packaging, presentations, and every future touchpoint.",
     ],
-    deliverables: [
-      "Brand strategy, market positioning & audience definition",
-      "Brand story, messaging framework, voice & tone",
-      "Logo design, wordmark & responsive logo system",
-      "Colour palette, typography & iconography system",
-      "Art direction for photography, imagery & campaigns",
-      "Social media, presentation, print & OOH templates",
-      "Motion identity principles for digital advertising",
-      "Complete brand guidelines and production-ready source files",
+    outcomes: [
+      { title: "Positioning that lands", description: "A clear market position and story your audience understands quickly." },
+      { title: "Identity that scales", description: "A distinctive visual and verbal system built for every touchpoint." },
+      { title: "Campaigns that connect", description: "Practical creative tools that turn the brand into consistent marketing." },
     ],
+    featureImages: ["/images/services/branding-hero-v2.webp", "/images/services/web-ui-ux-hero.webp", "/images/services/graphic-design-hero.webp"],
+    deliverables: ["Brand strategy, positioning & audience definition", "Brand story, messaging, voice & tone", "Logo, wordmark & responsive identity system", "Colour, typography & iconography system", "Campaign, social, print & presentation templates", "Brand guidelines and production-ready source files"],
     process: [
-      {
-        title: "Discover",
-        description:
-          "Stakeholder interviews, audience insight, and a GCC competitor audit reveal the commercial opportunity your brand can own.",
-      },
-      {
-        title: "Explore",
-        description:
-          "AI-assisted exploration expands the creative field; our creative director filters it into a small set of original, strategically relevant directions.",
-      },
-      {
-        title: "Design",
-        description:
-          "We build and stress-test the chosen identity across logo, type, colour, imagery, web, social, packaging, and advertising applications.",
-      },
-      {
-        title: "Activate",
-        description:
-          "Your team receives practical guidelines, source files, and campaign-ready templates, followed by a clear rollout plan for launch.",
-      },
+      { title: "Discover", description: "Stakeholder interviews, audience insight, and competitor research reveal the opportunity your brand can own." },
+      { title: "Explore", description: "AI-assisted exploration expands the field; senior creatives filter it into strategically relevant directions." },
+      { title: "Design", description: "We build and stress-test the chosen identity across every priority application." },
+      { title: "Activate", description: "Your team receives practical guidelines, source files, templates, and a rollout plan." },
     ],
     faqs: [
-      {
-        question: "Do you create new brands and rebrand existing businesses?",
-        answer:
-          "Both. We create complete brand identities for new ventures and lead strategic rebrands for established UAE and GCC businesses. A full identity usually takes six to ten weeks; a focused refresh that protects existing brand equity typically takes three to five.",
-      },
-      {
-        question: "What is included in a complete brand identity package?",
-        answer:
-          "A typical engagement covers positioning, messaging, logo design, typography, colour, iconography, image direction, brand guidelines, source files, and practical templates for the channels your team uses most. We tailor the scope to your launch and growth plan.",
-      },
-      {
-        question: "How does AI improve your branding process?",
-        answer:
-          "AI helps us test more strategic and visual territories early, shorten research and iteration cycles, and spend more time refining the strongest idea. Every final design and recommendation is reviewed, shaped, and approved by experienced human creatives.",
-      },
-      {
-        question: "How much does branding cost in Dubai?",
-        answer:
-          "Branding costs depend on the depth of strategy, number of applications, and rollout support required. After a short discovery call, we provide a clear fixed-scope proposal with deliverables, milestones, and timing — no vague retainers or hidden production fees.",
-      },
+      { question: "Do you create new brands and rebrand existing businesses?", answer: "Both. We create complete identities for new ventures and lead strategic rebrands for established UAE and GCC businesses." },
+      { question: "How does AI improve your branding process?", answer: "AI helps us explore and test more relevant territories early. Every final recommendation is shaped and approved by experienced human creatives." },
     ],
+    cta: { heading: "Your next chapter deserves a brand built for it.", body: "Tell us where the business is going. We will show you the strategy, identity, and launch system that can take it there.", label: "Request a branding proposal" },
+    related: ["web-ui-ux", "graphic-design", "motion"],
     accentIndex: 0,
   },
   {
-    slug: "motion",
-    name: "AI Motion Design & Video Advertising",
-    shortName: "Motion",
-    summary:
-      "Motion graphics and video ads built for the platforms that matter — Meta, TikTok, YouTube, and connected TV — with AI-accelerated production keeping cost and turnaround honest.",
-    valueProposition:
-      "A motion system, not one-off videos — reusable frames, sound, and pacing rules that produce a month of ad creative from a single build.",
+    slug: "web-ui-ux",
+    name: "Web UI/UX Design Agency in Dubai",
+    shortName: "Web UI/UX Design",
+    category: "Design",
+    summary: "Conversion-led websites and digital product interfaces that make complex journeys feel clear, fast, and unmistakably on-brand.",
+    keywords: ["web design agency Dubai", "UI UX design Dubai", "website redesign UAE", "conversion focused web design", "product design agency Dubai"],
+    valueProposition: "Turn strategy into a digital experience that earns trust quickly and moves every visitor toward action.",
+    heroEyebrow: "Web UI/UX Dubai · Research · Design systems · Conversion",
+    heroHeadline: "Turn every click into momentum.",
+    heroImage: "/images/services/web-ui-ux-hero.webp",
+    heroAlt: "Layered premium website and mobile interface system connected by a luminous conversion path",
+    heroStats: [
+      { value: "Responsive", label: "Designed for every screen" },
+      { value: "Conversion-led", label: "Every flow has a purpose" },
+      { value: "Dev-ready", label: "Systems built to ship" },
+    ],
+    introLabel: "Research + interface design + systems",
+    introHeading: "Beautiful is the baseline. Useful is the advantage.",
     description: [
-      "Motion at Alcon is treated as a brand asset, not a per-asset expense. Every engagement produces a motion identity — easing curves, hero shots, sound design, and pacing rules — so the tenth ad in a campaign looks and feels like the first without a new production budget behind it.",
-      "AI shows up in the parts of the pipeline where it earns its place: rough animatics, background generation, upscaling, and versioning across aspect ratios. Direction, storyboard, and the final grade are handled by motion designers. The result is a body of work that can flight across paid social, YouTube pre-roll, connected TV, and in-app formats without looking recycled.",
-      "Work spans logo animation, kinetic typography, explainer film, product motion, and short-form advertising creative built for scroll-stopping performance.",
+      "We design websites and product interfaces around what users need to understand, trust, and do next. Clear information architecture and purposeful interaction design come before decoration.",
+      "From landing pages to complex platforms, every component is designed as part of a reusable system. That gives developers cleaner handoff, marketing teams faster iteration, and customers a more coherent experience.",
     ],
-    deliverables: [
-      "Motion identity & animation principles",
-      "Logo animation & brand stings",
-      "Explainer, product & founder-story films",
-      "Short-form video ads for Meta, TikTok & YouTube",
-      "Vertical, square & widescreen versioning from one master",
-      "UI micro-interaction specs for product teams",
+    outcomes: [
+      { title: "Clarity before decoration", description: "A structure people understand without stopping to think about it." },
+      { title: "Conversion in every flow", description: "Pages and interactions shaped around meaningful business actions." },
+      { title: "A system that scales", description: "Reusable components that keep future releases fast and consistent." },
     ],
+    featureImages: ["/images/services/web-ui-ux-hero.webp", "/images/services/branding-hero-v2.webp", "/images/services/graphic-design-hero.webp"],
+    deliverables: ["UX research, audits & journey mapping", "Information architecture & wireframes", "High-fidelity responsive UI design", "Conversion-led landing pages", "Design systems & component libraries", "Developer handoff, prototypes & QA support"],
     process: [
-      {
-        title: "Brief & script",
-        description:
-          "Narrative structure and shot planning tied to the campaign's actual conversion goal, not a generic 'awareness' target.",
-      },
-      {
-        title: "Style frames",
-        description:
-          "Key visual frames signed off before full animation, so direction is locked while there is still time to change it.",
-      },
-      {
-        title: "Animate",
-        description:
-          "Production in industry-standard motion tooling, with AI accelerating the roughs, upscales, and background work.",
-      },
-      {
-        title: "Sound & polish",
-        description:
-          "Sound design, pacing pass, and platform-specific exports built for the safe zones and captioning rules of each channel.",
-      },
+      { title: "Understand", description: "We map audiences, business goals, content, and the friction in the current journey." },
+      { title: "Structure", description: "Sitemaps, flows, and wireframes make the experience clear before visual polish begins." },
+      { title: "Design", description: "A distinctive interface and reusable component system bring the brand to life." },
+      { title: "Ship", description: "Prototype, handoff, and build QA keep the delivered experience faithful and fast." },
     ],
     faqs: [
-      {
-        question: "Which platforms and formats do you deliver for?",
-        answer:
-          "Meta (feed, reels, stories), TikTok, YouTube (pre-roll and shorts), LinkedIn, connected TV, and in-app placements. Every master ships in vertical, square, and widescreen with the platform-safe zones respected.",
-      },
-      {
-        question: "How does AI actually shorten the motion turnaround?",
-        answer:
-          "It removes the slowest parts of the pipeline — animatic roughs, background plates, aspect-ratio versioning, upscaling — so more of the timeline is spent on direction, sound, and finish. The saving typically shows up as a 30–50% shorter delivery on campaign work.",
-      },
+      { question: "Can you redesign an existing website?", answer: "Yes. We can improve an existing structure or rethink the experience completely after an evidence-led UX and conversion audit." },
+      { question: "Do you build the website too?", answer: "We can provide design-only delivery or handle design and development as one coordinated engagement." },
     ],
+    cta: { heading: "Your website should work as hard as your best salesperson.", body: "Bring us the journey, product, or conversion problem. We will turn it into an experience people understand and act on.", label: "Plan your digital experience" },
+    related: ["branding", "graphic-design", "social"],
     accentIndex: 1,
   },
   {
-    slug: "editing",
-    name: "AI-Assisted Video Editing & Post-Production",
-    shortName: "Editing",
-    summary:
-      "Post-production for campaigns and content — colour, sound, subtitles, versioning — built around retention and conversion metrics, not just a finished cut.",
-    valueProposition:
-      "Every edit built backwards from a measurable outcome: watch-through, click-through, or booked call — not just a polished final master.",
+    slug: "graphic-design",
+    name: "Graphic Design & Campaign Creative Agency Dubai",
+    shortName: "Graphic Design",
+    category: "Design",
+    summary: "High-impact campaign creative for digital, social, print, presentations, packaging, and outdoor advertising.",
+    keywords: ["graphic design agency Dubai", "campaign creative UAE", "advertising design Dubai", "social media design agency", "print design Dubai"],
+    valueProposition: "Turn one strong visual idea into a campaign system that stays distinctive across every format and channel.",
+    heroEyebrow: "Graphic design Dubai · Campaigns · Digital · Print",
+    heroHeadline: "Make every campaign impossible to ignore.",
+    heroImage: "/images/services/graphic-design-hero.webp",
+    heroAlt: "Premium campaign design system unfolding across abstract posters, print sheets, and digital formats",
+    heroStats: [
+      { value: "One idea", label: "A recognisable creative territory" },
+      { value: "Every format", label: "Digital, print, social & OOH" },
+      { value: "Fast versioning", label: "Built for campaign pace" },
+    ],
+    introLabel: "Campaign concepts + design systems",
+    introHeading: "Not more assets. More visual impact per asset.",
     description: [
-      "Editing at Alcon starts with the goal of the piece. A brand film aimed at retention is cut differently to a paid ad aimed at click-through, which is cut differently again to a founder-led explainer aimed at booked demos. That answer sets the pacing, the grade, and the sound before a single clip is trimmed.",
-      "AI handles the mechanical work — rough assembly, transcript-first editing, subtitling and translation, upscaling — so the human editor spends their time on the decisions that actually move numbers: which shot leads, when the music drops, where the hook lands, and which cut converts.",
-      "Every deliverable ships in every platform aspect ratio needed, with captions burned in or as sidecar SRTs. Colour is graded on calibrated displays; sound is mixed to broadcast loudness; nothing goes out that could not run as a paid ad the same day.",
+      "Alcon creates campaign design around a central visual idea strong enough to survive every crop, placement, and media plan. The work feels connected without becoming repetitive.",
+      "AI helps us explore composition and versioning faster; art direction, typography, hierarchy, and production craft remain firmly human. Every final file is practical, polished, and ready to run.",
     ],
-    deliverables: [
-      "Campaign, product & brand-film editing",
-      "Colour grading on calibrated displays",
-      "Sound design, mix & broadcast-loudness master",
-      "AI-transcript-driven subtitles & localisation exports",
-      "Vertical, square & widescreen cutdowns from one master",
-      "Retention & drop-off analysis on delivered cuts",
+    outcomes: [
+      { title: "A campaign people recognise", description: "A distinct visual territory that builds memory across repeated exposure." },
+      { title: "Creative built for channels", description: "Every layout respects the context, crop, and behaviour of its placement." },
+      { title: "Production without drift", description: "A scalable kit that keeps dozens of assets looking like one campaign." },
     ],
+    featureImages: ["/images/services/graphic-design-hero.webp", "/images/services/branding-hero-v2.webp", "/images/services/social-hero-v2.webp"],
+    deliverables: ["Campaign concept & visual territory", "Digital and social advertising assets", "Outdoor, print & point-of-sale design", "Presentation and sales collateral", "Packaging and launch materials", "Campaign toolkit and production templates"],
     process: [
-      {
-        title: "Assembly",
-        description:
-          "Rough cut built against the brief, using AI transcript search to find the strongest takes fast rather than scrubbing timelines.",
-      },
-      {
-        title: "Fine cut",
-        description:
-          "Pacing, transitions, and structure refined with the client on a shared review link, with time-coded feedback baked in.",
-      },
-      {
-        title: "Grade & sound",
-        description:
-          "Colour pass on calibrated displays and full sound mix — dialogue, music, effects — to a consistent broadcast loudness target.",
-      },
-      {
-        title: "Export",
-        description:
-          "Deliverables versioned for every platform and aspect ratio required, with subtitles and captions in every language the campaign flights in.",
-      },
+      { title: "Frame", description: "We define the audience, single-minded message, and moments the campaign must win." },
+      { title: "Concept", description: "Multiple creative territories are explored, pressure-tested, and narrowed to one strong idea." },
+      { title: "Systemise", description: "The approved direction becomes a flexible toolkit for every planned channel." },
+      { title: "Produce", description: "Final art is versioned, quality-controlled, and delivered ready for media." },
     ],
     faqs: [
-      {
-        question: "Can you edit from footage we have already shot?",
-        answer:
-          "Yes — raw-footage-only engagements are common. We can also handle the shoot end-to-end if a production is needed alongside the edit.",
-      },
-      {
-        question: "How is AI used in the edit without losing the human decisions?",
-        answer:
-          "AI drives the transcript index, first-pass assembly, subtitling, translation, and upscaling. Every creative choice — which take leads, where the music comes in, how the grade sits — is made by the editor. The two together get you the finish of a full post house at agency turnaround.",
-      },
+      { question: "Can you work within our existing brand guidelines?", answer: "Yes. We can extend an established system or create a campaign layer that adds energy without breaking brand recognition." },
+      { question: "Can you handle high-volume campaign resizing?", answer: "Yes. We design a modular system first, then use structured production and AI-assisted versioning to deliver volume without quality drift." },
     ],
+    cta: { heading: "Give the campaign an idea worth repeating.", body: "Share the brief, audience, and media plan. We will build the creative system that makes every placement work harder.", label: "Start a campaign brief" },
+    related: ["branding", "social", "web-ui-ux"],
+    accentIndex: 2,
+  },
+  {
+    slug: "tutorials",
+    name: "AI Creative Weekend Workshops in Dubai",
+    shortName: "Tutorials",
+    category: "Design",
+    summary: "Hands-on AI creative workshops for marketing teams, designers, and independent creators who want practical output, not passive theory.",
+    keywords: ["AI workshops Dubai", "AI creative course Dubai", "weekend design workshop UAE", "AI video training Dubai", "creative team training"],
+    valueProposition: "Learn the tools on a real brief and leave with finished work, reusable workflows, and the confidence to keep building.",
+    heroEyebrow: "Dubai weekends · Small cohorts · Live creative builds",
+    heroHeadline: "Learn it Saturday. Ship it Sunday.",
+    heroImage: "/images/services/tutorials-hero-v2.webp",
+    heroAlt: "Premium AI creative learning lab with illuminated modular tools and connected project workspaces",
+    heroStats: [
+      { value: "Small groups", label: "Direct, practical guidance" },
+      { value: "Live build", label: "A real project from hour one" },
+      { value: "Take it home", label: "Files, guides & workflows" },
+    ],
+    introLabel: "AI creative learning by doing",
+    introHeading: "No slide marathon. No empty certificate.",
+    description: [
+      "Every workshop is built around making something real: a campaign concept, motion sting, ad edit, or on-brand content set. You work inside the same practical workflows Alcon uses on client projects.",
+      "Tracks are clearly levelled and groups stay small, so beginners get a confident start while experienced creatives can push into faster, more advanced production systems.",
+    ],
+    outcomes: [
+      { title: "A finished piece of work", description: "Leave with a deliverable you can show, use, and continue improving." },
+      { title: "A repeatable workflow", description: "Understand the sequence, prompts, checks, and decisions behind the output." },
+      { title: "Confidence after the weekend", description: "Take-home files and follow-up support help the learning stick." },
+    ],
+    featureImages: ["/images/services/tutorials-hero-v2.webp", "/images/services/ai-video-hero.webp", "/images/services/graphic-design-hero.webp"],
+    deliverables: ["Small-group weekend session", "Live brief and guided project", "Take-home source files and assets", "Prompt and workflow playbooks", "Tool setup and production checklists", "Follow-up Q&A support"],
+    process: [
+      { title: "Choose", description: "Pick AI image, motion, video, editing, or campaign creative at the right level." },
+      { title: "Learn", description: "See the workflow demonstrated with the reasoning behind every important decision." },
+      { title: "Build", description: "Create your own deliverable with direct feedback from an Alcon creative lead." },
+      { title: "Continue", description: "Leave with files, playbooks, and a clear next practice project." },
+    ],
+    faqs: [
+      { question: "Do I need prior experience?", answer: "Beginner tracks assume no experience with the specific AI tool. Intermediate sessions are labelled clearly and move faster." },
+      { question: "Can you run a private workshop for our team?", answer: "Yes. Private sessions can be tailored to your brand, existing tools, and real production challenges." },
+    ],
+    cta: { heading: "Make this the weekend your workflow changes.", body: "Choose a public track or bring us your team. Either way, you will leave making faster and thinking more clearly.", label: "Find the right workshop" },
+    related: ["ai-video", "motion", "editing"],
+    accentIndex: 3,
+  },
+  {
+    slug: "motion",
+    name: "Motion Design & Video Advertising Agency Dubai",
+    shortName: "Motion Design",
+    category: "Video & Animation",
+    summary: "Motion identities, animated campaigns, and platform-ready video ads built to move attention and scale across formats.",
+    keywords: ["motion design Dubai", "motion graphics agency UAE", "video advertising Dubai", "logo animation Dubai", "animated social ads"],
+    valueProposition: "Build a motion system — not a pile of one-off videos — so every campaign frame moves with the same recognisable energy.",
+    heroEyebrow: "Motion design Dubai · Brand systems · Video ads",
+    heroHeadline: "Make the brand move like it means it.",
+    heroImage: "/images/services/motion-hero-v2.webp",
+    heroAlt: "Cinematic motion design system built from luminous film ribbons, animation frames, and sound waves",
+    heroStats: [
+      { value: "1 master", label: "Every platform format" },
+      { value: "Sound-on craft", label: "Pacing, motion & audio" },
+      { value: "30–50% faster", label: "AI-accelerated production" },
+    ],
+    introLabel: "Motion identity + campaign animation",
+    introHeading: "Movement becomes memory when the system is consistent.",
+    description: [
+      "Motion at Alcon is treated as a brand asset. Easing, pacing, hero shots, transitions, and sound are designed as one repeatable language rather than reinvented for every video.",
+      "AI accelerates animatics, backgrounds, upscaling, and versioning. Storyboard, direction, animation decisions, and the final polish stay with experienced motion designers.",
+    ],
+    outcomes: [
+      { title: "A recognisable motion language", description: "Movement, transitions, and sound that make the brand identifiable before the logo appears." },
+      { title: "More creative from one build", description: "A master system that produces vertical, square, widescreen, and cutdown assets." },
+      { title: "Animation with a job", description: "Every sequence is shaped around attention, understanding, or conversion." },
+    ],
+    featureImages: ["/images/services/motion-hero-v2.webp", "/images/services/2d-animation-hero.webp", "/images/services/3d-animation-hero.webp"],
+    deliverables: ["Motion identity & animation principles", "Logo animation & brand stings", "Explainer, product & founder films", "Short-form ads for Meta, TikTok & YouTube", "Vertical, square & widescreen versioning", "Sound design and platform-ready masters"],
+    process: [
+      { title: "Brief & script", description: "Narrative and shots are tied to the actual campaign goal." },
+      { title: "Style frames", description: "Key visual moments are approved before full animation begins." },
+      { title: "Animate", description: "Motion designers build the system while AI accelerates roughs and production tasks." },
+      { title: "Sound & ship", description: "Sound, pacing, captions, and platform exports complete the work." },
+    ],
+    faqs: [
+      { question: "Which platforms and formats do you deliver for?", answer: "Meta, TikTok, YouTube, LinkedIn, connected TV, in-app placements, presentations, and websites." },
+      { question: "Can you create a reusable motion identity?", answer: "Yes. We define rules and assets your internal team can reuse, not only finished one-off files." },
+    ],
+    cta: { heading: "Give the brand a movement people recognise.", body: "Bring us the campaign, product, or identity. We will build the motion language and the assets ready to launch it.", label: "Start a motion project" },
+    related: ["2d-animation", "3d-animation", "ai-video"],
+    accentIndex: 4,
+  },
+  {
+    slug: "2d-animation",
+    name: "2D Animation & Explainer Video Studio Dubai",
+    shortName: "2D Animation",
+    category: "Video & Animation",
+    summary: "Clear, expressive 2D animation for explainers, products, campaigns, and brand stories that need to be understood fast.",
+    keywords: ["2D animation studio Dubai", "explainer video Dubai", "animated video agency UAE", "product animation Dubai", "motion graphics explainer"],
+    valueProposition: "Make complex products and stories feel simple, human, and worth watching from the first frame to the last.",
+    heroEyebrow: "2D animation Dubai · Explainers · Product stories",
+    heroHeadline: "Explain the complex. Keep every eye.",
+    heroImage: "/images/services/2d-animation-hero.webp",
+    heroAlt: "Layered premium 2D animation scene with luminous keyframe paths and abstract narrative planes",
+    heroStats: [
+      { value: "Clear story", label: "Complex ideas made simple" },
+      { value: "On-brand", label: "A visual world only you own" },
+      { value: "Multi-format", label: "One film, many channels" },
+    ],
+    introLabel: "Story + illustration + animation",
+    introHeading: "Clarity gets watched. Character gets remembered.",
+    description: [
+      "We use 2D animation to turn abstract services, unfamiliar products, and dense messages into clear visual stories. Every scene earns its place and moves the audience forward.",
+      "The illustration style is developed for the brand, then expanded into a flexible motion world for the master film, social cutdowns, sales tools, and future content.",
+    ],
+    outcomes: [
+      { title: "A story people follow", description: "A script and visual sequence that remove friction from understanding." },
+      { title: "A world the brand owns", description: "Original illustration and movement, not a library of familiar templates." },
+      { title: "More life after launch", description: "Reusable scenes and characters can extend into future campaigns." },
+    ],
+    featureImages: ["/images/services/2d-animation-hero.webp", "/images/services/motion-hero-v2.webp", "/images/services/graphic-design-hero.webp"],
+    deliverables: ["Concept and script development", "Storyboard and animatic", "Custom illustration style", "Character-free or character-led animation", "Voiceover, music and sound design", "Master film and social cutdowns"],
+    process: [
+      { title: "Simplify", description: "We find the single story the audience needs to understand." },
+      { title: "Storyboard", description: "Every beat is visualised and approved before production." },
+      { title: "Illustrate", description: "A custom visual world is built around the brand and message." },
+      { title: "Animate", description: "Movement, voice, sound, and final formats bring the story to life." },
+    ],
+    faqs: [
+      { question: "Can you help write the explainer script?", answer: "Yes. Script and message architecture are core parts of the engagement." },
+      { question: "Can the animation style match our brand?", answer: "Yes. We build a custom illustration and motion direction from your identity rather than forcing a house style." },
+    ],
+    cta: { heading: "Make the idea easier to understand — and harder to forget.", body: "Show us the product, service, or story. We will turn it into a film that keeps attention moving.", label: "Plan an animated story" },
+    related: ["motion", "3d-animation", "ai-video"],
+    accentIndex: 0,
+  },
+  {
+    slug: "3d-animation",
+    name: "3D Animation & CGI Studio Dubai",
+    shortName: "3D Animation",
+    category: "Video & Animation",
+    summary: "High-end 3D animation and CGI for products, architecture, campaigns, and ideas that cannot be captured by a camera alone.",
+    keywords: ["3D animation studio Dubai", "CGI agency UAE", "product animation Dubai", "architectural animation Dubai", "3D advertising"],
+    valueProposition: "Create impossible product shots, worlds, and transformations with the control and finish of premium commercial production.",
+    heroEyebrow: "3D animation Dubai · CGI · Product · Architecture",
+    heroHeadline: "Create what cameras cannot capture.",
+    heroImage: "/images/services/3d-animation-hero.webp",
+    heroAlt: "Premium 3D object evolving from wireframe through clay model into a polished glass and metal final render",
+    heroStats: [
+      { value: "Any world", label: "No location limits" },
+      { value: "Any angle", label: "Total camera control" },
+      { value: "Photoreal", label: "Materials built to convince" },
+    ],
+    introLabel: "CGI + product visualisation + animation",
+    introHeading: "When reality limits the idea, build a better reality.",
+    description: [
+      "Alcon creates 3D films and imagery with complete control over materials, lighting, environments, and camera movement. Products can transform, architecture can exist before construction, and campaign worlds can ignore practical limits.",
+      "Every project is art-directed like a commercial shoot: purposeful frames, tactile surfaces, believable light, and a final grade that makes the work feel premium rather than technical.",
+    ],
+    outcomes: [
+      { title: "Impossible shots made practical", description: "Reveal interiors, transformations, and environments no physical shoot can capture." },
+      { title: "One asset, many campaigns", description: "Approved 3D models can generate films, stills, cutdowns, and future launches." },
+      { title: "Craft viewers can feel", description: "Lighting, materials, and movement create the tactile credibility premium work needs." },
+    ],
+    featureImages: ["/images/services/3d-animation-hero.webp", "/images/services/photography-hero.webp", "/images/services/ai-video-hero.webp"],
+    deliverables: ["Creative concept & storyboard", "3D modelling and scene build", "Product and material visualisation", "Architectural and environment animation", "Simulation, lighting and rendering", "Final film, stills and platform cutdowns"],
+    process: [
+      { title: "Previsualise", description: "Concept, storyboard, camera, and timing are locked before heavy production." },
+      { title: "Build", description: "Models, environments, materials, and lighting are created to the required fidelity." },
+      { title: "Animate", description: "Camera and object movement turn the approved scene into a compelling sequence." },
+      { title: "Finish", description: "Rendering, compositing, sound, grade, and format delivery complete the work." },
+    ],
+    faqs: [
+      { question: "Can you work from CAD or architectural files?", answer: "Yes. We can use supplied models and drawings or build production-ready assets from reference." },
+      { question: "Can the 3D assets be reused later?", answer: "Yes. We structure projects so approved models and environments can support future stills, films, and launches." },
+    ],
+    cta: { heading: "If you can imagine it, we can give it light, material, and motion.", body: "Bring the product, building, or impossible shot. We will map the most effective 3D route to making it real.", label: "Scope a 3D project" },
+    related: ["motion", "ai-video", "photography"],
+    accentIndex: 1,
+  },
+  {
+    slug: "ai-video",
+    name: "Generative AI Video Production Agency Dubai",
+    shortName: "AI Video",
+    category: "Video & Animation",
+    summary: "Human-directed generative video for bold campaign ideas, rapid concept films, and social creative that traditional production cannot deliver at the same pace.",
+    keywords: ["AI video agency Dubai", "generative video production UAE", "AI advertising video", "AI commercial production Dubai", "AI social video"],
+    valueProposition: "Move from ambitious visual idea to finished film faster — with AI extending possibility and experienced directors controlling the result.",
+    heroEyebrow: "AI video Dubai · Direction · Generation · Finish",
+    heroHeadline: "Turn bold ideas into films at AI speed.",
+    heroImage: "/images/services/ai-video-hero.webp",
+    heroAlt: "Generative particles becoming cinematic film frames inside a premium director-controlled production system",
+    heroStats: [
+      { value: "More worlds", label: "Concept without location limits" },
+      { value: "Rapid iteration", label: "Test before committing" },
+      { value: "Human-finished", label: "Direction, edit, sound & grade" },
+    ],
+    introLabel: "Generative filmmaking + human direction",
+    introHeading: "AI expands what is possible. Direction decides what is worth making.",
+    description: [
+      "We use generative video where it creates a genuine creative advantage: impossible environments, rapid visual exploration, product transformations, stylised campaign worlds, and high-volume social testing.",
+      "Every project is directed, edited, graded, and sound-designed by humans. The output is judged by the same standard as any other campaign film — not by the novelty of the tool that produced it.",
+    ],
+    outcomes: [
+      { title: "Bigger concepts, lighter production", description: "Explore visual territory that would usually require locations, sets, or heavy VFX." },
+      { title: "Ideas tested before scale", description: "Rapid concept films help teams choose the strongest direction with evidence." },
+      { title: "A finished film, not raw generation", description: "Editing, consistency, sound, grade, and platform delivery complete the work." },
+    ],
+    featureImages: ["/images/services/ai-video-hero.webp", "/images/services/motion-hero-v2.webp", "/images/services/editing-hero-v2.webp"],
+    deliverables: ["Creative concept and treatment", "AI visual development and styleframes", "Generative video production", "Character and scene consistency workflow", "Human edit, sound design and colour finish", "Master film, paid-social variants and cutdowns"],
+    process: [
+      { title: "Direct", description: "We define the idea, visual rules, references, and boundaries before generation." },
+      { title: "Prototype", description: "Short controlled tests reveal the strongest approach and consistency risks." },
+      { title: "Generate", description: "Approved scenes are produced, curated, corrected, and assembled." },
+      { title: "Finish", description: "Human edit, sound, grade, titles, and versioning turn outputs into a campaign asset." },
+    ],
+    faqs: [
+      { question: "Will the film look obviously AI-generated?", answer: "Only if that is the chosen aesthetic. Our workflow prioritises consistency, art direction, editing, and finish over raw model spectacle." },
+      { question: "How do you manage rights and brand safety?", answer: "We agree the production approach, source policy, review gates, and usage requirements before work begins." },
+    ],
+    cta: { heading: "Bring us the film idea that feels too ambitious for the budget.", body: "We will show you where generative production creates leverage and where traditional craft should stay in control.", label: "Explore an AI film" },
+    related: ["motion", "editing", "3d-animation"],
     accentIndex: 2,
   },
   {
     slug: "social",
-    name: "AI-Powered Social Media Marketing",
-    shortName: "Social",
-    summary:
-      "Content systems, campaign management, and paid social creative for brands who need consistent posting and measurable growth — not just a monthly grid.",
-    valueProposition:
-      "A social system built as a marketing engine: fixed cadence, brand-consistent formats, and paid creative that ties back to real acquisition metrics.",
+    name: "Social Media Marketing Agency Dubai",
+    shortName: "Social Media",
+    category: "Media & Production",
+    summary: "Content systems, campaign management, and paid social creative for brands that need consistent attention and measurable growth.",
+    keywords: ["social media agency Dubai", "social media marketing UAE", "paid social creative Dubai", "Instagram management Dubai", "TikTok agency UAE"],
+    valueProposition: "Replace random posting with a recognisable content engine built to earn attention, learn from performance, and improve every month.",
+    heroEyebrow: "Social media Dubai · Content systems · Paid creative",
+    heroHeadline: "Stop posting. Start compounding attention.",
+    heroImage: "/images/services/social-hero-v2.webp",
+    heroAlt: "Connected premium social content frames and campaign signals rising across a dark digital grid",
+    heroStats: [
+      { value: "90-day system", label: "Pillars, cadence & formats" },
+      { value: "Organic + paid", label: "One connected creative engine" },
+      { value: "Monthly learning", label: "Performance changes the plan" },
+    ],
+    introLabel: "Strategy + content + performance",
+    introHeading: "Consistency builds recognition. Testing builds growth.",
     description: [
-      "Social at Alcon is planned as marketing, not as posting. Every engagement starts with a content system — recurring formats, a visual language tied to the brand guidelines, and a cadence the team can actually sustain — because inconsistent posting is the single biggest reason social budgets underperform.",
-      "AI shows up across the workflow: idea generation against the brand's content pillars, copy variants for A/B testing, first-pass captions and translations, and creative iteration on winning ad formats. The strategy, the direction, and the community management are led by humans who understand the brand and the market.",
-      "Coverage spans organic content production, community management across the major platforms, and paid social creative built to actually convert — not the generic template posts that most agencies bill as 'social media management'.",
+      "Social at Alcon is planned as marketing, not a monthly grid. We create recurring formats, a visual language tied to the brand, and a cadence the team can sustain.",
+      "AI supports ideation, variants, captions, and localisation. Human strategists direct the message, community, and creative choices, then performance data shapes the next cycle.",
     ],
-    deliverables: [
-      "Social strategy & 90-day content calendar",
-      "Content-pillar system & templated post design",
-      "Short-form video: reels, TikToks & YouTube shorts",
-      "Community management on Instagram, TikTok, LinkedIn & X",
-      "Paid social ad creative for Meta, TikTok & LinkedIn",
-      "Monthly performance report with iteration plan",
+    outcomes: [
+      { title: "A feed people recognise", description: "Recurring formats and art direction build memory instead of visual noise." },
+      { title: "Creative designed to learn", description: "Hooks, formats, and variants are structured around clear testable hypotheses." },
+      { title: "Reporting that changes the work", description: "Monthly analysis becomes a practical plan for the next production cycle." },
     ],
+    featureImages: ["/images/services/social-hero-v2.webp", "/images/services/videography-hero.webp", "/images/services/graphic-design-hero.webp"],
+    deliverables: ["Social strategy and 90-day calendar", "Content pillars and recurring formats", "Reels, TikToks and YouTube Shorts", "Community management", "Paid social creative and testing", "Performance reporting and iteration plan"],
     process: [
-      {
-        title: "Audit",
-        description:
-          "Review current channels, audience, and 90-day performance baseline — engagement, reach, and any paid results attached to them.",
-      },
-      {
-        title: "Strategy",
-        description:
-          "Define content pillars, cadence, and formats. Set the paid creative hypotheses that will run alongside the organic calendar.",
-      },
-      {
-        title: "Produce",
-        description:
-          "Batch content production against the calendar, with AI accelerating the ideation and copy pass — final edit and direction stays with the team.",
-      },
-      {
-        title: "Report",
-        description:
-          "Monthly review of what worked, what did not, and what the next cycle changes based on the data.",
-      },
+      { title: "Audit", description: "Channels, audience, competitors, and current performance establish the baseline." },
+      { title: "System", description: "We define pillars, cadence, visual rules, and paid creative hypotheses." },
+      { title: "Produce", description: "Content is batched efficiently without losing brand craft or platform relevance." },
+      { title: "Improve", description: "Performance evidence decides what scales, changes, and stops." },
     ],
     faqs: [
-      {
-        question: "Which social platforms do you manage?",
-        answer:
-          "Instagram, TikTok, LinkedIn, YouTube, and X are the most common. Platform mix is set per client based on where the audience actually converts, not on channel-of-the-month trends.",
-      },
-      {
-        question: "Do you handle paid social ad spend as well as organic?",
-        answer:
-          "Yes. We produce the creative, run the tests, and report against campaign KPIs. Paid buying can be handled by us or by your existing media team — either works.",
-      },
+      { question: "Which platforms do you manage?", answer: "Instagram, TikTok, LinkedIn, YouTube, and X. The mix is based on where your audience actually pays attention and converts." },
+      { question: "Do you handle paid social as well as organic?", answer: "Yes. We can produce the creative, run the tests, and report against campaign KPIs." },
     ],
+    cta: { heading: "Build a social presence that gets stronger every month.", body: "Show us the channels, audience, and growth target. We will design the content system and creative engine around them.", label: "Plan your social system" },
+    related: ["graphic-design", "videography", "editing"],
     accentIndex: 3,
   },
   {
-    slug: "tutorials",
-    name: "AI Creative Weekend Workshops",
-    shortName: "Tutorials",
-    summary:
-      "Hands-on weekend workshops in AI-powered creative tools — for marketing teams, in-house designers, and independent creatives who want to leave with a finished piece of work, not a certificate.",
-    valueProposition:
-      "Small, hands-on sessions on the AI tools actually in use at Alcon — image, motion, and post — with a real deliverable in your hand by Sunday evening.",
+    slug: "videography",
+    name: "Videography & Film Production Company Dubai",
+    shortName: "Videography",
+    category: "Media & Production",
+    summary: "Cinematic production for brand films, campaigns, products, interviews, events, and social content across Dubai and the UAE.",
+    keywords: ["videography company Dubai", "video production Dubai", "corporate video UAE", "commercial film production Dubai", "brand film agency"],
+    valueProposition: "Capture the people, products, and moments that make the brand believable — with a clear story and a premium cinematic finish.",
+    heroEyebrow: "Videography Dubai · Direction · Production · Finish",
+    heroHeadline: "Shoot stories people feel.",
+    heroImage: "/images/services/videography-hero.webp",
+    heroAlt: "Premium unbranded cinema camera and lighting system framing the Dubai skyline on a dark studio set",
+    heroStats: [
+      { value: "Dubai crew", label: "Local production capability" },
+      { value: "End to end", label: "Concept through final master" },
+      { value: "Every format", label: "Campaign, web & social" },
+    ],
+    introLabel: "Direction + production + post",
+    introHeading: "The camera records the scene. Direction creates the feeling.",
     description: [
-      "Weekend workshops are kept small and hands-on. Participants leave with a finished project — a rebrand exploration, an ad edit, a motion sting, a set of on-brand social frames — not just a stack of notes.",
-      "Tracks rotate across the AI tools actually in use inside Alcon's own production pipeline: image generation, motion assist, transcript-first editing, and campaign creative workflows. Every session is taught by the people who use these tools on live client work every week.",
-      "Suited to in-house marketing teams looking to level up, independent creatives adding AI to their workflow, and studios who want their team to leave a weekend faster than they arrived.",
+      "Alcon produces films around the response they need to create — trust, desire, understanding, or action. That goal shapes the treatment, casting, location, lens, light, and edit.",
+      "Our Dubai production network scales from focused interview days to multi-location campaign shoots, with one creative direction connecting every frame and final format.",
     ],
-    deliverables: [
-      "Small-group hands-on weekend sessions",
-      "Take-home project files & source assets",
-      "AI tool guides & workflow playbooks",
-      "Follow-up Q&A support after the session",
+    outcomes: [
+      { title: "A story before the shoot", description: "Clear purpose and treatment keep production focused on what the audience should feel." },
+      { title: "Premium craft on set", description: "Direction, camera, lighting, art, and sound work as one system." },
+      { title: "More value from shoot day", description: "Shot plans capture the master film, social cutdowns, and stills efficiently." },
     ],
+    featureImages: ["/images/services/videography-hero.webp", "/images/services/editing-hero-v2.webp", "/images/services/photography-hero.webp"],
+    deliverables: ["Creative treatment and script", "Pre-production, casting and locations", "Directing, cinematography and lighting", "Brand, campaign and corporate films", "Interview, event and social production", "Editing, sound, grade and platform versions"],
     process: [
-      {
-        title: "Choose a track",
-        description:
-          "Pick a focus area — AI image, AI motion, AI-assisted editing, or campaign creative — and a difficulty level.",
-      },
-      {
-        title: "Attend",
-        description:
-          "A focused weekend session in Dubai with a real creative brief and a working project from hour one.",
-      },
-      {
-        title: "Build",
-        description:
-          "Work on a real deliverable end-to-end with direct guidance from an Alcon creative lead throughout.",
-      },
-      {
-        title: "Take it home",
-        description:
-          "Leave with finished files, the tool guides, and a follow-up channel for questions once you are practising on your own.",
-      },
+      { title: "Treat", description: "The idea becomes a visual treatment, script, shot plan, and production approach." },
+      { title: "Prepare", description: "Crew, cast, locations, schedule, equipment, and approvals are locked." },
+      { title: "Shoot", description: "Direction and production capture the planned story with room for real moments." },
+      { title: "Finish", description: "Edit, sound, grade, captions, and versions turn footage into campaign-ready assets." },
     ],
     faqs: [
-      {
-        question: "Do I need prior experience with these tools?",
-        answer:
-          "Sessions are labelled by level. Beginner tracks assume zero prior experience with the specific AI tool being taught; intermediate tracks assume you have shipped work in a related area before.",
-      },
-      {
-        question: "Can you run a private workshop for our in-house team?",
-        answer:
-          "Yes — private team sessions are available on request, tailored to your brand's tools and current workflow rather than a generic curriculum.",
-      },
+      { question: "Can you manage the complete production?", answer: "Yes. We can handle concept, script, crew, casting, locations, filming, post-production, and final delivery." },
+      { question: "Can one shoot produce social content too?", answer: "Yes. We plan alternate frames, vertical coverage, short hooks, and still moments into the shoot rather than treating them as leftovers." },
     ],
+    cta: { heading: "Put a real feeling behind the brand.", body: "Tell us the story, audience, and channels. We will shape the treatment and production that make it worth watching.", label: "Plan a production" },
+    related: ["editing", "photography", "social"],
     accentIndex: 4,
+  },
+  {
+    slug: "photography",
+    name: "Commercial Photography Studio Dubai",
+    shortName: "Photography",
+    category: "Media & Production",
+    summary: "Product, brand, people, food, hospitality, and campaign photography crafted for advertising, ecommerce, social, and editorial use.",
+    keywords: ["commercial photographer Dubai", "product photography Dubai", "brand photography UAE", "campaign photographer Dubai", "ecommerce photography studio"],
+    valueProposition: "Create a library of images that gives every campaign, page, and product a more credible and desirable presence.",
+    heroEyebrow: "Commercial photography Dubai · Product · Brand · Campaign",
+    heroHeadline: "Make the product impossible to scroll past.",
+    heroImage: "/images/services/photography-hero.webp",
+    heroAlt: "Premium commercial photography set with sculptural product, optical glass, and multiple campaign crops",
+    heroStats: [
+      { value: "Shot-ready", label: "Concept, styling & production" },
+      { value: "Channel-aware", label: "Campaign, ecommerce & social" },
+      { value: "One library", label: "A coherent visual world" },
+    ],
+    introLabel: "Art direction + photography + retouching",
+    introHeading: "Every frame should make the brand feel more valuable.",
+    description: [
+      "We create commercial photography with a clear role in the customer journey. Product detail, people, environment, composition, and colour are planned around how the images will sell, explain, or build trust.",
+      "A coherent art direction turns a shoot into a reusable visual library rather than a folder of disconnected hero shots. Every image is selected and finished for its real placement.",
+    ],
+    outcomes: [
+      { title: "A visual world only you own", description: "Original imagery removes dependence on forgettable stock and copied aesthetics." },
+      { title: "More utility from every setup", description: "Wide, vertical, detail, and negative-space frames are planned for real placements." },
+      { title: "Finish that holds up close", description: "Lighting, colour, texture, and retouching support a premium impression." },
+    ],
+    featureImages: ["/images/services/photography-hero.webp", "/images/services/graphic-design-hero.webp", "/images/services/videography-hero.webp"],
+    deliverables: ["Creative direction and shot list", "Product and ecommerce photography", "Brand, people and lifestyle photography", "Food, hospitality and interior photography", "Campaign and advertising image libraries", "Retouching, colour and channel-ready exports"],
+    process: [
+      { title: "Art direct", description: "References, mood, use cases, and the complete shot list align the visual direction." },
+      { title: "Produce", description: "Products, people, styling, locations, and equipment are prepared around the brief." },
+      { title: "Shoot", description: "Every setup captures planned hero frames plus useful campaign variations." },
+      { title: "Finish", description: "Selection, retouching, colour, crop, and export prepare every image for use." },
+    ],
+    faqs: [
+      { question: "Can you shoot at our location?", answer: "Yes. We work in studio and on location across Dubai and the UAE, depending on the product and story." },
+      { question: "Do you provide styling and models?", answer: "Yes. We can coordinate art direction, props, product styling, food styling, talent, hair, makeup, and wardrobe." },
+    ],
+    cta: { heading: "Build the image library your next campaign deserves.", body: "Share the products, placements, and visual ambition. We will design a shoot that creates more usable value in every frame.", label: "Plan a photography shoot" },
+    related: ["videography", "graphic-design", "social"],
+    accentIndex: 0,
+  },
+  {
+    slug: "editing",
+    name: "Video Editing & Post-Production Studio Dubai",
+    shortName: "Video Editing",
+    category: "Media & Production",
+    summary: "Retention-led editing, colour, sound, subtitles, localisation, and versioning for campaigns and content.",
+    keywords: ["video editing Dubai", "post production studio Dubai", "colour grading Dubai", "social video editing UAE", "commercial video editor"],
+    valueProposition: "Build every cut backwards from a measurable outcome — watch-through, click-through, understanding, or action.",
+    heroEyebrow: "Video editing Dubai · Story · Colour · Sound",
+    heroHeadline: "Find the cut that moves the metric.",
+    heroImage: "/images/services/editing-hero-v2.webp",
+    heroAlt: "Cinematic post-production timeline with layered frames, luminous audio waveforms, and a refined colour grade",
+    heroStats: [
+      { value: "Retention-led", label: "Pacing with a purpose" },
+      { value: "Broadcast finish", label: "Colour, sound & captions" },
+      { value: "Every ratio", label: "One master, all channels" },
+    ],
+    introLabel: "Editorial + colour + sound",
+    introHeading: "Footage becomes valuable when every second earns the next.",
+    description: [
+      "A brand film built for trust is cut differently from a paid ad built for clicks. We start with the outcome, then shape the hook, structure, pace, grade, and sound around it.",
+      "AI handles transcript search, assembly support, subtitling, translation, and upscaling. Editors keep control of the decisions that create rhythm, emotion, and performance.",
+    ],
+    outcomes: [
+      { title: "A stronger opening", description: "The first seconds establish relevance before attention disappears." },
+      { title: "A cut with momentum", description: "Structure, music, and visual rhythm keep the viewer moving forward." },
+      { title: "A master built to multiply", description: "Versions, captions, languages, and ratios are planned into the edit." },
+    ],
+    featureImages: ["/images/services/editing-hero-v2.webp", "/images/services/motion-hero-v2.webp", "/images/services/social-hero-v2.webp"],
+    deliverables: ["Campaign, product and brand-film editing", "Retention-led social and paid ad cuts", "Colour grading", "Sound design and broadcast mix", "Subtitles, captions and localisation", "Vertical, square and widescreen versions"],
+    process: [
+      { title: "Assemble", description: "The strongest material is found quickly and structured against the brief." },
+      { title: "Refine", description: "Pacing, transitions, hook, and story are sharpened through time-coded review." },
+      { title: "Finish", description: "Colour, sound, graphics, and captions bring the cut to commercial standard." },
+      { title: "Version", description: "Every required ratio, duration, language, and platform master is delivered." },
+    ],
+    faqs: [
+      { question: "Can you edit footage we have already shot?", answer: "Yes. Raw-footage-only engagements are common, and we can also advise on pickups if the story needs more." },
+      { question: "Can you create multiple ad versions from one shoot?", answer: "Yes. We can produce structured hook, length, message, and format variants for testing." },
+    ],
+    cta: { heading: "There is a stronger story inside the footage.", body: "Send the material, objective, and channel plan. We will find the cut that earns attention and moves it toward action.", label: "Start a post-production brief" },
+    related: ["videography", "motion", "social"],
+    accentIndex: 1,
   },
 ];
 

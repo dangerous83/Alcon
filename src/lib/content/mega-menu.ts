@@ -49,12 +49,9 @@ export type MegaMenuColumn = {
  * AI-specialist positioning. Descriptions read as a short benefit line for
  * the buyer scanning the menu, not as an internal taxonomy note.
  *
- * The site's content model only has 5 built-out service pages (branding,
- * motion, editing, social, tutorials — see src/lib/content/services.ts),
- * so items map onto the closest existing page rather than 404ing; this is
- * a real routing constraint of a static export, not a content decision.
- * Swap individual hrefs once dedicated pages exist for e.g. Photography
- * or AI Video.
+ * Every item maps to a dedicated static service page. Keep these hrefs in
+ * sync with src/lib/content/services.ts so every menu promise has a real,
+ * search-ready destination.
  */
 export const servicesMegaMenu: MegaMenuColumn[] = [
   {
@@ -70,13 +67,13 @@ export const servicesMegaMenu: MegaMenuColumn[] = [
         label: "Web UI/UX Design",
         description: "Conversion-led web and product interfaces",
         icon: LayoutGrid,
-        href: "/services/branding",
+        href: "/services/web-ui-ux",
       },
       {
         label: "Graphic Design",
         description: "Campaign creative for digital and print",
         icon: ImageIcon,
-        href: "/services/branding",
+        href: "/services/graphic-design",
       },
       {
         label: "Tutorials",
@@ -100,19 +97,19 @@ export const servicesMegaMenu: MegaMenuColumn[] = [
         label: "2D Animation",
         description: "Explainer film and product storytelling",
         icon: Boxes,
-        href: "/services/motion",
+        href: "/services/2d-animation",
       },
       {
         label: "3D Animation",
         description: "Architectural, product and campaign 3D",
         icon: Box,
-        href: "/services/motion",
+        href: "/services/3d-animation",
       },
       {
         label: "AI Video",
         description: "Generative video ads built for paid social",
         icon: Wand2,
-        href: "/services/motion",
+        href: "/services/ai-video",
       },
     ],
   },
@@ -129,13 +126,13 @@ export const servicesMegaMenu: MegaMenuColumn[] = [
         label: "Videography",
         description: "Cinematic production for brand and campaign",
         icon: Video,
-        href: "/services/editing",
+        href: "/services/videography",
       },
       {
         label: "Photography",
         description: "Product, brand and campaign shoots in Dubai",
         icon: Camera,
-        href: "/services/editing",
+        href: "/services/photography",
       },
       {
         label: "Video Editing",
@@ -170,7 +167,7 @@ export const servicesMegaMenuPromo: MegaMenuPromo = {
 };
 
 export const servicesMegaMenuStats = [
-  { value: "13", label: "Services" },
+  { value: "12", label: "Services" },
   { value: "700+", label: "Projects" },
   { value: "12+", label: "Years Experience" },
 ] as const;
@@ -195,7 +192,7 @@ export const portfolioMegaMenu: MegaMenuColumn[] = [
         label: "3D Animation",
         description: "Architectural, product & campaign 3D",
         icon: Box,
-        href: "/services/motion",
+        href: "/services/3d-animation",
       },
       {
         label: "Motion Design",
@@ -218,25 +215,25 @@ export const portfolioMegaMenu: MegaMenuColumn[] = [
         label: "UI/UX Design",
         description: "Web platforms & product interfaces",
         icon: LayoutGrid,
-        href: "/services/branding",
+        href: "/services/web-ui-ux",
       },
       {
         label: "2D Animation",
         description: "Explainer film & product storytelling",
         icon: Boxes,
-        href: "/services/motion",
+        href: "/services/2d-animation",
       },
       {
         label: "Videography",
         description: "Cinematic brand & campaign shoots",
         icon: Video,
-        href: "/services/editing",
+        href: "/services/videography",
       },
       {
         label: "Photography",
         description: "Product, brand & campaign photography",
         icon: Camera,
-        href: "/services/editing",
+        href: "/services/photography",
       },
     ],
   },

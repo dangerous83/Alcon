@@ -38,10 +38,11 @@ export default function ClientProjectsPlatformPage() {
         <SectionLabel>Platform portfolio</SectionLabel>
         <Heading as="h2" size="lg" className="mt-4 max-w-3xl">Live products with a point of view.</Heading>
         <p className="mt-5 max-w-2xl text-text-secondary">Every cover below is captured from the live project. Open any card to experience the deployed platform.</p>
-        <div className="mt-12"><ClientLinkGrid items={clientPlatformLinks} /></div>
+        <div className="mt-12"><ClientLinkGrid items={clientPlatformLinks} kind="Platform" /></div>
       </section>
 
       <FinalCta heading="Have a platform idea worth launching?" body="Bring the workflow, audience, and ambition. We will shape the product story and build the experience around it." />
     </main>
   );
 }
+

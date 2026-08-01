@@ -38,10 +38,11 @@ export default function ClientProjectsWebsitePage() {
         <SectionLabel>Website portfolio</SectionLabel>
         <Heading as="h2" size="lg" className="mt-4 max-w-3xl">Published experiences, ready to explore.</Heading>
         <p className="mt-5 max-w-2xl text-text-secondary">Every cover below is captured from the live project. Open any card to see the website in market.</p>
-        <div className="mt-12"><ClientLinkGrid items={clientWebsiteLinks} /></div>
+        <div className="mt-12"><ClientLinkGrid items={clientWebsiteLinks} kind="Website" /></div>
       </section>
 
       <FinalCta heading="Ready for a website that earns attention?" body="We will turn the business story into a focused digital experience built to create confidence and action." />
     </main>
   );
 }
+

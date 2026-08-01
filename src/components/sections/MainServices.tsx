@@ -1,6 +1,3 @@
-Exit code: 0
-Wall time: 1 seconds
-Output:
 "use client";
 
 import Image from "next/image";
@@ -163,7 +160,7 @@ export function ServicesCopy() {
       </Heading>
       <p className="mt-2.5 max-w-xl text-sm leading-5 text-text-secondary sm:text-[15px] sm:leading-6">
         Premium custom print for teams, launches, events, client gifts, and
-        everyday brand visibilityâ€”produced with sharp detail and a finish that
+        everyday brand visibility—produced with sharp detail and a finish that
         feels considered.
       </p>
     </>
@@ -208,4 +205,3 @@ export function MainServices() {
     </section>
   );
 }
-

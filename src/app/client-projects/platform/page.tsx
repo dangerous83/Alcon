@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ClientLinkGrid } from "@/components/clients/ClientLinkGrid";
+import { FinalCta } from "@/components/sections/FinalCta";
+import { PageHero } from "@/components/sections/PageHero";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Heading } from "@/components/ui/Heading";
-import { Card } from "@/components/ui/Card";
 import { clientPlatformLinks } from "@/lib/content/mega-menu";
 import { siteConfig } from "@/lib/content/site";
 
@@ -15,44 +15,33 @@ export const metadata: Metadata = {
 
 export default function ClientProjectsPlatformPage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-      <nav aria-label="Breadcrumb" className="text-xs text-text-secondary">
-        <Link href="/client-projects" className="hover:text-text-primary">
-          Clients
-        </Link>{" "}
-        / <span className="text-text-primary">Platform</span>
-      </nav>
-      <SectionLabel className="mt-6">Clients / Platform</SectionLabel>
-      <Heading as="h1" size="xl" className="mt-4">
-        Platform Work
-      </Heading>
-      <p className="mt-4 max-w-2xl text-lg text-text-secondary">
-        Live products built for clients. Each link opens the real, deployed
-        project.
-      </p>
+    <main>
+      <PageHero
+        eyebrow="Clients · Platform work"
+        headline="Platforms built to work beyond the pitch."
+        accent="work"
+        description="Explore live digital products shaped around real workflows, real audiences, and measurable business movement."
+        image="/images/pages/clients-hero.webp"
+        imageAlt="Digital product gallery with illuminated platform screens"
+        primaryLabel="Explore live platforms"
+        primaryHref="#platform-work"
+        secondaryLabel="Start a platform"
+        secondaryHref="/get-quote"
+        stats={[
+          { value: "Live products", label: "Open the real deployed work" },
+          { value: "End-to-end", label: "Strategy, UX, UI, and launch" },
+          { value: "Built to scale", label: "Systems ready for growth" },
+        ]}
+      />
 
-      <ul className="mt-12 grid gap-4 sm:grid-cols-2">
-        {clientPlatformLinks.map((item) => (
-          <Card as="li" key={item.url} className="p-5">
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center justify-between gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
-            >
-              <span className="font-heading text-base font-medium text-text-primary">
-                {item.label}
-              </span>
-              <ExternalLink
-                size={16}
-                strokeWidth={1.75}
-                aria-hidden
-                className="shrink-0 text-text-secondary transition-colors group-hover:text-cyan-accent"
-              />
-            </a>
-          </Card>
-        ))}
-      </ul>
-    </div>
+      <section id="platform-work" className="scroll-mt-24 mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+        <SectionLabel>Platform portfolio</SectionLabel>
+        <Heading as="h2" size="lg" className="mt-4 max-w-3xl">Live products with a point of view.</Heading>
+        <p className="mt-5 max-w-2xl text-text-secondary">Every cover below is captured from the live project. Open any card to experience the deployed platform.</p>
+        <div className="mt-12"><ClientLinkGrid items={clientPlatformLinks} /></div>
+      </section>
+
+      <FinalCta heading="Have a platform idea worth launching?" body="Bring the workflow, audience, and ambition. We will shape the product story and build the experience around it." />
+    </main>
   );
 }

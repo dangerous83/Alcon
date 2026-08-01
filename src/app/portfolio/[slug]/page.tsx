@@ -60,19 +60,24 @@ export default async function PortfolioDisciplinePage({
 
   return (
     <main>
-      <section className="relative isolate min-h-[700px] overflow-hidden border-b border-border lg:min-h-[780px]">
+      <section className="relative isolate min-h-screen min-h-[100svh] overflow-hidden border-b border-border">
         <Image
           src={assetPath(portfolio.heroImage)}
           alt={portfolio.heroAlt}
           fill
           priority
           sizes="100vw"
-          className="-z-30 object-cover object-center"
+          className="internal-hero-media -z-30 object-cover object-center"
         />
         <div className="absolute inset-0 -z-20 bg-[linear-gradient(90deg,#000_0%,rgba(0,0,0,0.98)_34%,rgba(0,0,0,0.75)_57%,rgba(0,0,0,0.06)_100%)]" />
         <div className="absolute inset-x-0 bottom-0 -z-10 h-72 bg-gradient-to-t from-fuchsia-500/20 via-blue-500/10 to-transparent" />
+        <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
+          <span className="quote-orbit quote-orbit-one" />
+          <span className="quote-orbit quote-orbit-two" />
+          <span className="quote-scan" />
+        </div>
 
-        <div className="mx-auto flex min-h-[700px] max-w-7xl flex-col px-4 py-20 sm:px-6 lg:min-h-[780px] lg:px-8 lg:py-24">
+        <div className="mx-auto flex min-h-screen min-h-[100svh] max-w-7xl flex-col px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <nav aria-label="Breadcrumb" className="text-xs text-text-secondary">
             <Link href="/portfolio" className="hover:text-text-primary">Portfolio</Link>{" "}
             / <span className="text-text-primary">{portfolio.name}</span>
@@ -107,6 +112,7 @@ export default async function PortfolioDisciplinePage({
             ))}
           </ul>
         </div>
+        <span aria-hidden className="internal-hero-scroll-cue" />
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">

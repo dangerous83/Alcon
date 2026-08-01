@@ -254,7 +254,12 @@ export const portfolioMegaMenuPromo: MegaMenuPromo = {
   href: "/client-projects",
 };
 
-export type ExternalLinkItem = { label: string; url: string; icon: LucideIcon };
+export type ExternalLinkItem = {
+  label: string;
+  url: string;
+  image: string;
+  icon: LucideIcon;
+};
 
 /**
  * Client work — real external links the client supplied directly (not
@@ -263,28 +268,28 @@ export type ExternalLinkItem = { label: string; url: string; icon: LucideIcon };
  * icon so the Clients dropdown reads as a proper mega menu.
  */
 export const clientPlatformLinks: ExternalLinkItem[] = [
-  { label: "Ui Forge", url: "https://www.uiforge.site/", icon: LayoutGrid },
-  { label: "Vineyard", url: "https://www.vineyardchrist.com/", icon: Grape },
-  { label: "Pixela", url: "https://www.pixela-ai.com/", icon: Sparkles },
-  { label: "Forge Suite", url: "https://www.forgesuite.online/", icon: Boxes },
-  { label: "Media HQ", url: "https://marketing.securevisanow.com/", icon: Newspaper },
-  { label: "AlvinAI", url: "https://www.alvinai-dev.com/", icon: Bot },
-  { label: "Build Flow", url: "https://www.buildflow-tech.com", icon: Workflow },
-  { label: "Global Harvest", url: "https://www.globalharvest.online/", icon: Wheat },
-  { label: "Forge Crypto", url: "https://forge-crypto-omega.vercel.app/", icon: Bitcoin },
+  { label: "Ui Forge", url: "https://www.uiforge.site/", image: "/images/clients/platform-ui-forge.webp", icon: LayoutGrid },
+  { label: "Vineyard", url: "https://www.vineyardchrist.com/", image: "/images/clients/platform-vineyard.webp", icon: Grape },
+  { label: "Pixela", url: "https://www.pixela-ai.com/", image: "/images/clients/platform-pixela.webp", icon: Sparkles },
+  { label: "Forge Suite", url: "https://www.forgesuite.online/", image: "/images/clients/platform-forge-suite.webp", icon: Boxes },
+  { label: "Media HQ", url: "https://marketing.securevisanow.com/", image: "/images/clients/platform-media-hq.webp", icon: Newspaper },
+  { label: "AlvinAI", url: "https://www.alvinai-dev.com/", image: "/images/clients/platform-alvin-ai.webp", icon: Bot },
+  { label: "Build Flow", url: "https://www.buildflow-tech.com", image: "/images/clients/platform-build-flow.webp", icon: Workflow },
+  { label: "Global Harvest", url: "https://www.globalharvest.online/", image: "/images/clients/platform-global-harvest.webp", icon: Wheat },
+  { label: "Forge Crypto", url: "https://forge-crypto-omega.vercel.app/", image: "/images/clients/platform-forge-crypto.webp", icon: Bitcoin },
 ];
 
 export const clientWebsiteLinks: ExternalLinkItem[] = [
-  { label: "ITSEC", url: "https://itsecnow.com/", icon: ShieldCheck },
-  { label: "SecureVisa", url: "https://www.securevisanow.com", icon: Plane },
-  { label: "Koll", url: "https://www.koll.ae", icon: Globe },
-  { label: "Tina Portfolio", url: "https://www.tinaramos.online/", icon: UserRound },
-  { label: "Alcon Media", url: "https://www.alcon-online.site/", icon: Clapperboard },
-  { label: "Kangen", url: "https://kangenwateralife4u.com/", icon: Droplets },
-  { label: "Logistic", url: "https://www.ilsmtc.com/", icon: Truck },
-  { label: "Malath", url: "https://malathinvestment.com/", icon: TrendingUp },
-  { label: "UHUD", url: "https://www.uhud.online/", icon: Building2 },
-  { label: "VerifiX", url: "https://overview.verifix.itsecnow.com/", icon: BadgeCheck },
+  { label: "ITSEC", url: "https://itsecnow.com/", image: "/images/clients/website-itsec.webp", icon: ShieldCheck },
+  { label: "SecureVisa", url: "https://www.securevisanow.com", image: "/images/clients/website-securevisa.webp", icon: Plane },
+  { label: "Koll", url: "https://www.koll.ae", image: "/images/clients/website-koll.webp", icon: Globe },
+  { label: "Tina Portfolio", url: "https://www.tinaramos.online/", image: "/images/clients/website-tina-portfolio.webp", icon: UserRound },
+  { label: "Alcon Media", url: "https://www.alcon-online.site/", image: "/images/clients/website-alcon-media.webp", icon: Clapperboard },
+  { label: "Kangen", url: "https://kangenwateralife4u.com/", image: "/images/clients/website-kangen.webp", icon: Droplets },
+  { label: "Logistic", url: "https://www.ilsmtc.com/", image: "/images/clients/website-logistic.webp", icon: Truck },
+  { label: "Malath", url: "https://malathinvestment.com/", image: "/images/clients/website-malath.webp", icon: TrendingUp },
+  { label: "UHUD", url: "https://www.uhud.online/", image: "/images/clients/website-uhud.webp", icon: Building2 },
+  { label: "VerifiX", url: "https://overview.verifix.itsecnow.com/", image: "/images/clients/website-verifix.webp", icon: BadgeCheck },
 ];
 
 export const clientsMegaMenuPromo: MegaMenuPromo = {

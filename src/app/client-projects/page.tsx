@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { ProjectBrowser } from "@/components/sections/ProjectBrowser";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { ClientLinkGrid } from "@/components/clients/ClientLinkGrid";
 import { PageHero } from "@/components/sections/PageHero";
 import { FinalCta } from "@/components/sections/FinalCta";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Heading } from "@/components/ui/Heading";
+import { clientPlatformLinks, clientWebsiteLinks } from "@/lib/content/mega-menu";
 import { siteConfig } from "@/lib/content/site";
 
 export const metadata: Metadata = {
@@ -43,7 +46,31 @@ export default function ClientProjectsPage() {
           Explore active platforms and published websites across the studio’s
           core disciplines. Every link leads to work already in market.
         </p>
-        <ProjectBrowser />
+        <div className="mt-16 flex items-end justify-between gap-6">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-cyan-accent">Digital products</p>
+            <Heading as="h2" size="md" className="mt-3">Platforms built to perform.</Heading>
+          </div>
+          <Link href="/client-projects/platform" className="hidden items-center gap-2 text-sm text-text-secondary transition hover:text-cyan-accent sm:flex">
+            View platforms <ArrowRight size={16} aria-hidden />
+          </Link>
+        </div>
+        <div className="mt-8">
+          <ClientLinkGrid items={clientPlatformLinks} />
+        </div>
+
+        <div className="mt-24 flex items-end justify-between gap-6">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-fuchsia-400">Web experiences</p>
+            <Heading as="h2" size="md" className="mt-3">Websites designed for action.</Heading>
+          </div>
+          <Link href="/client-projects/website" className="hidden items-center gap-2 text-sm text-text-secondary transition hover:text-cyan-accent sm:flex">
+            View websites <ArrowRight size={16} aria-hidden />
+          </Link>
+        </div>
+        <div className="mt-8">
+          <ClientLinkGrid items={clientWebsiteLinks} />
+        </div>
       </section>
 
       <FinalCta

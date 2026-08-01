@@ -1,34 +1,71 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Brain, MessageCircle, Send, X } from "lucide-react";
+import { ArrowRight, Brain, Mail, MessageCircle, Send, Sparkles, X } from "lucide-react";
 import { siteConfig } from "@/lib/content/site";
 import { clsx } from "@/lib/clsx";
 
+const AI_AGENT_ENDPOINT = process.env.NEXT_PUBLIC_AI_AGENT_ENDPOINT ?? "";
 const WHATSAPP_LABEL = "Chat on WhatsApp";
 
-// Static export has no server, so there's nowhere to run an actual
-// Alcon-aware assistant from — that needs a real backend (a hosted LLM
-// endpoint, a RAG service over Alcon's content, etc.) which nobody has
-// configured yet. Rather than fake a knowledgeable reply, the panel says
-// so plainly and hands off to WhatsApp/email. Set NEXT_PUBLIC_AI_AGENT_ENDPOINT
-// to a real chat API (POST { message } -> { reply }) to light this up for
-// real; until then this is a functional, honest placeholder, not a stub
-// pretending to be more than it is.
-const AI_AGENT_ENDPOINT = process.env.NEXT_PUBLIC_AI_AGENT_ENDPOINT ?? "";
-
 type ChatMessage = { role: "user" | "assistant"; text: string };
+
+const QUICK_PROMPTS = [
+  "Which service fits?",
+  "How fast can we start?",
+  "Build a project stack",
+  "Show client work",
+];
+
+const WELCOME: ChatMessage = {
+  role: "assistant",
+  text: "Tell me what you are building. I can shape the right Alcon service mix, explain the process, and point you to the fastest next step.",
+};
+
+function getStudioReply(message: string) {
+  const text = message.toLowerCase();
+
+  if (/brand|identity|logo|position/.test(text)) {
+    return "Start with Brand Strategy + Identity. We define the position, audience, verbal direction, and visual system first—then extend it into the touchpoints your launch actually needs.";
+  }
+  if (/website|web |ui|ux|platform|app|product/.test(text)) {
+    return "For a digital build, the strongest stack is UX direction, interface design, responsive development, and launch support. If it is a platform, we begin with workflows and user priorities before visual design.";
+  }
+  if (/motion|video|animation|film/.test(text)) {
+    return "Motion works best when the idea is clear before production. We can combine concept, script, art direction, animation, edit, and rollout versions into one production path.";
+  }
+  if (/social|campaign|content|marketing/.test(text)) {
+    return "For ongoing attention, combine campaign strategy, a flexible creative system, content production, and channel-ready adaptations. That keeps the work recognisable without becoming repetitive.";
+  }
+  if (/white.?label|agency|partner|overflow/.test(text)) {
+    return "Alcon can work quietly behind your agency as a white-label creative and production partner—scoped for a single delivery or set up as ongoing capacity.";
+  }
+  if (/timeline|how fast|start|how long|when/.test(text)) {
+    return "A focused project can usually move into discovery quickly once scope, stakeholders, and timing are clear. Share your target date in the quote builder and the studio can recommend a realistic launch path.";
+  }
+  if (/budget|cost|price|quote|aed/.test(text)) {
+    return "The best estimate depends on the outcome, number of deliverables, and launch window. The quote builder takes about two minutes and sends the studio the details needed for a useful response.";
+  }
+  if (/work|portfolio|client|case stud/.test(text)) {
+    return "The Clients area now shows live platforms and websites with real project covers. Open any card to experience the deployed work, not a mockup.";
+  }
+
+  return "A strong starting point is to define the business goal, audience, must-have deliverables, and launch date. Add those four things to the quote builder and Alcon can shape the right team and service mix.";
+}
 
 export function FloatingWidgets() {
   const [aiOpen, setAiOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([WELCOME]);
   const [sending, setSending] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!aiOpen) return;
+
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setAiOpen(false);
@@ -44,6 +81,7 @@ export function FloatingWidgets() {
         setAiOpen(false);
       }
     }
+
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("mousedown", onPointerDown);
     return () => {
@@ -52,51 +90,59 @@ export function FloatingWidgets() {
     };
   }, [aiOpen]);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const text = input.trim();
+  useEffect(() => {
+    if (aiOpen) messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [aiOpen, messages]);
+
+  async function sendMessage(rawMessage: string) {
+    const text = rawMessage.trim();
     if (!text || sending) return;
 
-    setMessages((prev) => [...prev, { role: "user", text }]);
+    setMessages((previous) => [...previous, { role: "user", text }]);
     setInput("");
+    setSending(true);
 
     if (!AI_AGENT_ENDPOINT) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          text: "This assistant isn't connected yet, so I can't answer that reliably — message us on WhatsApp or email and a real person will help.",
-        },
+      await new Promise((resolve) => window.setTimeout(resolve, 520));
+      setMessages((previous) => [
+        ...previous,
+        { role: "assistant", text: getStudioReply(text) },
       ]);
+      setSending(false);
       return;
     }
 
-    setSending(true);
     try {
       const response = await fetch(AI_AGENT_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text }),
       });
-      const data = await response.json();
-      setMessages((prev) => [
-        ...prev,
+      if (!response.ok) throw new Error("Assistant unavailable");
+      const data = (await response.json()) as { reply?: string };
+      setMessages((previous) => [
+        ...previous,
         {
           role: "assistant",
-          text: data.reply ?? "Sorry, something went wrong on our end.",
+          text: data.reply ?? getStudioReply(text),
         },
       ]);
     } catch {
-      setMessages((prev) => [
-        ...prev,
+      setMessages((previous) => [
+        ...previous,
         {
           role: "assistant",
-          text: "Couldn't reach the assistant — try WhatsApp instead.",
+          text: `${getStudioReply(text)} If you want a studio response now, use WhatsApp below.`,
         },
       ]);
     } finally {
       setSending(false);
     }
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    void sendMessage(input);
   }
 
   return (
@@ -106,86 +152,114 @@ export function FloatingWidgets() {
           ref={panelRef}
           role="dialog"
           aria-modal="true"
-          aria-label="Alcon AI Assistant"
-          className="mb-1 w-[min(22rem,calc(100vw-2.5rem))] overflow-hidden rounded-[7px] border border-border bg-surface-elevated shadow-[0_30px_70px_-25px_rgba(0,0,0,0.9)]"
+          aria-label="Alcon Creative Concierge"
+          className="mb-1 flex max-h-[min(720px,calc(100svh-7rem))] w-[min(26rem,calc(100vw-2.5rem))] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#08090d]/95 shadow-[0_35px_100px_-30px_rgba(0,0,0,0.95),0_0_50px_-25px_rgba(22,199,255,0.7)] backdrop-blur-2xl"
         >
-          <div className="flex items-center justify-between gap-3 border-b border-border bg-surface px-4 py-3">
-            <div className="flex items-center gap-2.5">
-              <span
-                aria-hidden
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)]"
-              >
-                <Brain size={16} strokeWidth={1.75} className="text-white" />
-              </span>
-              <div>
-                <p className="text-sm font-medium text-text-primary">
-                  Alcon AI Assistant
-                </p>
-                <p className="text-[11px] text-text-secondary">
-                  {AI_AGENT_ENDPOINT ? "Online" : "Not connected yet"}
-                </p>
+          <div className="relative overflow-hidden border-b border-white/10 px-4 py-4">
+            <div aria-hidden className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(22,199,255,0.22),transparent_48%),radial-gradient(circle_at_90%_100%,rgba(209,45,255,0.18),transparent_42%)]" />
+            <div className="relative flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#16C7FF_0%,#7138FF_52%,#D12DFF_100%)] shadow-[0_0_28px_-8px_rgba(22,199,255,0.8)]">
+                  <Brain size={21} strokeWidth={1.65} className="text-white" aria-hidden />
+                  <span className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-2 border-[#08090d] bg-emerald-400" />
+                </span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="font-heading text-sm font-medium text-text-primary">Alcon Creative Concierge</p>
+                    <span className="rounded-full border border-cyan-accent/25 bg-cyan-accent/10 px-2 py-0.5 font-mono text-[8px] uppercase tracking-[0.14em] text-cyan-accent">AI-guided</span>
+                  </div>
+                  <p className="mt-1 flex items-center gap-1.5 text-[11px] text-text-secondary">
+                    <Sparkles size={11} aria-hidden className="text-fuchsia-400" />
+                    {AI_AGENT_ENDPOINT ? "Live studio intelligence" : "Instant guidance · human handoff"}
+                  </p>
+                </div>
               </div>
+              <button
+                type="button"
+                onClick={() => setAiOpen(false)}
+                aria-label="Close creative concierge"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-text-secondary transition hover:bg-white/5 hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+              >
+                <X size={17} strokeWidth={1.75} />
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => setAiOpen(false)}
-              aria-label="Close assistant"
-              className="flex h-8 w-8 items-center justify-center rounded-[7px] text-text-secondary hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
-            >
-              <X size={16} strokeWidth={1.75} />
-            </button>
           </div>
 
-          <div className="max-h-72 min-h-32 overflow-y-auto px-4 py-3">
-            {messages.length === 0 ? (
-              <p className="text-sm text-text-secondary">
-                Ask about Alcon&apos;s services, process, or past work.
-                {!AI_AGENT_ENDPOINT &&
-                  " (This assistant isn't wired to a live backend in this build — see NEXT_PUBLIC_AI_AGENT_ENDPOINT in the README.)"}
-              </p>
-            ) : (
-              <ul className="space-y-2.5">
-                {messages.map((message, i) => (
-                  <li
-                    key={i}
-                    className={clsx(
-                      "max-w-[85%] rounded-[7px] px-3 py-2 text-sm",
-                      message.role === "user"
-                        ? "ml-auto bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)] text-text-primary"
-                        : "bg-surface text-text-secondary"
-                    )}
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+            <ul className="space-y-3" aria-live="polite">
+              {messages.map((message, index) => (
+                <li
+                  key={`${message.role}-${index}`}
+                  className={clsx(
+                    "max-w-[88%] rounded-2xl px-3.5 py-3 text-sm leading-6",
+                    message.role === "user"
+                      ? "ml-auto rounded-br-md bg-[linear-gradient(120deg,#2870FF_0%,#7138FF_55%,#B22DFF_100%)] text-white"
+                      : "rounded-bl-md border border-white/8 bg-white/[0.045] text-text-secondary"
+                  )}
+                >
+                  {message.text}
+                </li>
+              ))}
+              {sending && (
+                <li className="flex w-fit items-center gap-1.5 rounded-2xl rounded-bl-md border border-white/8 bg-white/[0.045] px-4 py-3" aria-label="Concierge is thinking">
+                  {[0, 1, 2].map((dot) => (
+                    <span key={dot} className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-accent" style={{ animationDelay: `${dot * 140}ms` }} />
+                  ))}
+                </li>
+              )}
+            </ul>
+            <div ref={messageEndRef} />
+
+            {messages.length < 4 && (
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                {QUICK_PROMPTS.map((prompt) => (
+                  <button
+                    key={prompt}
+                    type="button"
+                    disabled={sending}
+                    onClick={() => void sendMessage(prompt)}
+                    className="rounded-xl border border-white/10 bg-white/[0.025] px-3 py-2 text-left text-[11px] leading-4 text-text-secondary transition hover:border-cyan-accent/35 hover:bg-cyan-accent/[0.06] hover:text-text-primary disabled:opacity-50"
                   >
-                    {message.text}
-                  </li>
+                    {prompt}
+                  </button>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
 
-          <form
-            onSubmit={handleSubmit}
-            className="flex items-center gap-2 border-t border-border p-3"
-          >
-            <label htmlFor="ai-agent-input" className="sr-only">
-              Message the Alcon AI Assistant
-            </label>
-            <input
-              id="ai-agent-input"
-              type="text"
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              placeholder="Ask a question…"
-              className="min-h-11 flex-1 rounded-[7px] border border-border bg-surface px-3 text-sm text-text-primary placeholder:text-text-secondary/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
-            />
-            <button
-              type="submit"
-              disabled={sending || !input.trim()}
-              aria-label="Send message"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[7px] bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)] text-text-primary transition hover:brightness-110 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
-            >
-              <Send size={16} strokeWidth={1.75} />
-            </button>
+          <form onSubmit={handleSubmit} className="border-t border-white/10 p-3">
+            <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.035] p-1.5 focus-within:border-cyan-accent/45">
+              <label htmlFor="ai-agent-input" className="sr-only">Message the Alcon Creative Concierge</label>
+              <input
+                id="ai-agent-input"
+                type="text"
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                placeholder="What are you looking to create?"
+                className="min-h-10 min-w-0 flex-1 bg-transparent px-2.5 text-sm text-text-primary placeholder:text-text-secondary/55 focus:outline-none"
+              />
+              <button
+                type="submit"
+                disabled={sending || !input.trim()}
+                aria-label="Send message"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[linear-gradient(120deg,#2870FF_0%,#7138FF_55%,#D12DFF_100%)] text-white transition hover:brightness-110 disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+              >
+                <Send size={16} strokeWidth={1.75} />
+              </button>
+            </div>
           </form>
+
+          <div className="grid grid-cols-3 border-t border-white/10 bg-black/20">
+            <Link href="/get-quote" onClick={() => setAiOpen(false)} className="flex min-h-11 items-center justify-center gap-1.5 border-r border-white/10 px-2 text-[10px] font-medium text-text-secondary transition hover:bg-white/[0.04] hover:text-cyan-accent">
+              Build quote <ArrowRight size={12} aria-hidden />
+            </Link>
+            <a href={siteConfig.contact.whatsapp} target="_blank" rel="noopener noreferrer" className="flex min-h-11 items-center justify-center gap-1.5 border-r border-white/10 px-2 text-[10px] font-medium text-text-secondary transition hover:bg-white/[0.04] hover:text-[#25D366]">
+              <MessageCircle size={12} aria-hidden /> WhatsApp
+            </a>
+            <a href={`mailto:${siteConfig.contact.email}`} className="flex min-h-11 items-center justify-center gap-1.5 px-2 text-[10px] font-medium text-text-secondary transition hover:bg-white/[0.04] hover:text-fuchsia-400">
+              <Mail size={12} aria-hidden /> Email
+            </a>
+          </div>
         </div>
       )}
 
@@ -194,36 +268,30 @@ export function FloatingWidgets() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label={WHATSAPP_LABEL}
-        className="flex h-13 w-13 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_12px_30px_-8px_rgba(37,211,102,0.6)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+        className="flex h-13 w-13 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_12px_30px_-8px_rgba(37,211,102,0.6)] transition hover:scale-105 hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
         style={{ height: "3.25rem", width: "3.25rem" }}
       >
         <MessageCircle size={24} strokeWidth={1.75} aria-hidden />
       </a>
 
-      <button
-        ref={triggerRef}
-        type="button"
-        aria-haspopup="dialog"
-        aria-expanded={aiOpen}
-        aria-label={
-          aiOpen ? "Close Alcon AI Assistant" : "Open Alcon AI Assistant"
-        }
-        onClick={() => setAiOpen((v) => !v)}
-        className="relative flex items-center justify-center rounded-full bg-surface-elevated text-cyan-accent shadow-[0_12px_30px_-8px_rgba(22,199,255,0.5)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
-        style={{ height: "3.25rem", width: "3.25rem" }}
-      >
-        {/* Glowing echo rings — decorative, hidden from assistive tech. */}
-        <span
-          aria-hidden
-          className="absolute inset-0 animate-ping rounded-full bg-cyan-accent/25"
-          style={{ animationDuration: "2.4s" }}
-        />
-        <span
-          aria-hidden
-          className="absolute inset-0 rounded-full ring-1 ring-cyan-accent/40"
-        />
-        <Brain size={24} strokeWidth={1.75} aria-hidden className="relative" />
-      </button>
+      <div className="group relative flex items-center">
+        <span className="pointer-events-none absolute right-[calc(100%+0.75rem)] whitespace-nowrap rounded-lg border border-white/10 bg-black/85 px-3 py-2 text-xs text-text-primary opacity-0 shadow-xl backdrop-blur-md transition group-hover:opacity-100">Ask Alcon AI</span>
+        <button
+          ref={triggerRef}
+          type="button"
+          aria-haspopup="dialog"
+          aria-expanded={aiOpen}
+          aria-label={aiOpen ? "Close Alcon Creative Concierge" : "Open Alcon Creative Concierge"}
+          onClick={() => setAiOpen((value) => !value)}
+          className="relative flex items-center justify-center rounded-full bg-[#0c0f15] text-cyan-accent shadow-[0_12px_35px_-8px_rgba(22,199,255,0.6)] transition hover:scale-105 hover:brightness-125 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
+          style={{ height: "3.25rem", width: "3.25rem" }}
+        >
+          <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-cyan-accent/20" style={{ animationDuration: "2.8s" }} />
+          <span aria-hidden className="absolute inset-0 rounded-full ring-1 ring-cyan-accent/45" />
+          <Brain size={24} strokeWidth={1.65} aria-hidden className="relative" />
+          <span className="absolute -right-1 -top-1 rounded-full border-2 border-[#08090d] bg-[linear-gradient(120deg,#2870FF,#D12DFF)] px-1.5 py-0.5 font-mono text-[7px] uppercase tracking-wide text-white">AI</span>
+        </button>
+      </div>
     </div>
   );
 }

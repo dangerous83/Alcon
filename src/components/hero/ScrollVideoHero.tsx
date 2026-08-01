@@ -7,6 +7,7 @@ import { heroChapters, heroSummary, heroCtas } from "@/lib/content/hero";
 import { HeroReveal } from "@/components/hero/HeroReveal";
 import { PositioningCopy } from "@/components/sections/PositioningCopy";
 import { PositioningStatement } from "@/components/sections/PositioningStatement";
+import { ServicesCopy, ServicesCards } from "@/components/sections/MainServices";
 import { Button } from "@/components/ui/Button";
 import { useIntroEntered } from "@/components/intro/intro-context";
 import { clsx } from "@/lib/clsx";
@@ -71,6 +72,7 @@ const COPY_REVEAL_AT = 24.4;
 // live on that left side, so they wait until the brain has moved off it
 // (frame-checked ~3.1s into the 5s clip) — no dark overlay is used, the copy
 // simply waits for black.
+const SERVICES_REVEAL_AT = 30.5;
 
 export function ScrollVideoHero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -84,6 +86,7 @@ export function ScrollVideoHero() {
   const [phaseC, setPhaseC] = useState(false);
   const [phaseD, setPhaseD] = useState(false);
   const [copyRevealed, setCopyRevealed] = useState(false);
+  const [servicesRevealed, setServicesRevealed] = useState(false);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
   // False while the intro overlay is still up: the hero is inside a
@@ -125,6 +128,7 @@ export function ScrollVideoHero() {
     let lastPhaseC = false;
     let lastPhaseD = false;
     let lastCopyRevealed = false;
+    let lastServicesRevealed = false;
     let hasStarted = false;
 
     function computeChapterIndex(timeInSeconds: number) {
@@ -214,6 +218,13 @@ export function ScrollVideoHero() {
             setCopyRevealed(isCopyRevealed);
           }
 
+          // The services copy + cards resolve on the left once the brain has
+          // dispersed off it into the towers on the right.
+          const isServicesRevealed = timeInSeconds >= SERVICES_REVEAL_AT;
+          if (isServicesRevealed !== lastServicesRevealed) {
+            lastServicesRevealed = isServicesRevealed;
+            setServicesRevealed(isServicesRevealed);
+          }
         },
       });
 
@@ -534,6 +545,21 @@ export function ScrollVideoHero() {
             content resolving over the towers — not a separate section, so there
             is no cut. No dark overlay: the copy waits for the left to clear
             (servicesRevealed) and each card carries its own translucent plate. */}
+        <div
+          data-testid="hero-services"
+          className={clsx(
+            "absolute inset-0 z-20 flex items-center transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            servicesRevealed ? "opacity-100" : "pointer-events-none opacity-0"
+          )}
+          aria-hidden={!servicesRevealed}
+        >
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="lg:max-w-[54%]">
+              <ServicesCopy />
+              <ServicesCards />
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -598,3 +624,4 @@ function StaticHero() {
     </>
   );
 }
+

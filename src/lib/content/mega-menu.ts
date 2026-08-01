@@ -269,27 +269,27 @@ export type ExternalLinkItem = {
  * icon so the Clients dropdown reads as a proper mega menu.
  */
 export const clientPlatformLinks: ExternalLinkItem[] = [
-  { label: "Ui Forge", description: "AI-assisted UI/UX workspace for faster product design.", url: "https://www.uiforge.site/", image: "/images/clients/platform-ui-forge.webp", icon: LayoutGrid },
+  { label: "Ui Forge", description: "AI-assisted UI/UX workspace for faster product design.", url: "https://www.uiforge.site/", image: "/images/clients/platform-ui-forge-v2.webp", icon: LayoutGrid },
   { label: "Vineyard", description: "Faith-centred community platform connecting people and purpose.", url: "https://www.vineyardchrist.com/", image: "/images/clients/platform-vineyard.webp", icon: Grape },
   { label: "Pixela", description: "Generative AI product for visual creation and smart workflows.", url: "https://www.pixela-ai.com/", image: "/images/clients/platform-pixela.webp", icon: Sparkles },
-  { label: "Forge Suite", description: "Connected business tools organised in one scalable workspace.", url: "https://www.forgesuite.online/", image: "/images/clients/platform-forge-suite.webp", icon: Boxes },
+  { label: "Forge Suite", description: "Connected business tools organised in one scalable workspace.", url: "https://www.forgesuite.online/", image: "/images/clients/platform-forge-suite-v2.webp", icon: Boxes },
   { label: "Media HQ", description: "Campaign and content hub built for modern media operations.", url: "https://marketing.securevisanow.com/", image: "/images/clients/platform-media-hq.webp", icon: Newspaper },
-  { label: "AlvinAI", description: "AI productivity platform turning complex tasks into clear actions.", url: "https://www.alvinai-dev.com/", image: "/images/clients/platform-alvin-ai.webp", icon: Bot },
+  { label: "AlvinAI", description: "AI productivity platform turning complex tasks into clear actions.", url: "https://www.alvinai-dev.com/", image: "/images/clients/platform-alvin-ai-v2.webp", icon: Bot },
   { label: "Build Flow", description: "Project workflow platform for planning, teams, and delivery.", url: "https://www.buildflow-tech.com", image: "/images/clients/platform-build-flow.webp", icon: Workflow },
   { label: "Global Harvest", description: "Digital agriculture platform connecting growth and opportunity.", url: "https://www.globalharvest.online/", image: "/images/clients/platform-global-harvest.webp", icon: Wheat },
   { label: "Forge Crypto", description: "Crypto intelligence experience for clearer market decisions.", url: "https://forge-crypto-omega.vercel.app/", image: "/images/clients/platform-forge-crypto.webp", icon: Bitcoin },
 ];
 
 export const clientWebsiteLinks: ExternalLinkItem[] = [
-  { label: "ITSEC", description: "Cybersecurity expertise presented with authority and clarity.", url: "https://itsecnow.com/", image: "/images/clients/website-itsec.webp", icon: ShieldCheck },
-  { label: "SecureVisa", description: "Conversion-led visa journey designed to build trust quickly.", url: "https://www.securevisanow.com", image: "/images/clients/website-securevisa.webp", icon: Plane },
-  { label: "Koll", description: "Premium UAE business presence with a confident digital identity.", url: "https://www.koll.ae", image: "/images/clients/website-koll.webp", icon: Globe },
+  { label: "ITSEC", description: "Cybersecurity expertise presented with authority and clarity.", url: "https://itsecnow.com/", image: "/images/clients/website-itsec-v2.webp", icon: ShieldCheck },
+  { label: "SecureVisa", description: "Conversion-led visa journey designed to build trust quickly.", url: "https://www.securevisanow.com", image: "/images/clients/website-securevisa-v2.webp", icon: Plane },
+  { label: "Koll", description: "Premium UAE business presence with a confident digital identity.", url: "https://www.koll.ae", image: "/images/clients/website-koll-v2.webp", icon: Globe },
   { label: "Tina Portfolio", description: "Personal portfolio shaping experience into a clear creative story.", url: "https://www.tinaramos.online/", image: "/images/clients/website-tina-portfolio.webp", icon: UserRound },
-  { label: "Alcon Media", description: "Media production showcase built to make the work feel cinematic.", url: "https://www.alcon-online.site/", image: "/images/clients/website-alcon-media.webp", icon: Clapperboard },
+  { label: "Alcon Media", description: "Media production showcase built to make the work feel cinematic.", url: "https://www.alcon-online.site/", image: "/images/clients/website-alcon-media-v2.webp", icon: Clapperboard },
   { label: "Kangen", description: "Wellness-focused product website designed around education and action.", url: "https://kangenwateralife4u.com/", image: "/images/clients/website-kangen.webp", icon: Droplets },
   { label: "Logistic", description: "Logistics capability presented through a direct commercial journey.", url: "https://www.ilsmtc.com/", image: "/images/clients/website-logistic.webp", icon: Truck },
   { label: "Malath", description: "Investment brand experience balancing confidence and accessibility.", url: "https://malathinvestment.com/", image: "/images/clients/website-malath.webp", icon: TrendingUp },
-  { label: "UHUD", description: "Corporate digital presence designed for credibility and growth.", url: "https://www.uhud.online/", image: "/images/clients/website-uhud.webp", icon: Building2 },
+  { label: "UHUD", description: "Corporate digital presence designed for credibility and growth.", url: "https://www.uhud.online/", image: "/images/clients/website-uhud-v2.webp", icon: Building2 },
   { label: "VerifiX", description: "Product overview translating verification technology into clarity.", url: "https://overview.verifix.itsecnow.com/", image: "/images/clients/website-verifix.webp", icon: BadgeCheck },
 ];
 

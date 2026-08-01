@@ -38,6 +38,7 @@ export function ClientLinkGrid({ items, kind }: ClientLinkGridProps) {
                   src={assetPath(item.image)}
                   alt={`${item.label} ${kind.toLowerCase()} project thumbnail`}
                   fill
+                  loading="eager"
                   sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                   className="object-cover object-top transition duration-700 ease-out group-hover:scale-[1.045]"
                 />

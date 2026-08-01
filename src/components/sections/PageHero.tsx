@@ -54,7 +54,7 @@ export function PageHero({
       )}
 
       <div className="mx-auto flex min-h-screen min-h-[100svh] max-w-7xl flex-col justify-center px-4 py-24 sm:px-6 lg:px-8">
-        <div className="max-w-3xl py-10">
+        <div className="max-w-3xl py-10 lg:mt-12 xl:mt-16">
           <p className="font-mono text-xs uppercase tracking-[0.22em] text-cyan-accent">
             {eyebrow}
           </p>

@@ -62,7 +62,7 @@ export function ServicesCards() {
                 aria-controls={detailsId}
                 aria-label={`${isActive ? "Collapse" : "View"} details for ${product.name}`}
                 onClick={() => setActiveIndex(isActive ? null : index)}
-                className={`group relative block aspect-[16/9] w-full overflow-hidden rounded-2xl border bg-black/70 text-left shadow-[0_18px_55px_-34px_rgba(40,112,255,0.8)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-accent/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent ${
+                className={`group relative block aspect-[16/9] w-full overflow-hidden rounded-2xl border bg-black/70 text-left shadow-[0_18px_55px_-34px_rgba(40,112,255,0.8)] transition duration-300 hover:-translate-y-1 hover:border-cyan-accent/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent ${
                   isActive
                     ? "border-cyan-accent/70 ring-1 ring-cyan-accent/35"
                     : "border-white/12"
@@ -77,12 +77,12 @@ export function ServicesCards() {
                   sizes="(min-width: 1024px) 17vw, 46vw"
                   className="object-cover transition duration-700 ease-out group-hover:scale-[1.045]"
                 />
-                <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/60 px-2 py-1 font-mono text-[9px] text-white/85 backdrop-blur-md">
+                <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/80 px-2 py-1 font-mono text-[9px] text-white/85">
                   {String(index + 1).padStart(2, "0")}
                 </span>
 
                 <span className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-3 p-3 sm:p-4">
-                  <span className="rounded-xl border border-white/10 bg-black/60 px-2.5 py-2 backdrop-blur-md">
+                  <span className="rounded-xl border border-white/10 bg-black/80 px-2.5 py-2">
                     <span className="block font-mono text-[8px] uppercase tracking-[0.17em] text-cyan-accent sm:text-[9px]">
                       {product.category}
                     </span>
@@ -90,7 +90,7 @@ export function ServicesCards() {
                       {product.name}
                     </span>
                   </span>
-                  <span className="grid size-8 shrink-0 place-items-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur-md transition group-hover:border-cyan-accent/70 group-hover:text-cyan-accent">
+                  <span className="grid size-8 shrink-0 place-items-center rounded-full border border-white/20 bg-black/80 text-white transition group-hover:border-cyan-accent/70 group-hover:text-cyan-accent">
                     {isActive ? (
                       <X size={14} aria-hidden />
                     ) : (

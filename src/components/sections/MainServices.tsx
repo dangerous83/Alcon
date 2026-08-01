@@ -14,7 +14,7 @@ const printProducts = [
     category: "Apparel",
     description: "Premium tees printed for teams, launches, events, and brand drops.",
     highlights: ["Premium cotton options", "DTF, screen print & embroidery"],
-    image: "/images/print-products/print-tshirt.jpg",
+    image: "/images/print-products/print-tshirt-clean.jpg",
     imageAlt: "Premium black custom printed T-shirt with electric blue and violet artwork",
   },
   {
@@ -22,7 +22,7 @@ const printProducts = [
     category: "Apparel",
     description: "Heavyweight branded hoodies with durable, high-impact finishing.",
     highlights: ["Heavyweight fleece options", "Print or embroidery finishing"],
-    image: "/images/print-products/print-hoodie.jpg",
+    image: "/images/print-products/print-hoodie-clean.jpg",
     imageAlt: "Premium black custom hoodie with electric blue and violet artwork",
   },
   {
@@ -30,7 +30,7 @@ const printProducts = [
     category: "Drinkware",
     description: "Sharp, colour-rich mugs made for gifts, offices, and campaigns.",
     highlights: ["Vivid, durable colour", "Ideal for teams and gifting"],
-    image: "/images/print-products/print-mugs.jpg",
+    image: "/images/print-products/print-mugs-clean.jpg",
     imageAlt: "Matte black printed ceramic mug with blue and violet artwork",
   },
   {
@@ -38,7 +38,7 @@ const printProducts = [
     category: "Brand details",
     description: "Premium die-cut vinyl stickers that make every surface feel branded.",
     highlights: ["Custom shapes and sizes", "Durable vinyl finishing"],
-    image: "/images/print-products/print-stickers.jpg",
+    image: "/images/print-products/print-stickers-clean.jpg",
     imageAlt: "Premium die-cut sticker collection with blue, violet, and magenta graphics",
   },
 ] as const;

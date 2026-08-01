@@ -8,6 +8,7 @@ export type Service = {
   valueProposition: string;
   heroEyebrow: string;
   heroHeadline: string;
+  heroAccent: string;
   heroImage: string;
   heroAlt: string;
   heroStats: { value: string; label: string }[];
@@ -35,6 +36,7 @@ export const services: Service[] = [
     valueProposition: "Build a brand people recognise, trust, and choose — with a distinctive identity engineered to perform everywhere.",
     heroEyebrow: "Branding agency Dubai · Strategy · Identity · Launch",
     heroHeadline: "Build a brand they remember — and choose.",
+    heroAccent: "choose",
     heroImage: "/images/services/branding-hero-v2.webp",
     heroAlt: "Premium brand identity system taking shape in glass, metal, electric blue, and violet light",
     heroStats: [
@@ -79,6 +81,7 @@ export const services: Service[] = [
     valueProposition: "Turn strategy into a digital experience that earns trust quickly and moves every visitor toward action.",
     heroEyebrow: "Web UI/UX Dubai · Research · Design systems · Conversion",
     heroHeadline: "Turn every click into momentum.",
+    heroAccent: "momentum",
     heroImage: "/images/services/web-ui-ux-hero.webp",
     heroAlt: "Layered premium website and mobile interface system connected by a luminous conversion path",
     heroStats: [
@@ -123,6 +126,7 @@ export const services: Service[] = [
     valueProposition: "Turn one strong visual idea into a campaign system that stays distinctive across every format and channel.",
     heroEyebrow: "Graphic design Dubai · Campaigns · Digital · Print",
     heroHeadline: "Make every campaign impossible to ignore.",
+    heroAccent: "ignore",
     heroImage: "/images/services/graphic-design-hero.webp",
     heroAlt: "Premium campaign design system unfolding across abstract posters, print sheets, and digital formats",
     heroStats: [
@@ -167,6 +171,7 @@ export const services: Service[] = [
     valueProposition: "Learn the tools on a real brief and leave with finished work, reusable workflows, and the confidence to keep building.",
     heroEyebrow: "Dubai weekends · Small cohorts · Live creative builds",
     heroHeadline: "Learn it Saturday. Ship it Sunday.",
+    heroAccent: "Sunday",
     heroImage: "/images/services/tutorials-hero-v2.webp",
     heroAlt: "Premium AI creative learning lab with illuminated modular tools and connected project workspaces",
     heroStats: [
@@ -211,6 +216,7 @@ export const services: Service[] = [
     valueProposition: "Build a motion system — not a pile of one-off videos — so every campaign frame moves with the same recognisable energy.",
     heroEyebrow: "Motion design Dubai · Brand systems · Video ads",
     heroHeadline: "Make the brand move like it means it.",
+    heroAccent: "move",
     heroImage: "/images/services/motion-hero-v2.webp",
     heroAlt: "Cinematic motion design system built from luminous film ribbons, animation frames, and sound waves",
     heroStats: [
@@ -255,6 +261,7 @@ export const services: Service[] = [
     valueProposition: "Make complex products and stories feel simple, human, and worth watching from the first frame to the last.",
     heroEyebrow: "2D animation Dubai · Explainers · Product stories",
     heroHeadline: "Explain the complex. Keep every eye.",
+    heroAccent: "complex",
     heroImage: "/images/services/2d-animation-hero.webp",
     heroAlt: "Layered premium 2D animation scene with luminous keyframe paths and abstract narrative planes",
     heroStats: [
@@ -299,6 +306,7 @@ export const services: Service[] = [
     valueProposition: "Create impossible product shots, worlds, and transformations with the control and finish of premium commercial production.",
     heroEyebrow: "3D animation Dubai · CGI · Product · Architecture",
     heroHeadline: "Create what cameras cannot capture.",
+    heroAccent: "cannot",
     heroImage: "/images/services/3d-animation-hero.webp",
     heroAlt: "Premium 3D object evolving from wireframe through clay model into a polished glass and metal final render",
     heroStats: [
@@ -343,6 +351,7 @@ export const services: Service[] = [
     valueProposition: "Move from ambitious visual idea to finished film faster — with AI extending possibility and experienced directors controlling the result.",
     heroEyebrow: "AI video Dubai · Direction · Generation · Finish",
     heroHeadline: "Turn bold ideas into films at AI speed.",
+    heroAccent: "speed",
     heroImage: "/images/services/ai-video-hero.webp",
     heroAlt: "Generative particles becoming cinematic film frames inside a premium director-controlled production system",
     heroStats: [
@@ -387,6 +396,7 @@ export const services: Service[] = [
     valueProposition: "Replace random posting with a recognisable content engine built to earn attention, learn from performance, and improve every month.",
     heroEyebrow: "Social media Dubai · Content systems · Paid creative",
     heroHeadline: "Stop posting. Start compounding attention.",
+    heroAccent: "attention",
     heroImage: "/images/services/social-hero-v2.webp",
     heroAlt: "Connected premium social content frames and campaign signals rising across a dark digital grid",
     heroStats: [
@@ -431,6 +441,7 @@ export const services: Service[] = [
     valueProposition: "Capture the people, products, and moments that make the brand believable — with a clear story and a premium cinematic finish.",
     heroEyebrow: "Videography Dubai · Direction · Production · Finish",
     heroHeadline: "Shoot stories people feel.",
+    heroAccent: "feel",
     heroImage: "/images/services/videography-hero.webp",
     heroAlt: "Premium unbranded cinema camera and lighting system framing the Dubai skyline on a dark studio set",
     heroStats: [
@@ -475,6 +486,7 @@ export const services: Service[] = [
     valueProposition: "Create a library of images that gives every campaign, page, and product a more credible and desirable presence.",
     heroEyebrow: "Commercial photography Dubai · Product · Brand · Campaign",
     heroHeadline: "Make the product impossible to scroll past.",
+    heroAccent: "scroll",
     heroImage: "/images/services/photography-hero.webp",
     heroAlt: "Premium commercial photography set with sculptural product, optical glass, and multiple campaign crops",
     heroStats: [
@@ -519,6 +531,7 @@ export const services: Service[] = [
     valueProposition: "Build every cut backwards from a measurable outcome — watch-through, click-through, understanding, or action.",
     heroEyebrow: "Video editing Dubai · Story · Colour · Sound",
     heroHeadline: "Find the cut that moves the metric.",
+    heroAccent: "metric",
     heroImage: "/images/services/editing-hero-v2.webp",
     heroAlt: "Cinematic post-production timeline with layered frames, luminous audio waveforms, and a refined colour grade",
     heroStats: [

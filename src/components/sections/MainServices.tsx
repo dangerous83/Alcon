@@ -1,100 +1,126 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { services } from "@/lib/content/services";
+import { useSyncExternalStore } from "react";
+import { ArrowUpRight } from "lucide-react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Heading } from "@/components/ui/Heading";
-import { Card } from "@/components/ui/Card";
 import { assetPath } from "@/lib/asset-path";
 
-// The full catalogue (including Video Editing) still lives on /services and
-// powers the routes; this section intentionally features a subset.
-const featured = services.filter((service) => service.slug !== "editing");
+const printProducts = [
+  {
+    name: "Custom T-shirts",
+    category: "Apparel",
+    description: "Premium tees printed for teams, launches, events, and brand drops.",
+    image: "/images/print-products/print-tshirt.webp",
+    imageAlt: "Premium black custom printed T-shirt with electric blue and violet artwork",
+  },
+  {
+    name: "Custom Hoodies",
+    category: "Apparel",
+    description: "Heavyweight branded hoodies with durable, high-impact finishing.",
+    image: "/images/print-products/print-hoodie.webp",
+    imageAlt: "Premium black custom hoodie with electric blue and violet artwork",
+  },
+  {
+    name: "Printed Mugs",
+    category: "Drinkware",
+    description: "Sharp, colour-rich mugs made for gifts, offices, and campaigns.",
+    image: "/images/print-products/print-mugs.webp",
+    imageAlt: "Matte black printed ceramic mug with blue and violet artwork",
+  },
+  {
+    name: "Custom Stickers",
+    category: "Brand details",
+    description: "Premium die-cut vinyl stickers that make every surface feel branded.",
+    image: "/images/print-products/print-stickers.webp",
+    imageAlt: "Premium die-cut sticker collection with blue, violet, and magenta graphics",
+  },
+] as const;
 
-/**
- * The four discipline cards. Exported so the hero can render them as the final
- * phase of its one continuous scroll-scrub (over the growth-chart of towers),
- * and the reduced-motion fallback below can render the identical set. Summaries
- * are clamped so the four cards + heading fit the pinned viewport; the full
- * text lives on /services.
- */
 export function ServicesCards() {
   return (
-    <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-      {featured.map((service, index) => (
-        <Card
-          as="li"
-          key={service.slug}
-          // The card's own translucent, blurred plate is what keeps it legible
-          // over the bright towers — deliberately no full-section dark wash.
-          className="flex flex-col bg-surface-elevated/80 p-4 backdrop-blur-md"
+    <ul className="mt-4 grid grid-cols-2 gap-3">
+      {printProducts.map((product, index) => (
+        <li
+          key={product.name}
+          className="group overflow-hidden rounded-2xl border border-white/10 bg-surface-elevated/90 shadow-[0_18px_55px_-34px_rgba(40,112,255,0.8)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-accent/45"
         >
-          <span className="font-mono text-[11px] text-text-secondary">
-            0{index + 1}
-          </span>
-          <h3 className="mt-2 font-heading text-base font-medium leading-tight text-text-primary">
-            {service.name}
-          </h3>
-          <p className="mt-1.5 flex-1 text-sm leading-snug text-text-secondary line-clamp-2">
-            {service.summary}
-          </p>
           <Link
-            href={`/services/${service.slug}`}
-            className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent rounded"
+            href="/get-quote#project-details"
+            className="flex h-full flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-accent"
           >
-            Learn more
-            <span aria-hidden>→</span>
+            <div className="relative h-16 overflow-hidden border-b border-white/10 sm:h-20">
+              <Image
+                src={assetPath(product.image)}
+                alt={product.imageAlt}
+                fill
+                sizes="(min-width: 1024px) 17vw, 46vw"
+                className="object-cover transition duration-700 ease-out group-hover:scale-[1.06]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+              <span className="absolute left-3 top-3 rounded-full border border-white/15 bg-black/55 px-2 py-1 font-mono text-[9px] text-white/80 backdrop-blur-md">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+            </div>
+
+            <div className="flex flex-1 flex-col p-2.5 sm:p-3">
+              <p className="font-mono text-[8px] uppercase tracking-[0.17em] text-cyan-accent sm:text-[9px]">
+                {product.category}
+              </p>
+              <h3 className="mt-1.5 font-heading text-sm font-semibold leading-tight text-text-primary">
+                {product.name}
+              </h3>
+              <p className="mt-1 hidden text-[11px] leading-4 text-text-secondary sm:line-clamp-2 sm:block">
+                {product.description}
+              </p>
+              <span className="mt-2.5 inline-flex items-center gap-1.5 text-[11px] font-medium text-text-primary transition group-hover:text-cyan-accent sm:text-xs">
+                Request a quote
+                <ArrowUpRight size={13} strokeWidth={1.9} aria-hidden />
+              </span>
+            </div>
           </Link>
-        </Card>
+        </li>
       ))}
     </ul>
   );
 }
 
-/** Heading + intro for the services section. Exported alongside the cards. */
 export function ServicesCopy() {
   return (
     <>
-      <SectionLabel>What we do</SectionLabel>
-      <Heading as="h2" id="services-heading" size="lg" className="mt-3">
-        One creative system, four disciplines.
+      <SectionLabel className="lg:pt-14">Print &amp; merchandise</SectionLabel>
+      <Heading as="h2" id="services-heading" size="sm" className="mt-2.5 max-w-lg">
+        Put your brand on something people keep.
       </Heading>
-      <p className="mt-3 max-w-xl text-text-secondary">
-        Every service is built to plug into the same brand system — so
-        identity, motion, and content stay consistent no matter which team
-        you start with.
+      <p className="mt-2.5 max-w-xl text-sm leading-5 text-text-secondary sm:text-[15px] sm:leading-6">
+        Premium custom print for teams, launches, events, client gifts, and
+        everyday brand visibility—produced with sharp detail and a finish that
+        feels considered.
       </p>
     </>
   );
 }
 
-/**
- * "One creative system, four disciplines."
- *
- * For motion visitors this content is rendered by the hero as the FINAL phase
- * of one continuous scroll-scrub — the same clip runs brain → skyline → towers
- * without a break, and the cards resolve over the towers finale. So there is no
- * separate scrubbed section here (a second pinned section would put a visible
- * cut between the hero and this content); this component only provides the
- * reduced-motion / no-JS / SSR fallback: a static frame of the towers finale
- * with the cards on the left, no dark overlay.
- */
+function subscribeToReducedMotion(callback: () => void) {
+  const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+  media.addEventListener("change", callback);
+  return () => media.removeEventListener("change", callback);
+}
+
+function getReducedMotionSnapshot() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 export function MainServices() {
-  const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
+  const reducedMotion = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    () => true
+  );
 
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-
-  // Motion visitors get this content inside the hero's scrub, so rendering it
-  // again here would duplicate it — and put it after a section boundary, the
-  // very cut we're removing. Render only for reduced-motion / no-JS / SSR.
-  if (reducedMotion === false) return null;
+  if (!reducedMotion) return null;
 
   return (
     <section

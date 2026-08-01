@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { AccentHeading } from "@/components/ui/AccentHeading";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { FinalCta } from "@/components/sections/FinalCta";
+import { PageHero } from "@/components/sections/PageHero";
 import { portfolioDisciplines } from "@/lib/content/portfolio";
 import { siteConfig } from "@/lib/content/site";
 import { assetPath } from "@/lib/asset-path";
@@ -29,32 +29,25 @@ export const metadata: Metadata = {
 export default function PortfolioPage() {
   return (
     <main>
-      <section className="relative overflow-hidden border-b border-border">
-        <div
-          aria-hidden
-          className="absolute inset-0 opacity-30"
-          style={{
-            background:
-              "radial-gradient(circle at 75% 15%, rgba(40,112,255,0.4), transparent 40%), radial-gradient(circle at 20% 85%, rgba(209,45,255,0.28), transparent 42%)",
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8 lg:py-40">
-          <div className="max-w-4xl">
-            <SectionLabel>Portfolio</SectionLabel>
-            <AccentHeading
-              text="A working portfolio, not a highlight reel."
-              accent="portfolio"
-              className="mt-5"
-            />
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-text-secondary sm:text-xl">
-              Eight creative disciplines. One standard: every idea must become
-              work people notice, understand, and remember.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Portfolio · Eight creative disciplines"
+        headline="A working portfolio, not a highlight reel."
+        accent="portfolio"
+        description="Eight creative disciplines. One standard: every idea must become work people notice, understand, and remember."
+        image="/images/pages/portfolio-hero.webp"
+        imageAlt="Curated gallery of creative frames, film, cameras, and sculptural work"
+        primaryLabel="Explore the collections"
+        primaryHref="#portfolio-collections"
+        secondaryLabel="Start a project"
+        secondaryHref="/get-quote"
+        stats={[
+          { value: "08 collections", label: "Explore by discipline" },
+          { value: "700+ projects", label: "Delivered across formats" },
+          { value: "One standard", label: "Strategy through finish" },
+        ]}
+      />
 
-      <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+      <section id="portfolio-collections" className="scroll-mt-24 mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
             <SectionLabel>Explore by discipline</SectionLabel>

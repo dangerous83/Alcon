@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { siteConfig } from "@/lib/content/site";
 import { serviceJsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { generatedImages } from "@/lib/content/generated-images";
+import { assetPath } from "@/lib/asset-path";
 
 const serviceVisuals: Partial<
   Record<string, (typeof generatedImages)[keyof typeof generatedImages]>
@@ -117,7 +118,7 @@ export default async function ServicePage({
       {isBranding ? (
         <section className="relative isolate min-h-[720px] overflow-hidden border-b border-border lg:min-h-[780px]">
           <Image
-            src="/images/services/branding-hero-v2.webp"
+            src={assetPath("/images/services/branding-hero-v2.webp")}
             alt="A premium brand identity system taking shape in glass, metal, electric blue, and violet light"
             fill
             priority

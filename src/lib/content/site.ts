@@ -85,8 +85,15 @@ export const topBanner = {
 export const footerLinks = {
   services: [
     { label: "Branding & Identity", href: "/services/branding" },
+    { label: "Web UI/UX Design", href: "/services/web-ui-ux" },
+    { label: "Graphic Design", href: "/services/graphic-design" },
     { label: "Motion Graphics", href: "/services/motion" },
+    { label: "2D Animation", href: "/services/2d-animation" },
+    { label: "3D Animation", href: "/services/3d-animation" },
+    { label: "AI Video", href: "/services/ai-video" },
     { label: "Video Editing", href: "/services/editing" },
+    { label: "Videography", href: "/services/videography" },
+    { label: "Photography", href: "/services/photography" },
     { label: "Social Media", href: "/services/social" },
     { label: "Weekend Tutorials", href: "/services/tutorials" },
   ],

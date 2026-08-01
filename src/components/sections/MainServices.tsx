@@ -72,6 +72,8 @@ export function ServicesCards() {
                   src={assetPath(product.image)}
                   alt={product.imageAlt}
                   fill
+                  loading="eager"
+                  decoding="sync"
                   sizes="(min-width: 1024px) 17vw, 46vw"
                   className="object-cover brightness-125 contrast-110 saturate-125 transition duration-700 ease-out group-hover:scale-[1.045]"
                 />
@@ -124,6 +126,8 @@ export function ServicesCards() {
             src={assetPath(activeProduct.image)}
             alt={activeProduct.imageAlt}
             fill
+            loading="eager"
+            decoding="sync"
             sizes="(min-width: 1024px) 39vw, 92vw"
             className="object-contain brightness-125 contrast-110 saturate-125"
           />

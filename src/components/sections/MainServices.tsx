@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useId, useState } from "react";
+import { useId, useState, useSyncExternalStore } from "react";
 import { ArrowUpRight, X } from "lucide-react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Heading } from "@/components/ui/Heading";
@@ -165,7 +165,25 @@ export function ServicesCopy() {
   );
 }
 
+function subscribeToReducedMotion(callback: () => void) {
+  const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+  media.addEventListener("change", callback);
+  return () => media.removeEventListener("change", callback);
+}
+
+function getReducedMotionSnapshot() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 export function MainServices() {
+  const reducedMotion = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    () => true
+  );
+
+  if (!reducedMotion) return null;
+
   return (
     <section
       className="relative overflow-hidden bg-black"

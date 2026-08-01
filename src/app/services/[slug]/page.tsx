@@ -5,7 +5,9 @@ import { notFound } from "next/navigation";
 import { services, getServiceBySlug } from "@/lib/content/services";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Heading } from "@/components/ui/Heading";
+import { AccentHeading } from "@/components/ui/AccentHeading";
 import { Button } from "@/components/ui/Button";
+import { FinalCta } from "@/components/sections/FinalCta";
 import { siteConfig } from "@/lib/content/site";
 import { serviceJsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { assetPath } from "@/lib/asset-path";
@@ -156,9 +158,11 @@ export default async function ServicePage({
             >
               {service.heroEyebrow}
             </p>
-            <h1 className="mt-6 max-w-3xl font-heading text-5xl font-medium leading-[0.95] tracking-[-0.05em] text-text-primary sm:text-6xl lg:text-8xl">
-              {service.heroHeadline}
-            </h1>
+            <AccentHeading
+              text={service.heroHeadline}
+              accent={service.heroAccent}
+              className="mt-6 max-w-3xl"
+            />
             <p className="mt-7 max-w-2xl text-lg leading-8 text-text-secondary sm:text-xl">
               {service.valueProposition}
             </p>
@@ -346,28 +350,12 @@ export default async function ServicePage({
         </section>
       )}
 
-      <section className="relative overflow-hidden border-y border-border">
-        <div
-          aria-hidden
-          className={`absolute inset-0 -z-10 bg-gradient-to-br ${theme.glow}`}
-        />
-        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
-          <div className="mx-auto max-w-4xl text-center">
-            <SectionLabel>Ready when you are</SectionLabel>
-            <Heading as="h2" size="lg" className="mt-5">
-              {service.cta.heading}
-            </Heading>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-text-secondary">
-              {service.cta.body}
-            </p>
-            <div className="mt-10">
-              <Button href="/get-quote" size="lg">
-                {service.cta.label}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <FinalCta
+        heading={service.cta.heading}
+        body={service.cta.body}
+        primaryLabel={service.cta.label}
+        secondaryLabel="Explore Our Work"
+      />
 
       <section className="bg-surface">
         <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">

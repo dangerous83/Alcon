@@ -1,181 +1,116 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { Plus, ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { AccentHeading } from "@/components/ui/AccentHeading";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { Heading } from "@/components/ui/Heading";
-import { Button } from "@/components/ui/Button";
+import { FinalCta } from "@/components/sections/FinalCta";
+import { portfolioDisciplines } from "@/lib/content/portfolio";
 import { siteConfig } from "@/lib/content/site";
-import { projectCategories } from "@/lib/content/projects";
+import { assetPath } from "@/lib/asset-path";
 
-const title = "Portfolio";
+const title = "Creative Portfolio";
 const description =
-  "Selected work from Alcon — a Dubai advertising and creative agency specialising in AI-powered branding, motion, video editing, and social marketing.";
+  "Explore Alcon's branding, UI/UX, animation, social, videography, and photography portfolio across Dubai, the UAE, and the GCC.";
 
 export const metadata: Metadata = {
   title,
   description,
   keywords: [
     "creative agency portfolio Dubai",
-    "AI advertising work",
-    "branding case studies UAE",
-    "motion design portfolio",
-    "video production Dubai",
+    "branding portfolio UAE",
+    "animation portfolio Dubai",
+    "UI UX portfolio UAE",
+    "video production portfolio Dubai",
   ],
   alternates: { canonical: `${siteConfig.url}/portfolio` },
 };
 
-// One placeholder slot per discipline the portfolio will fill up with.
-// These render as visibly-empty "add case study" tiles rather than
-// invented work — replace the summaries below with the real project name,
-// hero image, and outcome once each engagement is cleared to publish.
-const portfolioSlots = [
-  {
-    discipline: "Branding & Identity",
-    category: "branding",
-    intro:
-      "Full brand builds and identity refreshes for Dubai and GCC businesses — engineered for advertising, not just presentation decks.",
-  },
-  {
-    discipline: "Motion & Video Ads",
-    category: "motion",
-    intro:
-      "Ad-ready motion identities, brand stings, and short-form video creative built for Meta, TikTok, YouTube, and connected TV.",
-  },
-  {
-    discipline: "Post-Production & Editing",
-    category: "editing",
-    intro:
-      "AI-assisted post on campaign, product, and brand films — colour, sound, subtitles, and platform versioning to a broadcast finish.",
-  },
-  {
-    discipline: "Social Marketing",
-    category: "social",
-    intro:
-      "Content systems and paid social campaigns that tie back to real acquisition metrics, not vanity engagement.",
-  },
-  {
-    discipline: "Web & Product Design",
-    category: "branding",
-    intro:
-      "Marketing sites, product interfaces, and landing-page systems built to convert paid traffic and hold organic ranking.",
-  },
-  {
-    discipline: "3D & AI Video",
-    category: "motion",
-    intro:
-      "Architectural, product, and generative-video work — the more experimental end of what an AI creative agency can ship.",
-  },
-];
-
-const categoryHref = (slug: string) => {
-  // Portfolio filters link into the closest existing service page. When
-  // dedicated per-discipline portfolio pages are built, swap this map for
-  // real /portfolio/<slug> hrefs.
-  const map: Record<string, string> = {
-    branding: "/services/branding",
-    motion: "/services/motion",
-    editing: "/services/editing",
-    social: "/services/social",
-  };
-  return map[slug] ?? "/client-projects";
-};
-
 export default function PortfolioPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-      <div className="max-w-3xl">
-        <SectionLabel>Portfolio</SectionLabel>
-        <Heading as="h1" size="xl" className="mt-4">
-          A working portfolio, not a highlight reel.
-        </Heading>
-        <p className="mt-5 text-lg text-text-secondary">
-          Selected work across the disciplines Alcon actually ships: brand
-          builds, motion identities, video ads, post-production, and paid
-          social campaigns — for clients across Dubai, the wider GCC, and
-          international brands with a regional presence.
-        </p>
-        <p className="mt-4 text-text-secondary">
-          Case studies below are added as engagements clear for publication.
-          For live client work already in market, browse the Clients menu
-          in the header or the Client Projects index.
-        </p>
-      </div>
-
-      <div className="mt-14 flex flex-wrap items-center gap-2">
-        {projectCategories.map((category) => (
-          <span
-            key={category.slug}
-            className="rounded-full border border-border bg-surface px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-text-secondary"
-          >
-            {category.label}
-          </span>
-        ))}
-      </div>
-
-      <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {portfolioSlots.map((slot, index) => (
-          <li key={`${slot.discipline}-${index}`}>
-            <Link
-              href={categoryHref(slot.category)}
-              aria-label={`${slot.discipline} portfolio slot — pending`}
-              className="group block rounded-[7px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-accent"
-            >
-              <div
-                role="img"
-                aria-hidden
-                className="relative overflow-hidden rounded-[7px] border border-dashed border-white/15 bg-surface-elevated/40 transition-colors duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:border-white/30 group-hover:bg-surface-elevated/70"
-                style={{ aspectRatio: "4 / 3" }}
-              >
-                <div
-                  className="absolute inset-0 opacity-30"
-                  style={{
-                    background:
-                      "radial-gradient(circle at 75% 30%, rgba(40,112,255,0.35), transparent 55%), radial-gradient(circle at 25% 80%, rgba(209,45,255,0.25), transparent 55%)",
-                  }}
-                />
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-background/50 text-text-primary transition-colors duration-500 group-hover:border-white/50">
-                    <Plus size={20} strokeWidth={2} aria-hidden />
-                  </span>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-text-secondary">
-                    Add case study
-                  </span>
-                </div>
-                <span className="absolute bottom-4 left-4 font-mono text-[10px] uppercase tracking-[0.24em] text-text-secondary/70">
-                  Slot 0{index + 1}
-                </span>
-              </div>
-              <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-magenta">
-                {slot.discipline}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                {slot.intro}
-              </p>
-              <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-text-primary transition-colors group-hover:text-cyan-accent">
-                See the service
-                <ArrowRight size={14} strokeWidth={2} aria-hidden />
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-
-      <div className="mt-20 rounded-[7px] border border-border bg-surface-elevated/60 p-8 sm:p-10">
-        <Heading as="h2" size="md" className="max-w-2xl">
-          Looking for live client work?
-        </Heading>
-        <p className="mt-3 max-w-2xl text-text-secondary">
-          Real, currently-in-market client sites and platforms are indexed
-          under Client Projects — the Portfolio page above is where
-          publishable case studies land as each one clears review.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Button href="/client-projects">View all client work</Button>
-          <Button href="/get-quote" variant="secondary">
-            Start a project
-          </Button>
+    <main>
+      <section className="relative overflow-hidden border-b border-border">
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-30"
+          style={{
+            background:
+              "radial-gradient(circle at 75% 15%, rgba(40,112,255,0.4), transparent 40%), radial-gradient(circle at 20% 85%, rgba(209,45,255,0.28), transparent 42%)",
+          }}
+        />
+        <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8 lg:py-40">
+          <div className="max-w-4xl">
+            <SectionLabel>Portfolio</SectionLabel>
+            <AccentHeading
+              text="A working portfolio, not a highlight reel."
+              accent="portfolio"
+              className="mt-5"
+            />
+            <p className="mt-7 max-w-2xl text-lg leading-8 text-text-secondary sm:text-xl">
+              Eight creative disciplines. One standard: every idea must become
+              work people notice, understand, and remember.
+            </p>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+        <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+          <div>
+            <SectionLabel>Explore by discipline</SectionLabel>
+            <p className="mt-4 max-w-2xl text-text-secondary">
+              Each collection connects the thinking, craft, and production
+              outputs behind the work—without invented case studies.
+            </p>
+          </div>
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-fuchsia-400">
+            08 collections
+          </p>
+        </div>
+
+        <ul className="mt-12 grid gap-6 md:grid-cols-2">
+          {portfolioDisciplines.map((portfolio, index) => (
+            <li key={portfolio.slug}>
+              <Link
+                href={`/portfolio/${portfolio.slug}`}
+                className="group block overflow-hidden rounded-2xl border border-border bg-surface-elevated transition hover:-translate-y-1 hover:border-white/25"
+              >
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <Image
+                    src={assetPath(portfolio.heroImage)}
+                    alt={portfolio.heroAlt}
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="object-cover transition duration-700 group-hover:scale-[1.035]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent" />
+                  <span className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/55 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-text-secondary backdrop-blur-md">
+                    Collection {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-5 p-6 sm:p-8">
+                    <div>
+                      <h2 className="font-heading text-2xl font-medium text-white sm:text-3xl">
+                        {portfolio.name}
+                      </h2>
+                      <p className="mt-2 max-w-lg text-sm leading-6 text-white/70">
+                        {portfolio.summary}
+                      </p>
+                    </div>
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/25 bg-black/40 text-white transition group-hover:border-fuchsia-400 group-hover:bg-fuchsia-500/15">
+                      <ArrowUpRight size={18} aria-hidden />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <FinalCta
+        heading="Ready to make work worth adding to the portfolio?"
+        body="Tell us what the next campaign, brand, platform, or production needs to achieve. We will bring the right disciplines together."
+      />
+    </main>
   );
 }

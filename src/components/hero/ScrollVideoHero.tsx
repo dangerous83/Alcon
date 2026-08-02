@@ -312,7 +312,7 @@ export function ScrollVideoHero() {
          non-linear map (see SCROLL_SPLIT) gives clips 1-3 roughly the old
          per-pixel rate over the first ~60% and hands the towers finale a
          generous last ~40%. */
-      className="relative h-[460vh] lg:h-[560vh]"
+      className="relative h-[380vh] sm:h-[460vh] lg:h-[560vh]"
       aria-label="Alcon — Creative Intelligence"
     >
       <h1 className="sr-only">{heroSummary}</h1>
@@ -342,6 +342,19 @@ export function ScrollVideoHero() {
             )}
             muted
             playsInline
+            {...({
+              // iOS Safari inline-playback attribute (kept alongside
+              // playsInline because older WebKit still honours the
+              // vendor-prefixed form). Without it the browser can promote the
+              // video to a fullscreen player mid-scroll on some devices.
+              "webkit-playsinline": "true",
+              // Tencent X5 (WeChat / QQ browsers on Android) inline hint —
+              // otherwise the video takes over the full screen on scroll.
+              "x5-video-player-type": "h5-page",
+              "x5-video-player-fullscreen": "false",
+            } as Record<string, string>)}
+            disablePictureInPicture
+            disableRemotePlayback
             preload="auto"
             poster={assetPath("/images/hero-poster.jpg")}
             aria-hidden
@@ -433,7 +446,7 @@ export function ScrollVideoHero() {
         <div
           data-testid="hero-chapter-copy"
           className={clsx(
-            "relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-4 py-24 transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:px-6 lg:px-8",
+            "relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-5 py-20 transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:px-6 sm:py-24 lg:px-8",
             phaseB ? "pointer-events-none opacity-0" : "opacity-100"
           )}
         >
@@ -451,7 +464,7 @@ export function ScrollVideoHero() {
                 <p className="font-heading text-xs font-medium uppercase tracking-[0.2em] text-[#C7CBD6]">
                   {chapter.eyebrow}
                 </p>
-                <p className="mt-2.5 font-heading text-4xl font-bold leading-[1.05] tracking-tight text-text-primary sm:text-5xl lg:text-6xl">
+                <p className="mt-2.5 font-heading text-[2rem] font-bold leading-[1.05] tracking-tight text-text-primary sm:text-5xl lg:text-6xl">
                   {chapter.heading.map((segment, i) =>
                     segment.emphasis ? (
                       <em key={i} className="heading-accent">
@@ -462,18 +475,23 @@ export function ScrollVideoHero() {
                     )
                   )}
                 </p>
-                <p className="mt-5 max-w-lg text-base text-text-secondary sm:text-lg">
+                <p className="mt-4 max-w-lg text-[15px] leading-6 text-text-secondary sm:mt-5 sm:text-lg">
                   {chapter.paragraph}
                 </p>
               </div>
             ))}
           </div>
 
-          <div className="mt-9 flex flex-wrap items-center gap-4">
-            <Button href={heroCtas.primary.href} size="lg">
+          <div className="mt-7 flex flex-wrap items-center gap-3 sm:mt-9 sm:gap-4">
+            <Button href={heroCtas.primary.href} size="lg" className="w-full sm:w-auto">
               {heroCtas.primary.label}
             </Button>
-            <Button href={heroCtas.secondary.href} variant="secondary" size="lg">
+            <Button
+              href={heroCtas.secondary.href}
+              variant="secondary"
+              size="lg"
+              className="w-full sm:w-auto"
+            >
               {heroCtas.secondary.label}
             </Button>
           </div>
@@ -529,11 +547,20 @@ export function ScrollVideoHero() {
         <div
           data-testid="hero-positioning"
           className={clsx(
-            "pointer-events-none absolute inset-0 z-20 flex items-center transition-opacity duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            "pointer-events-none absolute inset-0 z-20 flex items-end sm:items-center transition-opacity duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]",
             copyRevealed ? "opacity-100" : "opacity-0"
           )}
         >
-          <div className="relative ml-auto w-full px-6 sm:px-10 lg:w-1/2 lg:pl-0 lg:pr-10 xl:w-[46%]">
+          {/* Mobile scrim: on small screens the video is full-bleed
+              object-cover, so the positioning copy needs its own dark backing
+              to stay legible over the brain. Fades in with the copy and
+              disappears at lg where the video panel already clears the right
+              of frame. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-black via-black/85 to-transparent lg:hidden"
+          />
+          <div className="relative ml-auto w-full px-5 pb-10 sm:px-10 sm:pb-0 lg:w-1/2 lg:pl-0 lg:pr-10 xl:w-[46%]">
             <PositioningCopy className="mr-auto max-w-sm xl:max-w-md" />
           </div>
         </div>
@@ -548,12 +575,19 @@ export function ScrollVideoHero() {
         <div
           data-testid="hero-services"
           className={clsx(
-            "absolute inset-0 z-20 flex items-center transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            "absolute inset-0 z-20 flex items-end sm:items-center transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
             servicesRevealed ? "opacity-100" : "pointer-events-none opacity-0"
           )}
           aria-hidden={!servicesRevealed}
         >
-          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Mobile scrim behind the services block. On lg the towers finale
+              already clears the left of frame for this content, so no wash
+              needed there. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/40 lg:hidden"
+          />
+          <div className="relative mx-auto w-full max-w-7xl px-4 pb-8 pt-6 sm:px-6 sm:pb-0 sm:pt-0 lg:px-8">
             <div className="lg:max-w-[54%]">
               <ServicesCopy />
               <ServicesCards />

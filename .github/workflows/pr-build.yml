@@ -31,7 +31,7 @@ jobs:
 
       - name: Build static export
         env:
-          NEXT_PUBLIC_BASE_PATH: /Alcon
-          NEXT_PUBLIC_SITE_URL: https://dangerous83.github.io/Alcon
+          NEXT_PUBLIC_BASE_PATH: ""
+          NEXT_PUBLIC_SITE_URL: https://www.alcon-online.site
           NEXT_PUBLIC_FORM_ENDPOINT: ${{ vars.NEXT_PUBLIC_FORM_ENDPOINT }}
         run: npm run build

@@ -75,11 +75,11 @@ jobs:
         env:
           # Empty on a custom domain, /<repo> on github.io — whichever is
           # actually correct for this deployment's URL.
-          NEXT_PUBLIC_BASE_PATH: ${{ steps.basepath.outputs.path }}
+          NEXT_PUBLIC_BASE_PATH: ""
           # Keeps canonical tags / sitemap / OG URLs pointing at where the
           # site actually lives. Replace with the real domain once one is
           # attached.
-          NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
+          NEXT_PUBLIC_SITE_URL: https://www.alcon-online.site
           # Optional: set a repo variable of the same name to point the
           # quote form at Formspree/Web3Forms/etc. Without it the form
           # falls back to a pre-filled email instead of faking a send.

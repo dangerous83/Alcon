@@ -27,6 +27,9 @@ import {
   TrendingUp,
   Building2,
   BadgeCheck,
+  Shirt,
+  Coffee,
+  Sticker,
   type LucideIcon,
 } from "lucide-react";
 
@@ -254,6 +257,58 @@ export const portfolioMegaMenuPromo: MegaMenuPromo = {
   href: "/client-projects",
 };
 
+export const printMegaMenu: MegaMenuColumn[] = [
+  {
+    heading: "Apparel",
+    items: [
+      {
+        label: "Custom T-shirt",
+        description: "Premium branded tees for teams, events, and launches",
+        icon: Shirt,
+        href: "/print/custom-t-shirts",
+      },
+      {
+        label: "Hoodies",
+        description: "High-impact apparel with durable custom finishing",
+        icon: Shirt,
+        href: "/print/hoodies",
+      },
+    ],
+  },
+  {
+    heading: "Everyday Brand",
+    items: [
+      {
+        label: "Mugs & Tumblers",
+        description: "Branded drinkware made for daily visibility",
+        icon: Coffee,
+        href: "/print/mugs-tumblers",
+      },
+      {
+        label: "Stickers",
+        description: "Die-cut brand details for packaging and promotion",
+        icon: Sticker,
+        href: "/print/stickers",
+      },
+    ],
+  },
+];
+
+export const printMegaMenuStats = [
+  { value: "04", label: "Print categories" },
+  { value: "Premium", label: "Materials & finish" },
+  { value: "Dubai", label: "Creative production" },
+] as const;
+
+export const printMegaMenuPromo: MegaMenuPromo = {
+  image: "/images/print/print-overview-hero.webp",
+  eyebrow: "Print & Merchandise",
+  heading: "Make the brand tangible",
+  description:
+    "Custom apparel, drinkware, and stickers designed as one polished brand system—not generic merchandise.",
+  href: "/print",
+};
+
 export type ExternalLinkItem = {
   label: string;
   description: string;
@@ -275,9 +330,9 @@ export const clientPlatformLinks: ExternalLinkItem[] = [
   { label: "Forge Suite", description: "Connected business tools organised in one scalable workspace.", url: "https://www.forgesuite.online/", image: "/images/clients/platform-forge-suite-v2.webp", icon: Boxes },
   { label: "Media HQ", description: "Campaign and content hub built for modern media operations.", url: "https://marketing.securevisanow.com/", image: "/images/clients/platform-media-hq.webp", icon: Newspaper },
   { label: "AlvinAI", description: "AI productivity platform turning complex tasks into clear actions.", url: "https://www.alvinai-dev.com/", image: "/images/clients/platform-alvin-ai-v2.webp", icon: Bot },
-  { label: "Build Flow", description: "Project workflow platform for planning, teams, and delivery.", url: "https://www.buildflow-tech.com", image: "/images/clients/platform-build-flow.webp", icon: Workflow },
-  { label: "Global Harvest", description: "Digital agriculture platform connecting growth and opportunity.", url: "https://www.globalharvest.online/", image: "/images/clients/platform-global-harvest.webp", icon: Wheat },
-  { label: "Forge Crypto", description: "Crypto intelligence experience for clearer market decisions.", url: "https://forge-crypto-omega.vercel.app/", image: "/images/clients/platform-forge-crypto.webp", icon: Bitcoin },
+  { label: "Build Flow", description: "Project workflow platform for planning, teams, and delivery.", url: "https://www.buildflow-tech.com", image: "/images/clients/platform-build-flow-v2.webp", icon: Workflow },
+  { label: "Global Harvest", description: "Digital agriculture platform connecting growth and opportunity.", url: "https://www.globalharvest.online/", image: "/images/clients/platform-global-harvest-v2.webp", icon: Wheat },
+  { label: "Forge Crypto", description: "Crypto intelligence experience for clearer market decisions.", url: "https://forge-crypto-omega.vercel.app/", image: "/images/clients/platform-forge-crypto-v2.webp", icon: Bitcoin },
 ];
 
 export const clientWebsiteLinks: ExternalLinkItem[] = [

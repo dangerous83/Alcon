@@ -6,7 +6,8 @@
 
 import { services } from "@/lib/content/services";
 import { blogPosts } from "@/lib/content/blog";
-import { servicesMegaMenu, portfolioMegaMenu } from "@/lib/content/mega-menu";
+import { printProducts } from "@/lib/content/print";
+import { servicesMegaMenu, portfolioMegaMenu, printMegaMenu } from "@/lib/content/mega-menu";
 
 export type SearchEntry = {
   label: string;
@@ -18,6 +19,12 @@ export type SearchEntry = {
 const staticEntries: SearchEntry[] = [
   { label: "Services", href: "/services", group: "Pages" },
   { label: "Portfolio", href: "/portfolio", group: "Pages" },
+  {
+    label: "Print",
+    href: "/print",
+    group: "Pages",
+    keywords: "custom printing merchandise apparel t-shirts hoodies mugs tumblers stickers Dubai",
+  },
   { label: "White Label", href: "/white-label", group: "Pages" },
   { label: "Clients", href: "/client-projects", group: "Pages" },
   {
@@ -46,6 +53,13 @@ const serviceEntries: SearchEntry[] = services.map((service) => ({
   keywords: service.summary,
 }));
 
+const printEntries: SearchEntry[] = printProducts.map((product) => ({
+  label: product.name,
+  href: `/print/${product.slug}`,
+  group: "Print",
+  keywords: product.summary,
+}));
+
 // The mega menus list finer-grained service names (e.g. "AI Video",
 // "Photography") than the five built-out service pages, each mapped onto
 // its closest existing page — see mega-menu.ts. Indexing those labels too
@@ -54,6 +68,7 @@ const serviceEntries: SearchEntry[] = services.map((service) => ({
 const megaMenuEntries: SearchEntry[] = [
   ...servicesMegaMenu.flatMap((column) => column.items),
   ...portfolioMegaMenu.flatMap((column) => column.items),
+  ...printMegaMenu.flatMap((column) => column.items),
 ].map((item) => ({
   label: item.label,
   href: item.href,
@@ -76,6 +91,7 @@ const seen = new Set<string>();
 export const searchIndex: SearchEntry[] = [
   ...staticEntries,
   ...serviceEntries,
+  ...printEntries,
   ...megaMenuEntries,
   ...blogEntries,
 ].filter((entry) => {

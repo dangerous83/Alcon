@@ -11,6 +11,7 @@ import {
   Tag,
   Users,
   ArrowRight,
+  Printer,
   type LucideIcon,
 } from "lucide-react";
 import { navigation, topBanner } from "@/lib/content/site";
@@ -29,6 +30,9 @@ import {
   portfolioMegaMenu,
   portfolioMegaMenuStats,
   portfolioMegaMenuPromo,
+  printMegaMenu,
+  printMegaMenuStats,
+  printMegaMenuPromo,
   clientPlatformLinks,
   clientWebsiteLinks,
   clientsMegaMenuPromo,
@@ -40,6 +44,7 @@ const linkBase =
 const navIcons: Record<string, LucideIcon> = {
   layers: Layers,
   briefcase: Briefcase,
+  printer: Printer,
   tag: Tag,
   users: Users,
   "arrow-right": ArrowRight,
@@ -305,6 +310,17 @@ export function SiteHeader() {
                 onNavigate={() => setOpenMenu(null)}
               />
             )}
+            {activeMega === "print" && (
+              <ServicesStyleMegaMenu
+                testId="print-mega-menu"
+                columns={printMegaMenu}
+                stats={printMegaMenuStats}
+                promo={printMegaMenuPromo}
+                ctaLabel="Explore Print"
+                ctaHref="/print"
+                onNavigate={() => setOpenMenu(null)}
+              />
+            )}
             {activeMega === "clients" && (
               <ClientsMegaMenu
                 platform={clientPlatformLinks}
@@ -366,6 +382,8 @@ export function SiteHeader() {
                 ? servicesMegaMenu.flatMap((c) => c.items)
                 : hasMega(item) && item.mega === "portfolio"
                   ? portfolioMegaMenu.flatMap((c) => c.items)
+                  : hasMega(item) && item.mega === "print"
+                    ? printMegaMenu.flatMap((c) => c.items)
                   : null;
             const expandable = Boolean(submenuItems);
             const MobileIcon = iconFor(item);

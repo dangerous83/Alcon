@@ -53,6 +53,7 @@ export const siteConfig = {
 export const navigation = [
   { label: "Services", href: "/services", cta: false, mega: "services", icon: "layers" },
   { label: "Portfolio", href: "/portfolio", cta: false, mega: "portfolio", icon: "briefcase" },
+  { label: "Print", href: "/print", cta: false, mega: "print", icon: "printer" },
   { label: "White Label", href: "/white-label", cta: false, icon: "tag" },
   {
     label: "Clients",

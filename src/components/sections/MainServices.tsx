@@ -216,11 +216,11 @@ export function MainServices() {
     () => true
   );
 
-  if (!reducedMotion) return null;
-
   return (
     <section
-      className="relative overflow-hidden bg-black"
+      className={`relative overflow-hidden bg-black ${
+        reducedMotion ? "" : "md:hidden"
+      }`}
       aria-labelledby="services-heading"
     >
       <div

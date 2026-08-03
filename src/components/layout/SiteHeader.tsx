@@ -141,7 +141,7 @@ export function SiteHeader() {
           z-20 against the nav row's z-10 below: both are stacking contexts
           at the same level, so without this the nav paints over the search
           dropdown that hangs down into it and swallows its clicks. */}
-      <div className="relative z-20 border-b border-white/10 bg-black">
+      <div className="relative z-20 hidden border-b border-white/10 bg-black md:block">
         <div
           aria-hidden
           className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(110deg,#2870FF_0%,#7138FF_52%,#D12DFF_100%)]"

@@ -218,7 +218,7 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
               while it runs. */}
           <div
             className={clsx(
-              "absolute inset-x-0 top-[76%] z-10 flex -translate-y-1/2 flex-col items-center justify-center px-4",
+              "absolute inset-x-0 top-[76%] z-10 flex -translate-y-1/2 flex-col items-center justify-center px-4 [@media(max-height:740px)]:top-[68%]",
               "transition-opacity duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
               phase === "idle"
                 ? "opacity-100"
@@ -247,6 +247,23 @@ export function IntroGate({ children }: { children: React.ReactNode }) {
               <span className="text-text-primary">AI specialists</span> — building intelligent campaigns,
               automations, and creative systems that move the metrics that matter.
             </p>
+
+            <a
+              href="https://dangerous83.github.io/SVG-Interactive-Screen/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="SVG Interactive (opens in a new tab)"
+              tabIndex={phase === "idle" ? undefined : -1}
+              className="group absolute left-1/2 top-full mt-4 inline-flex min-h-11 -translate-x-1/2 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[#7138FF]/50 bg-[#7138FF]/10 px-5 py-2.5 font-heading text-xs font-medium text-text-primary backdrop-blur-sm transition-all duration-300 hover:border-[#D12DFF]/70 hover:bg-[#7138FF]/20 hover:shadow-[0_0_24px_-8px_rgba(113,56,255,0.6)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-accent sm:mt-10"
+            >
+              SVG Interactive
+              <ArrowRight
+                size={14}
+                strokeWidth={2}
+                aria-hidden
+                className="transition-transform group-hover:translate-x-0.5"
+              />
+            </a>
           </div>
         </div>
       )}
